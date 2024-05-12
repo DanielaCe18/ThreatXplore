@@ -1,48 +1,61 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #f4f4f4;
     color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
 }
 
-.container {
-    text-align: center;
-    background-color: #ffffff;
+.reporting {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 300px;
-    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: white;
 }
 
-input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #005073;
-    border-radius: 4px;
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
-button {
-    background-color: #0077c0;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
+.widget {
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-button:hover {
-    background-color: #005073;
+.widget.large {
+    grid-column: span 2;
 }
 
-#results {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #eef;
-    border: 1px solid #ccd;
-    min-height: 50px;
+#worldMap .leaflet-container {
+    height: 100%;
+    background-color: #000; /* For dark mode map background */
+}
+
+h1, h2 {
+    color: #333;
+}
+
+.canvas {
+    width: 100%;
+    height: auto;
+}
+
+/* Additional styles for dark theme map */
+#attacksMap {
+    background-color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .widget.large {
+        grid-column: span 1;
+    }
 }
