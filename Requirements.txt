@@ -1,0 +1,7 @@
+1. Telecharger metasploitable sur ce lien : https://sourceforge.net/projects/metasploitable/ , mot de passe : msfadmin
+on y accede a partir de son ip dans notre navigateur , faire systemctl start apache2
+2.pip install mechanize
+3.pip install beautifulsoup4
+4.trouver ton user agent : http://useragent.fr/
+5. trouver des proxy optionnel : http://useragent.fr/
+
