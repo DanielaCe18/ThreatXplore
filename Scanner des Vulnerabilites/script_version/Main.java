@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
+    private static final Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
         BeginProgram();
         System.exit(0);
@@ -39,7 +40,6 @@ public class Main {
     }
 
     public static void MainMenu(){
-        Scanner scanner = new Scanner(System.in);
         int choice;
 
         System.out.println("                        Welcome to Main Menu                            ");
@@ -53,29 +53,25 @@ public class Main {
         System.out.println("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$\n\n");
 
         System.out.print("Make a choice : ");
-        choice = scanner.nextInt();
+        choice = sc.nextInt();
 
         boolean state = false;
         while (!state) {
             switch (choice) {
                 case 1:
                     state = true;
-                    scanner.close();
                     LearnMore();
                     break;
                 case 2:
                     state = true;
-                    scanner.close();
                     MenuScan();
                     break;
                 case 3:
                     state = true;
-                    scanner.close();
                     System.out.println("\nExiting the program...\n\n");
                     EndProgram();
                     break;
                 case 4:
-                    scanner.close();
                     Help();
                     break;
                 default:
@@ -99,8 +95,7 @@ public class Main {
     }
 
     public static void MenuScan(){
-        Scanner scanner = new Scanner(System.in);
-        int choice;
+        int input;
 
         System.out.println("\n\n                    Welcome to Menu Scan");
         System.out.println("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$");
@@ -114,29 +109,25 @@ public class Main {
         System.out.println("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$\n\n");
 
         System.out.print("Make a choice : ");
-        choice = scanner.nextInt();
+        input = sc.nextInt();
 
         boolean state = false;
         while (!state) {
-            switch (choice) {
+            switch (input) {
                 case 1:
                     state = true;
-                    scanner.close();
                     NewScan();
                     break;
                 case 2:
                     state = true;
-                    scanner.close();
                     ListScan();
                     break;
                 case 3:
                     state = true;
-                    scanner.close();
                     System.out.println("\nExiting the program...\n\n");
                     EndProgram();
                     break;
                 case 4:
-                    scanner.close();
                     Help();
                     break;
                 default:
@@ -147,11 +138,30 @@ public class Main {
     }
 
     public static void NewScan(){
-        System.out.println("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**");
-        System.out.println("**$**$**$**$**$** NEW SCAN **$**$**$**$**$**");
-        System.out.println("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**");
+        try {
+            String input;
+            System.out.println("\n\n**$**$**$**$**$**$**$**$**$**$**$**$**$**$**");
+            System.out.println("**$**$**$**$**$** NEW SCAN **$**$**$**$**$**");
+            System.out.println("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**\n\n");
         
-        EndProgram();
+            System.out.println("Enter the address of the website : ");
+            input = sc.nextLine();
+
+            while (input.isEmpty()) {
+                System.out.println("Input invalid. Write a correct address : ");
+            }
+
+            System.out.println("Scan ongoing ..");
+        
+            Thread.sleep(15000);
+        
+            System.out.println("Scan finished. End of the program..");
+
+            EndProgram();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public static void ListScan(){
