@@ -111,6 +111,21 @@ header .navbar {
   display: none;
 }
 
+/*rajouter*/ 
+.download-btn {
+  background-color: #800080; /* Purple color */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+/*rajouter*/
+.download-btn:hover {
+  background-color: #5a005a; /* Darker purple for hover effect */
+}
+
 @media (max-width: 768px) {
   header {
     padding: 10px;
