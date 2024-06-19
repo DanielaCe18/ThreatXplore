@@ -115,7 +115,6 @@ def check_certificate_pinning(url):
     return ["Certificate pinning must be checked on the client side"]
 
 def check_tls_fallback_scsv(url):
-    #install https://github.com/drwetter/testssl.sh
     output = subprocess.getoutput(f"testssl.sh --fallback {url}")
     if 'not vulnerable' not in output:
         return ["TLS Fallback SCSV not supported"]
@@ -126,6 +125,68 @@ def check_insecure_renegotiation(url):
     if 'Secure Renegotiation IS supported' not in output:
         return ["Insecure renegotiation"]
     return []
+
+def check_tls_1_3_support(url):
+    output = subprocess.getoutput(f"sslscan {url}")
+    if 'TLSv1.3' not in output:
+        return ["TLS 1.3 not supported"]
+    return []
+
+def check_certificate_chain(url):
+    output = subprocess.getoutput(f"openssl s_client -showcerts -connect {url}:443")
+    if 'Verify return code: 0 (ok)' not in output:
+        return ["Certificate chain issue"]
+    return []
+
+def check_ocsp_stapling(url):
+    output = subprocess.getoutput(f"openssl s_client -status -connect {url}:443")
+    if 'OCSP Response Status: successful' not in output:
+        return ["OCSP stapling not supported"]
+    return []
+
+def check_dns_caa_records(url):
+    hostname = url.split("//")[-1].split("/")[0]
+    output = subprocess.getoutput(f"dig caa {hostname} +short")
+    if not output:
+        return ["No DNS CAA records found"]
+    return []
+
+def check_headers(url):
+    headers_issues = []
+    try:
+        response = requests.get(f"https://{url}")
+        headers = response.headers
+        
+        # Check HSTS
+        if 'Strict-Transport-Security' not in headers:
+            headers_issues.append("HSTS not implemented")
+
+        # Check Expect-CT
+        if 'Expect-CT' not in headers:
+            headers_issues.append("Expect-CT header not set")
+
+        # Check Content Security Policy (CSP)
+        if 'Content-Security-Policy' not in headers:
+            headers_issues.append("Content Security Policy (CSP) not implemented")
+
+        # Check Referrer Policy
+        if 'Referrer-Policy' not in headers:
+            headers_issues.append("Referrer Policy header not set")
+
+        # Check X-Content-Type-Options
+        if 'X-Content-Type-Options' not in headers or headers['X-Content-Type-Options'] != 'nosniff':
+            headers_issues.append("X-Content-Type-Options header not set to 'nosniff'")
+
+        # Check X-Frame-Options
+        if 'X-Frame-Options' not in headers:
+            headers_issues.append("X-Frame-Options header not set")
+
+        # Check X-XSS-Protection
+        if 'X-XSS-Protection' not in headers or headers['X-XSS-Protection'] != '1; mode=block':
+            headers_issues.append("X-XSS-Protection header not set to '1; mode=block'")
+    except Exception as e:
+        headers_issues.append(f"Error checking headers: {e}")
+    return headers_issues
 
 def scan_url(url):
     results = {}
@@ -150,6 +211,13 @@ def scan_url(url):
     results['certificate_pinning'] = check_certificate_pinning(url)
     results['tls_fallback_scsv'] = check_tls_fallback_scsv(url)
     results['insecure_renegotiation'] = check_insecure_renegotiation(url)
+
+    # Enhanced checks
+    results['tls_1_3_support'] = check_tls_1_3_support(url)
+    results['certificate_chain'] = check_certificate_chain(url)
+    results['ocsp_stapling'] = check_ocsp_stapling(url)
+    results['dns_caa_records'] = check_dns_caa_records(url)
+    results['header_issues'] = check_headers(url)
 
     return results
 
