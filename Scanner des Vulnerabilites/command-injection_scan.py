@@ -752,19 +752,19 @@ def ssi_scan(params, site, directory, headers, proxies, allow_redirects, verify,
             print(f"[{datetime.now().strftime('%H:%M:%S')}] Finished scanning")
 
 # Example usage
-params = ["param1", "param2"]  # Replace with actual parameters
-site = "http://testphp.vulnweb.com/artists.php?artist=1"  # Replace with actual site
-directory = "/path"  # Replace with actual directory
-headers = {}  # Replace with actual headers
-proxies = {}  # Replace with actual proxies
+params = ["param1", "param2"]  
+site = "http://testphp.vulnweb.com/artists.php?artist=1"  
+directory = "/path"  
+headers = {}  
+proxies = {}  
 allow_redirects = True
 verify = True
-cookies = {}  # Replace with actual cookies
+cookies = {}  
 verbose = True
 info = "[INFO]"
 vulnerability = "[VULNERABLE]"
 warning = "[WARNING]"
-full_site = "http://testphp.vulnweb.com/artists.php?artist=1"  # Replace with actual full site
+full_site = "http://testphp.vulnweb.com/artists.php?artist=1"  
 
 # Call your scan functions as needed
 ssti_scan(params, site, directory, headers, proxies, allow_redirects, verify, cookies, verbose, info, vulnerability)

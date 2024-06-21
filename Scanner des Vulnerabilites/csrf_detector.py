@@ -12,7 +12,7 @@ def extractHeaders(headers_input):
             headers[key.strip()] = value.strip()
     return headers
 
-def requester(url, data, headers, get=True, timeout=0):
+def requester(url, data, headers, get=True, timeout=100):
     if get:
         return requests.get(url, headers=headers, timeout=timeout)
     return requests.post(url, data=data, headers=headers, timeout=timeout)
@@ -54,7 +54,6 @@ def check_csrf(url, headers={}, delay=0, level=2, timeout=20, threads=2):
         if len(set(sim_tokens)) < len(sim_tokens):
             print('Same tokens were issued for simultaneous requests.')
 
-        # Further phases can be added as needed
 
     except Exception as e:
         print('Error:', e)
