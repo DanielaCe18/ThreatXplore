@@ -1,0 +1,2 @@
+for XSS and SQLi = pip install requests beautifulsoup4
+download nmap 
