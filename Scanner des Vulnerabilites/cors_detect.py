@@ -1,5 +1,4 @@
 import requests
-from datetime import datetime
 
 # Global settings for the requests
 proxies = None
@@ -9,10 +8,10 @@ cookies = {}
 
 # Define logging functions
 def log_info(message):
-    print(f"[{datetime.now().strftime('%H:%M:%S')} INFO] {message}")
+    print(f"{message}")
 
 def log_vulnerability(message):
-    print(f"[{datetime.now().strftime('%H:%M:%S')} VULNERABILITY] {message}")
+    print(f"{message}")
 
 # Function to extract the domain from a URL
 def extract_domain(site):
@@ -71,5 +70,5 @@ def cors_scan(site):
             log_vulnerability(f"Website is vulnerable to Advanced CORS Bypassing using special characters: {char}")
 
 # Example usage
-site = "https://example.com"
+site = "http://testphp.vulnweb.com/artists.php?artist=1"
 cors_scan(site)
