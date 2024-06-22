@@ -3,7 +3,7 @@ import re
 
 def find_emails(url):
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=True)  # Default behavior
         response.raise_for_status()  # Check for request errors
         content = response.content.decode('utf-8')  # Decode content to string
         emails = re.findall(r'[\w.-]+@[\w.-]+\.\w+', content)
@@ -21,7 +21,7 @@ def find_credit_cards(url):
     }
 
     try:
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=True)  # Default behavior
         response.raise_for_status()  # Check for request errors
         content = response.content.decode('utf-8')  # Decode content to string
         content = ''.join(content.split())  # Remove whitespace
@@ -37,6 +37,6 @@ def find_credit_cards(url):
         print(f"Error accessing {url}: {e}")
 
 # Example usage
-url = "https://www.cdiscount.com/"
+url = "https://vulnerable-website.com/catalog/cart"
 find_emails(url)
 find_credit_cards(url)
