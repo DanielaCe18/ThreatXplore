@@ -73,5 +73,5 @@ def check_xxe_vulnerability(url):
         print(f"Error: {e}")
 
 # Example usage
-target_url = "https://example.com/some-xml-endpoint"
+target_url = "https://vulnerable-website.com//catalog/product/stock"
 check_xxe_vulnerability(target_url)
