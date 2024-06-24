@@ -1,10 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import dns.resolver
-from scapy.all import *
 import ssl
 import socket
 from urllib.parse import urlparse
+from datetime import datetime
 
 def get_domain_info(url):
     domain = urlparse(url).netloc
@@ -41,7 +41,19 @@ def get_certificate_info(url):
     with socket.create_connection((domain, 443)) as sock:
         with context.wrap_socket(sock, server_hostname=domain) as ssock:
             cert = ssock.getpeercert()
-    return cert
+            cert_info = {
+                'issuer': dict(x[0] for x in cert['issuer']),
+                'subject': dict(x[0] for x in cert['subject']),
+                'serialNumber': cert['serialNumber'],
+                'version': cert['version'],
+                'notBefore': cert['notBefore'],
+                'notAfter': cert['notAfter'],
+                'subjectAltName': cert['subjectAltName']
+            }
+            # Converting notBefore and notAfter to datetime for better readability
+            cert_info['notBefore'] = datetime.strptime(cert_info['notBefore'], '%b %d %H:%M:%S %Y %Z')
+            cert_info['notAfter'] = datetime.strptime(cert_info['notAfter'], '%b %d %H:%M:%S %Y %Z')
+    return cert_info
 
 def get_outgoing_links(url):
     response = requests.get(url)
