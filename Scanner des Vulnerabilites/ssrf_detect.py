@@ -77,7 +77,7 @@ def analyze_response(response, url, payload=None):
 
 # Function to scan a list of URLs
 def scan_urls(urls):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
         futures = []
         for url in urls:
             print(f"Testing {url}")
@@ -88,7 +88,7 @@ def scan_urls(urls):
 # Main function
 def main():
     urls_to_test = [
-        "http://example.com/vulnerable-endpoint",
+        "http://localhost/bWAPP/ssrf.php",
         # Add more URLs to test
     ]
     scan_urls(urls_to_test)

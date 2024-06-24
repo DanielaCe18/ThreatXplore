@@ -34,4 +34,4 @@ def directoryTraversal(url):
         print(f"[-] Error occurred during the request: {e}")
 
 # Example usage:
-# directoryTraversal("http://example.com/page?id=123")
+directoryTraversal("http://localhost/bWAPP/directory_traversal_2.php?directory=documents")

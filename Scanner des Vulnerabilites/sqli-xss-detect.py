@@ -144,9 +144,9 @@ def scan_xss(url):
                 break  # Stop after finding a vulnerability in a form
 
 if __name__ == "__main__":
-    urlsql = "https://vulnerable-website.com/blog"  # Replace with the target URL
+    urlsql = "http://localhost/bWAPP/sqli_1.php"  # Replace with the target URL
     print("Scanning for SQL Injection...")
     scan_sql(urlsql)
-    urlxss = "https://vulnerable-website.com/blog"
-    print("\nScanning for XSS...")
-    scan_xss(urlxss)
+    #urlxss = "https://vulnerable-website.com/blog"
+    #print("\nScanning for XSS...")
+   # scan_xss(urlxss)

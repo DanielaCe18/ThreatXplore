@@ -58,6 +58,6 @@ def file_upload_vulnerability(url):
         print(f"Error accessing {url}: {e}")
 
 # Example usage
-url = "https://vulnerable-website.com/"
+url = "http://localhost/bWAPP/rlfi.php"
 advanced_lfi_detection(url)
-file_upload_vulnerability(url)
+#file_upload_vulnerability(url)

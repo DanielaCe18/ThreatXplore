@@ -67,8 +67,8 @@ def check_password_recovery(url):
 
 # Combine functions and execute
 def main():
-    target_url = 'https://example.com/login'  # Replace with the actual login URL
-    username = 'testuser'
+    target_url = 'http://localhost/bWAPP/ba_weak_pwd.php'  # Replace with the actual login URL
+    username = 'bee'
     password_file = 'common-password.txt'
     
     # Load passwords from file
