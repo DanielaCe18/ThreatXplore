@@ -1,0 +1,9 @@
+"http://testphp.vulnweb.com/artists.php?artist=1"
+"https://xss-game.appspot.com/level1/frame"
+
+
+
+lfi : http://localhost/bWAPP/rlfi.php
+
+
+weak passwords = http://localhost/bWAPP/ba_weak_pwd.php
