@@ -2,9 +2,8 @@
 "https://xss-game.appspot.com/level1/frame"
 
 
-"https://vulnerable-website.com/"
-http://www.itsecgames.com/bugs.htm = bwapp
-pentest lab = iso
 
-webforce
-tulpar 
+lfi : http://localhost/bWAPP/rlfi.php
+
+
+weak passwords = http://localhost/bWAPP/ba_weak_pwd.php
