@@ -35,7 +35,6 @@ def format_whois_info(w):
     {' | '.join(w.domain_name) if isinstance(w.domain_name, list) else w.domain_name}
     
     Registrar Data
-    
     domain:                        {w.domain_name}
     status:                        {w.status if w.status else 'Unknown'}
     hold:                          {'NO' if w.status == 'active' else 'YES'}
@@ -44,10 +43,8 @@ def format_whois_info(w):
     created:                       {w.creation_date if w.creation_date else 'Unknown'}
     last-update:                   {w.updated_date if w.updated_date else 'Unknown'}
     source:                        WHOIS
-
     nserver:                       {' | '.join(w.name_servers) if w.name_servers else 'Unknown'}
     source:                        WHOIS
-
     registrar:                     {w.registrar}
     address:                       {w.registrar_address if w.registrar_address else 'Unknown'}
     country:                       {w.registrar_country if w.registrar_country else 'Unknown'}
@@ -57,7 +54,6 @@ def format_whois_info(w):
     anonymous:                     No
     registered:                    {w.creation_date if w.creation_date else 'Unknown'}
     source:                        WHOIS
-
     nic-hdl:                       {w.admin_id if w.admin_id else 'Unknown'}
     type:                          ORGANIZATION
     contact:                       {w.admin_name if w.admin_name else 'Unknown'}
@@ -73,17 +69,8 @@ def format_whois_info(w):
     eligstatus:                    {'identified' if w.status == 'active' else 'not identified'}
     reachstatus:                   {'identified' if w.status == 'active' else 'not identified'}
     source:                        WHOIS
-
+    
     >>> Last update of WHOIS database: {now.strftime('%Y-%m-%dT%H:%M:%SZ')} <<<
     """
     
     return formatted_info
-
-def main():
-    domain = 'myges.fr'
-    whois_info = fetch_whois_info(domain)
-    formatted_info = format_whois_info(whois_info)
-    print(formatted_info)
-
-if __name__ == "__main__":
-    main()
