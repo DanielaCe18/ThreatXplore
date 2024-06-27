@@ -10,8 +10,8 @@
 
 body, html {
   height: 100%;
-  background-color: #001f3f;
-  color: white;
+  background-color: #000;
+  color: #fff;
   overflow-x: hidden;
 }
 
@@ -21,7 +21,7 @@ header {
   left: 0;
   width: 100%;
   padding: 20px;
-  background-color: #001f3f;
+  background-color: #000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
@@ -75,10 +75,11 @@ header .navbar {
 .hero-section .content {
   max-width: 800px;
   width: 100%;
-  background-color: #002b5c;
+  background-color: #333;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #fff;
 }
 
 .hero-section .content h1 {
@@ -115,7 +116,7 @@ header .navbar {
 }
 
 .scan-form button {
-  background: #007bff;
+  background: #ff4c4c;
   padding: 12px 30px;
   border: none;
   font-size: 1rem;
@@ -127,12 +128,12 @@ header .navbar {
 }
 
 .scan-form button:hover {
-  background: #0056b3;
+  background: #cc0000;
 }
 
 /* Light blue box */
 #light-blue-box {
-  background-color: #004080;
+  background-color: #444;
   color: white;
   padding: 10px;
   margin-bottom: 10px;
@@ -141,12 +142,13 @@ header .navbar {
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
+  margin-top: 20px; /* Added spacing between the scan button and the Scanning URL text */
 }
 
 /* Progress bar */
 #progress-bar-container {
   width: 100%;
-  background-color: #e0e0e0;
+  background-color: #666;
   border-radius: 5px;
   overflow: hidden;
   position: relative;
@@ -155,7 +157,7 @@ header .navbar {
 #progress-bar {
   width: 0%;
   height: 20px;
-  background-color: #007bff;
+  background-color: #ff4c4c;
   text-align: center;
   line-height: 20px;
   color: white;
@@ -171,19 +173,45 @@ header .navbar {
   width: 100%;
   background: repeating-linear-gradient(
     45deg,
-    #f0f0f0,
-    #f0f0f0 10px,
-    #e0e0e0 10px,
-    #e0e0e0 20px
+    #888,
+    #888 10px,
+    #666 10px,
+    #666 20px
   );
   opacity: 0.5;
 }
 
 /* Progress text */
 #progress-text {
-  color: #e0e0e0;
+  color: #ccc;
   margin-top: 5px;
   text-align: center;
+}
+
+/* Findings Section */
+.findings-section {
+  padding: 40px 20px;
+  background-color: #fff;
+}
+
+.findings-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.findings-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+#findings-result {
+  color: #333;
 }
 
 /* Result styles */
@@ -191,8 +219,8 @@ header .navbar {
   margin-top: 20px;
   padding: 20px;
   border-radius: 5px;
-  background-color: #004080;
-  color: white;
+  background-color: #f5f5f5;
+  color: #000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -253,7 +281,7 @@ header .navbar {
 }
 
 footer {
-  background-color: #001f3f;
+  background-color: #000;
   color: #ffffff;
   text-align: center;
   padding: 10px 0;
