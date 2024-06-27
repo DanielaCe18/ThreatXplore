@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vulnerability Scanner</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a class="logo" href="#">Vulnerability Scanner<span>.</span></a>
+      <ul class="menu-links">
+        <span id="close-menu-btn" class="material-symbols-outlined">close</span>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about_us.html">About us</a></li>
+        <li><a href="attacks.html">Attacks & Menace</a></li>
+        <li><a href="scan.html">GogoScan</a></li>
+        <li><a href="result.html">Result Scan</a></li>
+        <li><a href="download.html">Download</a></li>
+      </ul>
+      <span id="hamburger-btn" class="material-symbols-outlined">menu</span>
+    </nav>
+  </header>
+
+  <section class="hero-section">
+    <div class="content">
+      <h1>Scan Your Website for Vulnerabilities</h1>
+      <p>Enter a URL to scan for potential security vulnerabilities.</p>
+      <form id="scan-form" class="scan-form">
+        <input type="text" id="url-input" placeholder="Enter URL" required>
+        <div class="scan-type-selection">
+          <label><input type="radio" name="scan-type" value="whois" checked> WHOIS</label>
+          <label><input type="radio" name="scan-type" value="sqli"> SQL Injection</label>
+          <label><input type="radio" name="scan-type" value="xss"> XSS</label>
+          <label><input type="radio" name="scan-type" value="all"> All</label>
+        </div>
+        <button type="submit">Scan</button>
+      </form>
+      <div id="progress-container" class="hidden">
+        <div id="light-blue-box">Scanning URL: <span id="target-url"></span></div>
+        <div id="progress-bar-container">
+          <div id="progress-bar"></div>
+        </div>
+        <div id="progress-text">Scanning target...</div>
+      </div>
+      <div id="result"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 Vulnerability Scanner. All rights reserved.</p>
+  </footer>
+
+  <script src="scan.js"></script>
+</body>
+</html>
