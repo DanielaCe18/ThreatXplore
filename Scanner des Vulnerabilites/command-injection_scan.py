@@ -42,22 +42,6 @@ def advanced_ssti_detection(url):
             print(f"Parameter might be vulnerable to {name}")
             print(f"Payload: {payload}")
 
-# Advanced LFI detection
-def advanced_lfi_detection(url):
-    session = create_session()
-    config = load_config('configs/lfi_config.json')
-
-    for item in config:
-        name = item.get('name')
-        payload = item.get('payload')
-        response_pattern = item.get('response')
-
-        response = send_request(session, url, payload)
-        if re.search(response_pattern, response):
-            print(f"Parameter might be vulnerable to {name}")
-            print(f"Payload: {payload}")
-            break
-
 # Advanced CRLF detection
 def advanced_crlf_detection(url):
     session = create_session()
@@ -95,6 +79,5 @@ def advanced_ssi_detection(url):
 # Example usage
 url_to_scan = "http://www.itsecgames.com/bugs.htm"
 advanced_ssti_detection(url_to_scan)
-advanced_lfi_detection(url_to_scan)
 advanced_crlf_detection(url_to_scan)
 advanced_ssi_detection(url_to_scan)
