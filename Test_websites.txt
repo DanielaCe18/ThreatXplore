@@ -7,3 +7,13 @@ lfi : http://localhost/bWAPP/rlfi.php
 
 
 weak passwords = http://localhost/bWAPP/ba_weak_pwd.php
+
+subdomain takeovers : http://portswigger-labs.net
+xxe = portswigger
+cors = portswigger
+os command injection = portswigger
+ssti = portswigger 
+csrf =portswigger 
+
+
+directory trasversal, dis, lfi, robot, rce detect, = bwapp
