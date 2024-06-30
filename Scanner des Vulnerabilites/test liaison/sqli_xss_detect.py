@@ -81,7 +81,13 @@ def is_vulnerable_to_sqli(response):
 
 def is_vulnerable_to_xss(response):
     xss_markers = [
-        # xss markers as previously defined...
+        "<script>alert('XSS')</script>",
+        "<img src=x onerror=alert('XSS')>",
+        "<body onload=alert('XSS')>",
+        "<svg/onload=alert('XSS')>",
+        "'\"><script>alert('XSS')</script>",
+        "<iframe src=javascript:alert('XSS')></iframe>",
+        "<marquee onstart=alert('XSS')>"
     ]
     for marker in xss_markers:
         if marker in response.content.decode():
@@ -140,17 +146,17 @@ def scan_xss(url):
             if is_vulnerable_to_xss(res):
                 results.append(f"XSS vulnerability detected in form: {details} with payload: {payload}")
                 break  # Stop after finding a vulnerability in a form
-    if not results:
+    if len(results) == 1:  # No vulnerabilities found
         results.append("[-] No XSS vulnerabilities detected.")
     return results
 
 if __name__ == "__main__":
-    urlsql = "http://localhost/bWAPP/sqli_1.php"  # Replace with the target URL
+    urlsql = "http://testphp.vulnweb.com/artists.php?artist=1"  # Replace with the target URL
     print("Scanning for SQL Injection...")
     results = scan_sql(urlsql)
     for result in results:
         print(result)
-    urlxss = "https://vulnerable-website.com/blog"
+    urlxss = "https://xss-game.appspot.com/level1/frame"
     print("\nScanning for XSS...")
     results = scan_xss(urlxss)
     for result in results:

@@ -1,36 +1,34 @@
 import whois
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 def fetch_whois_info(domain):
-    w = whois.whois(domain)
-    return w
+    try:
+        w = whois.whois(domain)
+        return w
+    except Exception as e:
+        return {'error': str(e)}
 
 def to_naive_utc(dt):
     if dt.tzinfo is not None:
-        dt = dt.astimezone(datetime.timezone.utc).replace(tzinfo=None)
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
     return dt
 
 def format_whois_info(w):
+    if 'error' in w:
+        return w['error']
+
     now = datetime.utcnow()
 
     # Handle lists of dates and ensure they are naive UTC
-    expiration_date = w.expiration_date
-    if isinstance(expiration_date, list):
-        expiration_date = min(expiration_date)
-    if expiration_date:
-        expiration_date = to_naive_utc(expiration_date)
+    def convert_to_naive_utc(dates):
+        if isinstance(dates, list):
+            dates = [to_naive_utc(date) for date in dates]
+            return min(dates)
+        return to_naive_utc(dates)
 
-    creation_date = w.creation_date
-    if isinstance(creation_date, list):
-        creation_date = min(creation_date)
-    if creation_date:
-        creation_date = to_naive_utc(creation_date)
-
-    updated_date = w.updated_date
-    if isinstance(updated_date, list):
-        updated_date = min(updated_date)
-    if updated_date:
-        updated_date = to_naive_utc(updated_date)
+    expiration_date = convert_to_naive_utc(w.expiration_date)
+    creation_date = convert_to_naive_utc(w.creation_date)
+    updated_date = convert_to_naive_utc(w.updated_date)
 
     expires_in = (expiration_date - now) if expiration_date else 'Unknown'
     
@@ -43,13 +41,33 @@ def format_whois_info(w):
     else:
         expires_in_str = 'Unknown'
 
+    # Ensure all fields are checked for None or null values
+    domain_name = ' | '.join(w.domain_name) if isinstance(w.domain_name, list) else (w.domain_name or 'Unknown')
+    registrar = w.registrar or 'Unknown'
+    status = ' | '.join(w.status) if isinstance(w.status, list) else (w.status or 'Unknown')
+    name_servers = ' | '.join(w.name_servers) if w.name_servers else 'Unknown'
+    registrar_address = getattr(w, 'registrar_address', 'Unknown')
+    registrar_country = getattr(w, 'registrar_country', 'Unknown')
+    registrar_phone = getattr(w, 'registrar_phone', 'Unknown')
+    registrar_email = getattr(w, 'registrar_email', 'Unknown')
+    registrar_url = getattr(w, 'registrar_url', 'Unknown')
+
+    # Ensure other WHOIS fields are not null
+    name = w.name or 'Unknown'
+    org = w.org or 'Unknown'
+    address = w.address or 'Unknown'
+    city = w.city or 'Unknown'
+    state = w.state or 'Unknown'
+    postal_code = getattr(w, 'registrant_postal_code', 'Unknown')
+    country = w.country or 'Unknown'
+
     formatted_info = f"""
-    WHOIS information for {w.domain_name}
+    WHOIS information for {domain_name}
     Cache expires in {expires_in_str}
     
     Registrar Info
-    Name: {w.registrar}
-    Status: {'Active' if w.status else 'Inactive'}
+    Name: {registrar}
+    Status: {status}
     
     Important Dates
     Expires On: {expiration_date if expiration_date else 'Unknown'}
@@ -57,25 +75,34 @@ def format_whois_info(w):
     Updated On: {updated_date if updated_date else 'Unknown'}
     
     Similar Domains
-    {' | '.join(w.domain_name) if isinstance(w.domain_name, list) else w.domain_name}
+    {domain_name}
     
     Registrar Data
-    domain:                        {w.domain_name}
-    status:                        {w.status if w.status else 'Unknown'}
-    hold:                          {'NO' if w.status == 'active' else 'YES'}
-    registrar:                     {w.registrar}
+    domain:                        {domain_name}
+    status:                        {status}
+    hold:                          {'NO' if 'active' in status.lower() else 'YES'}
+    registrar:                     {registrar}
     Expiry Date:                   {expiration_date if expiration_date else 'Unknown'}
     created:                       {creation_date if creation_date else 'Unknown'}
     last-update:                   {updated_date if updated_date else 'Unknown'}
     source:                        WHOIS
-    nserver:                       {' | '.join(w.name_servers) if w.name_servers else 'Unknown'}
+    nserver:                       {name_servers}
     source:                        WHOIS
-    registrar:                     {w.registrar}
-    address:                       {w.registrar_address if w.registrar_address else 'Unknown'}
-    country:                       {w.registrar_country if w.registrar_country else 'Unknown'}
-    phone:                         {w.registrar_phone if w.registrar_phone else 'Unknown'}
-    e-mail:                        {w.registrar_email if w.registrar_email else 'Unknown'}
-    website:                       {w.registrar_url if w.registrar_url else 'Unknown'}
+    registrar:                     {registrar}
+    address:                       {registrar_address}
+    country:                       {registrar_country}
+    phone:                         {registrar_phone}
+    e-mail:                        {registrar_email}
+    website:                       {registrar_url}
+
+    Registrant Info
+    Name: {name}
+    Organization: {org}
+    Address: {address}
+    City: {city}
+    State: {state}
+    Postal Code: {postal_code}
+    Country: {country}
     
     >>> Last update of WHOIS database: {now.strftime('%Y-%m-%dT%H:%M:%SZ')} <<<
     """
