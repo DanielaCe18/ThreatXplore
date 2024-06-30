@@ -48,37 +48,33 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
     updateProgressBar(100);
     progressText.textContent = 'Scan completed.';
 
-    results.forEach(result => {
+    for (const [type, result] of Object.entries(results)) {
       const resultDivContent = document.createElement('div');
       resultDivContent.classList.add('scan-result');
 
-      if (result.type === 'whois') {
+      if (result.error) {
         resultDivContent.innerHTML = `
-          <h3>WHOIS Scan Result</h3>
-          <pre>${result.result}</pre>`;
-      } else if (result.error) {
-        resultDivContent.innerHTML = `
-          <h3>${result.type.toUpperCase()} Scan Error</h3>
+          <h3>${type.toUpperCase()} Scan Error</h3>
           <pre class="error">${result.error}</pre>`;
       } else {
-        const vulnerabilityFound = result.result.toLowerCase().includes('vulnerability detected');
+        const vulnerabilityFound = result.vulnerable;
         const labelClass = vulnerabilityFound ? 'label-red' : 'label-green';
         const labelText = vulnerabilityFound ? 'Vulnerability Found' : 'No Vulnerability';
 
         resultDivContent.innerHTML = `
-          <h3>${result.type.toUpperCase()} Scan Result <span class="label ${labelClass}">${labelText}</span></h3>
+          <h3>${type.toUpperCase()} Scan Result <span class="label ${labelClass}">${labelText}</span></h3>
           <p>${vulnerabilityFound ? 'Vulnerability detected in the scan.' : 'No vulnerability detected in the scan.'}</p>`;
 
         if (vulnerabilityFound) {
           resultDivContent.innerHTML += `
-            <button class="blue-team-btn" onclick="showBlueTeamInfo('${result.type}')">Blue Team</button>
-            <button class="red-team-btn" onclick="showRedTeamInfo('${result.result}')">Red Team</button>`;
+            <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
+            <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${result.details}\`)">Red Team</button>`;
         }
       }
 
       resultDiv.appendChild(resultDivContent);
       findingsDiv.appendChild(resultDivContent);
-    });
+    }
 
     findingsSection.classList.remove('hidden');
   } catch (error) {
@@ -105,7 +101,18 @@ function showBlueTeamInfo(scanType) {
   alert(message);
 }
 
-function showRedTeamInfo(result) {
-  const payload = result.match(/with payload: (.+)/)[1];
-  alert(`Payload used for the attack:\n\n${payload}`);
+function showRedTeamInfo(scanType, result) {
+  let message = '';
+  switch(scanType) {
+    case 'whois':
+      message = 'No payloads needed';
+      break;
+    case 'sqli':
+      message = `SQLi vulnerability detected: ${result}`;
+      break;
+    case 'xss':
+      message = `XSS vulnerability detected: ${result}`;
+      break;
+  }
+  alert(message);
 }

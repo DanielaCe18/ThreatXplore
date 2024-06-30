@@ -19,28 +19,36 @@ def scan():
     if not url:
         return jsonify({'message': 'URL is required'}), 400
 
-    results = []
+    results = {}
     try:
         if scan_type in ['whois', 'all']:
             whois_info = fetch_whois_info(url)
             formatted_info = format_whois_info(whois_info)
-            results.append({'type': 'whois', 'result': formatted_info})
+            results['whois'] = {'result': formatted_info}
     except Exception as e:
-        results.append({'type': 'whois', 'error': str(e)})
+        results['whois'] = {'error': str(e)}
 
     try:
         if scan_type in ['sqli', 'all']:
             sqli_results = scan_sql(url)
-            results.append({'type': 'sqli', 'result': '\n'.join(sqli_results)})
+            sqli_vulnerable = any('vulnerability detected' in result.lower() for result in sqli_results)
+            results['sqli'] = {
+                'vulnerable': sqli_vulnerable,
+                'details': sqli_results if sqli_vulnerable else 'No vulnerabilities detected'
+            }
     except Exception as e:
-        results.append({'type': 'sqli', 'error': str(e)})
+        results['sqli'] = {'error': str(e)}
 
     try:
         if scan_type in ['xss', 'all']:
             xss_results = scan_xss(url)
-            results.append({'type': 'xss', 'result': '\n'.join(xss_results)})
+            xss_vulnerable = any('vulnerability detected' in result.lower() for result in xss_results)
+            results['xss'] = {
+                'vulnerable': xss_vulnerable,
+                'details': xss_results if xss_vulnerable else 'No vulnerabilities detected'
+            }
     except Exception as e:
-        results.append({'type': 'xss', 'error': str(e)})
+        results['xss'] = {'error': str(e)}
 
     return jsonify(results)
 
