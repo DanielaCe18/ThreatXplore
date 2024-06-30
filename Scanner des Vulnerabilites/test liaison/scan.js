@@ -97,6 +97,9 @@ function showBlueTeamInfo(scanType) {
     case 'xss':
       message = 'Implement input validation, output encoding, and use Content Security Policy (CSP) to mitigate XSS risks.';
       break;
+    case 'os_command_injection':
+      message = 'Use proper input validation and sanitization to prevent OS Command Injection attacks.';
+      break;
   }
   alert(message);
 }
@@ -112,6 +115,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'xss':
       message = `XSS vulnerability detected: ${result}`;
+      break;
+    case 'os_command_injection':
+      message = `OS Command Injection vulnerability detected: ${result}`;
       break;
   }
   alert(message);

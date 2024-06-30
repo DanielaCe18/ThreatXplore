@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from whois_utils import fetch_whois_info, format_whois_info
 from sqli_xss_detect import scan_sql, scan_xss
+from OS_command_injection import scan_os_command_injection  # Import the OS Command Injection scan function
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -49,6 +50,17 @@ def scan():
             }
     except Exception as e:
         results['xss'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['os_command_injection', 'all']:
+            os_command_results = scan_os_command_injection(url)
+            os_command_vulnerable = 'visible injection detected' in os_command_results.lower()
+            results['os_command_injection'] = {
+                'vulnerable': os_command_vulnerable,
+                'details': os_command_results
+            }
+    except Exception as e:
+        results['os_command_injection'] = {'error': str(e)}
 
     return jsonify(results)
 
