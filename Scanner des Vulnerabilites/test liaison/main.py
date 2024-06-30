@@ -3,7 +3,8 @@ from flask_cors import CORS
 from whois_utils import fetch_whois_info, format_whois_info
 from sqli_xss_detect import scan_sql, scan_xss
 from OS_command_injection import scan_os_command_injection
-from ssti_detect import check_and_exploit_ssti  # Import the SSTI detection function
+from ssti_detect import check_and_exploit_ssti
+from cors_detect import check_and_exploit_cors  # Import the CORS detection function
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -73,6 +74,17 @@ def scan():
             }
     except Exception as e:
         results['ssti'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['cors', 'all']:
+            cors_results = check_and_exploit_cors(url)
+            cors_vulnerable = any('Vulnerable' in result for result in cors_results)
+            results['cors'] = {
+                'vulnerable': cors_vulnerable,
+                'details': cors_results if cors_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['cors'] = {'error': str(e)}
 
     return jsonify(results)
 

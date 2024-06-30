@@ -103,6 +103,9 @@ function showBlueTeamInfo(scanType) {
     case 'ssti':
       message = 'Ensure proper input validation and escaping to prevent SSTI vulnerabilities.';
       break;
+    case 'cors':
+      message = 'Ensure proper CORS configuration to prevent unauthorized access from untrusted origins.';
+      break;
   }
   alert(message);
 }
@@ -124,6 +127,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'ssti':
       message = `SSTI vulnerability detected: ${result}`;
+      break;
+    case 'cors':
+      message = `CORS vulnerability detected: ${result}`;
       break;
   }
   alert(message);

