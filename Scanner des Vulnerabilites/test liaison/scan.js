@@ -100,6 +100,9 @@ function showBlueTeamInfo(scanType) {
     case 'os_command_injection':
       message = 'Use proper input validation and sanitization to prevent OS Command Injection attacks.';
       break;
+    case 'ssti':
+      message = 'Ensure proper input validation and escaping to prevent SSTI vulnerabilities.';
+      break;
   }
   alert(message);
 }
@@ -118,6 +121,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'os_command_injection':
       message = `OS Command Injection vulnerability detected: ${result}`;
+      break;
+    case 'ssti':
+      message = `SSTI vulnerability detected: ${result}`;
       break;
   }
   alert(message);

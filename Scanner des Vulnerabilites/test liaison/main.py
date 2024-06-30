@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from whois_utils import fetch_whois_info, format_whois_info
 from sqli_xss_detect import scan_sql, scan_xss
-from OS_command_injection import scan_os_command_injection  # Import the OS Command Injection scan function
+from OS_command_injection import scan_os_command_injection
+from ssti_detect import check_and_exploit_ssti  # Import the SSTI detection function
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -61,6 +62,17 @@ def scan():
             }
     except Exception as e:
         results['os_command_injection'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['ssti', 'all']:
+            ssti_results = check_and_exploit_ssti(url)
+            ssti_vulnerable = any('vulnerability detected' in result.lower() for result in ssti_results)
+            results['ssti'] = {
+                'vulnerable': ssti_vulnerable,
+                'details': ssti_results if ssti_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['ssti'] = {'error': str(e)}
 
     return jsonify(results)
 
