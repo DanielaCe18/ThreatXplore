@@ -66,9 +66,12 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
           <p>${vulnerabilityFound ? 'Vulnerability detected in the scan.' : 'No vulnerability detected in the scan.'}</p>`;
 
         if (vulnerabilityFound) {
+          // Properly escape the details for safe insertion into HTML
+          const escapedDetails = escapeHtml(result.details.join('\n'));
+
           resultDivContent.innerHTML += `
             <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
-            <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${result.details}\`)">Red Team</button>`;
+            <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${escapedDetails}\`)">Red Team</button>`;
         }
       }
 
@@ -112,10 +115,12 @@ function showBlueTeamInfo(scanType) {
     case 'credit card':
       message = 'Use encryption (SSL/TLS) for data transmission, implement tokenization, follow PCI DSS compliance, use secure payment gateways, regularly update and patch systems, monitor for suspicious activity, and educate users on security practices to protect credit card information disclosure on websites.';
       break;
+    case 'xxe':
+      message = 'Ensure your XML parsers are securely configured to disable external entity processing.';
+      break;
   }
   alert(message);
 }
-
 
 function showRedTeamInfo(scanType, result) {
   let message = '';
@@ -144,6 +149,18 @@ function showRedTeamInfo(scanType, result) {
     case 'credit card':
       message = `Credit card disclosure detected: ${result}`;
       break;
+    case 'xxe':
+      message = `XXE vulnerability detected: ${result}`;
+      break;
   }
   alert(message);
+}
+
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

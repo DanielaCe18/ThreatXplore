@@ -6,6 +6,7 @@ from OS_command_injection import scan_os_command_injection
 from ssti_detect import check_and_exploit_ssti
 from cors_detect import check_and_exploit_cors  # Import the CORS detection function
 from email_card_detect import find_emails, find_credit_cards
+from xxe_detect import check_xxe_vulnerability
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -60,7 +61,7 @@ def scan():
             os_command_vulnerable = 'visible injection detected' in os_command_results.lower()
             results['os_command_injection'] = {
                 'vulnerable': os_command_vulnerable,
-                'details': os_command_results
+                'details': [os_command_results] if os_command_vulnerable else ['No vulnerabilities detected']
             }
     except Exception as e:
         results['os_command_injection'] = {'error': str(e)}
@@ -108,6 +109,17 @@ def scan():
             }
     except Exception as e:
         results['email'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['xxe', 'all']:
+            xxe_results = check_xxe_vulnerability(url)
+            xxe_vulnerable = len(xxe_results) > 0
+            results['xxe'] = {
+                'vulnerable': xxe_vulnerable,
+                'details': xxe_results if xxe_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['xxe'] = {'error': str(e)}
 
     return jsonify(results)
 

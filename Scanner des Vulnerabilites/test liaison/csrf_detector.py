@@ -8,7 +8,7 @@ def check_csrf_vulnerability(base_url):
     # Define the URLs and credentials
     login_url = f"{base_url}/login"
     change_email_url = f"{base_url}/my-account?id=wiener"
-    exploit_server_url = "https://exploit-0a64007a03aad377801d70f301950058.exploit-server.net/"
+    exploit_server_url = "https://exploit-0a52005e04112c278233378c01f400e2.exploit-server.net/exploit"
 
     # Define the login credentials
     credentials = {
@@ -90,5 +90,5 @@ def check_csrf_vulnerability(base_url):
         print(f"Current email found: {email_text if email_text else 'No email field found'}")
 
 # URL to check
-url_to_check = "https://0a9f003b03a3d3ac80c171b000940018.web-security-academy.net/"
+url_to_check = "https://0adf00c304ff2cf8829e384300940007.web-security-academy.net"
 check_csrf_vulnerability(url_to_check)
