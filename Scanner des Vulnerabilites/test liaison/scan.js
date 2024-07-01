@@ -106,9 +106,16 @@ function showBlueTeamInfo(scanType) {
     case 'cors':
       message = 'Ensure proper CORS configuration to prevent unauthorized access from untrusted origins.';
       break;
+    case 'email':
+      message = 'Use methods like encoding email addresses, using contact forms, displaying email addresses as images, implementing CAPTCHA on forms, using CSS techniques, leveraging email address cloaking tools, and employing JavaScript frameworks to protect email addresses from disclosure on websites.';
+      break;
+    case 'credit card':
+      message = 'Use encryption (SSL/TLS) for data transmission, implement tokenization, follow PCI DSS compliance, use secure payment gateways, regularly update and patch systems, monitor for suspicious activity, and educate users on security practices to protect credit card information disclosure on websites.';
+      break;
   }
   alert(message);
 }
+
 
 function showRedTeamInfo(scanType, result) {
   let message = '';
@@ -130,6 +137,12 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'cors':
       message = `CORS vulnerability detected: ${result}`;
+      break;
+    case 'email':
+      message = `Email disclosure detected: ${result}`;
+      break;
+    case 'credit card':
+      message = `Credit card disclosure detected: ${result}`;
       break;
   }
   alert(message);

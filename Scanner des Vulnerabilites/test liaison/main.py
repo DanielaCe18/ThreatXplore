@@ -5,6 +5,7 @@ from sqli_xss_detect import scan_sql, scan_xss
 from OS_command_injection import scan_os_command_injection
 from ssti_detect import check_and_exploit_ssti
 from cors_detect import check_and_exploit_cors  # Import the CORS detection function
+from email_card_detect import find_emails, find_credit_cards
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -85,6 +86,28 @@ def scan():
             }
     except Exception as e:
         results['cors'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['credit card', 'all']:
+            card_results = find_credit_cards(url)
+            card_vulnerable = len(card_results) > 0
+            results['credit card'] = {
+                'vulnerable': card_vulnerable,
+                'details': card_results if card_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['credit card'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['email', 'all']:
+            email_results = find_emails(url)
+            email_vulnerable = len(email_results) > 0
+            results['email'] = {
+                'vulnerable': email_vulnerable,
+                'details': email_results if email_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['email'] = {'error': str(e)}
 
     return jsonify(results)
 
