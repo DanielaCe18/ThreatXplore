@@ -118,6 +118,9 @@ function showBlueTeamInfo(scanType) {
     case 'xxe':
       message = 'Ensure your XML parsers are securely configured to disable external entity processing.';
       break;
+    case 'ssrf':
+      message = 'Implement strict input validation and sanitation, limit outbound connections, use a whitelist of permitted URLs, and employ network segmentation to restrict internal network access.';
+      break;
   }
   alert(message);
 }
@@ -151,6 +154,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'xxe':
       message = `XXE vulnerability detected: ${result}`;
+      break;
+    case 'ssrf':
+      message = `SSRF vulnerability detected: ${result}`;
       break;
   }
   alert(message);
