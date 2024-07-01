@@ -1,5 +1,8 @@
 "http://testphp.vulnweb.com/artists.php?artist=1"
 "https://xss-game.appspot.com/level1/frame"
+xxe =https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files
+os = https://portswigger.net/web-security/os-command-injection/lab-simple
+cors = https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack
 
 
 
