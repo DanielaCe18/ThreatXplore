@@ -121,6 +121,9 @@ function showBlueTeamInfo(scanType) {
     case 'ssrf':
       message = 'Implement strict input validation and sanitation, limit outbound connections, use a whitelist of permitted URLs, and employ network segmentation to restrict internal network access.';
       break;
+    case 'csrf':
+      message = 'Implement anti-CSRF tokens for each user session and validate them with each state-changing request.';
+      break;
   }
   alert(message);
 }
@@ -157,6 +160,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'ssrf':
       message = `SSRF vulnerability detected: ${result}`;
+      break;
+    case 'csrf':
+      message = `CSRF vulnerability detected: ${result}`;
       break;
   }
   alert(message);

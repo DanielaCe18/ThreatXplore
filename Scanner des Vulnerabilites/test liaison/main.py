@@ -8,6 +8,7 @@ from cors_detect import check_and_exploit_cors  # Import the CORS detection func
 from email_card_detect import find_emails, find_credit_cards
 from xxe_detect import check_xxe_vulnerability
 from ssrf_detect import check_ssrf
+from csrf_detector import detect_csrf_vulnerability
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -132,6 +133,17 @@ def scan():
             }
     except Exception as e:
         results['ssrf'] = {'error': str(e)}
+    
+    try:
+        if scan_type in ['csrf', 'all']:
+            csrf_results = detect_csrf_vulnerability(url)
+            csrf_vulnerable = any('CSRF' in result for result in csrf_results)
+            results['csrf'] = {
+                'vulnerable': csrf_vulnerable,
+                'details': csrf_results if csrf_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['csrf'] = {'error': str(e)}
 
     return jsonify(results)
 
