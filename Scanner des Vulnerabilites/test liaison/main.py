@@ -31,9 +31,11 @@ def scan():
         if scan_type in ['whois', 'all']:
             whois_info = fetch_whois_info(url)
             formatted_info = format_whois_info(whois_info)
-            results['whois'] = {'result': formatted_info}
+            results['whois'] = {
+                'result': formatted_info}
     except Exception as e:
         results['whois'] = {'error': str(e)}
+
 
     try:
         if scan_type in ['sqli', 'all']:

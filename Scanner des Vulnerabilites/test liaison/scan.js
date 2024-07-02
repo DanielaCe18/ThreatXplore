@@ -57,21 +57,27 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
           <h3>${type.toUpperCase()} Scan Error</h3>
           <pre class="error">${result.error}</pre>`;
       } else {
-        const vulnerabilityFound = result.vulnerable;
-        const labelClass = vulnerabilityFound ? 'label-red' : 'label-green';
-        const labelText = vulnerabilityFound ? 'Vulnerability Found' : 'No Vulnerability';
+        if (type === 'whois') {
+          resultDivContent.innerHTML = `
+            <h3>${type.toUpperCase()} Scan Result</h3>
+            <pre>${result.result}</pre>`;
+        } else {
+          const vulnerabilityFound = result.vulnerable;
+          const labelClass = vulnerabilityFound ? 'label-red' : 'label-green';
+          const labelText = vulnerabilityFound ? 'Vulnerability Found' : 'No Vulnerability';
 
-        resultDivContent.innerHTML = `
-          <h3>${type.toUpperCase()} Scan Result <span class="label ${labelClass}">${labelText}</span></h3>
-          <p>${vulnerabilityFound ? 'Vulnerability detected in the scan.' : 'No vulnerability detected in the scan.'}</p>`;
+          resultDivContent.innerHTML = `
+            <h3>${type.toUpperCase()} Scan Result <span class="label ${labelClass}">${labelText}</span></h3>
+            <p>${vulnerabilityFound ? 'Vulnerability detected in the scan.' : 'No vulnerability detected in the scan.'}</p>`;
 
-        if (vulnerabilityFound) {
-          // Properly escape the details for safe insertion into HTML
-          const escapedDetails = escapeHtml(result.details.join('\n'));
+          if (vulnerabilityFound) {
+            // Properly escape the details for safe insertion into HTML
+            const escapedDetails = escapeHtml(result.details.join('\n'));
 
-          resultDivContent.innerHTML += `
-            <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
-            <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${escapedDetails}\`)">Red Team</button>`;
+            resultDivContent.innerHTML += `
+              <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
+              <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${escapedDetails}\`)">Red Team</button>`;
+          }
         }
       }
 
@@ -91,9 +97,6 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
 function showBlueTeamInfo(scanType) {
   let message = '';
   switch(scanType) {
-    case 'whois':
-      message = 'Ensure your domain registration details are up-to-date and accurate to prevent domain hijacking.';
-      break;
     case 'sqli':
       message = 'Use parameterized queries and ORM libraries to prevent SQL Injection attacks.';
       break;
@@ -131,9 +134,6 @@ function showBlueTeamInfo(scanType) {
 function showRedTeamInfo(scanType, result) {
   let message = '';
   switch(scanType) {
-    case 'whois':
-      message = 'No payloads needed';
-      break;
     case 'sqli':
       message = `SQLi vulnerability detected: ${result}`;
       break;
