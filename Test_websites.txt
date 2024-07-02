@@ -8,7 +8,7 @@ credit card = http://cyberini.com
 csrf = https://portswigger.net/web-security/csrf/lab-no-defenses
 pour l'url sans / a la fin et l'exploit serveur.
 ssrf = https://portswigger.net/web-security/ssrf/lab-basic-ssrf-against-localhost et ajoute /product/stock a la fin
-
+robots.txt : http://localhost/bWAPP
 lfi : http://localhost/bWAPP/rlfi.php
 
 
@@ -20,6 +20,6 @@ cors = portswigger
 os command injection = portswigger
 ssti = portswigger 
 csrf =portswigger 
-ajoute score cve et vulnerability description ameliorer blue team preventions, possibilite de telecharge un rapport et un scan summary, docker file, application et cli et documentation
+ajoute score cve et vulnerability description ameliorer blue team preventions, possibilite de telecharge un rapport et un scan summary, docker file, application et cli et documentation, ajout des commentaires dans le code comme pour directory trasversal
 fix sql, os et xxe
 directory trasversal, dis, lfi, robot, rce detect, = bwapp
