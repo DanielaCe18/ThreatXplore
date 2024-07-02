@@ -136,6 +136,9 @@ function showBlueTeamInfo(scanType) {
     case 'security_headers':
       message = 'test';
       break
+    case 'robot':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -181,6 +184,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'security_headers':
       message = `Uncommon security headers vulnerability detected: ${result}`;
+      break;
+    case 'robot':
+      message = `Robots.txt vulnerability detected: ${result}`;
       break;
   }
   alert(message);

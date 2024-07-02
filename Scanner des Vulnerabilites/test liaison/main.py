@@ -10,6 +10,7 @@ from xxe_detect import check_xxe_vulnerability
 from ssrf_detect import check_ssrf
 from csrf_detector import detect_csrf_vulnerability
 from httpvuln_detect import check_uncommon_http_methods, check_redirections, check_security_headers
+from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -180,6 +181,19 @@ def scan():
             }
     except Exception as e:
         results['security_headers'] = {'error': str(e)}
+    
+    try:
+        if scan_type in ['robot', 'all']:
+            robot_results = check_robots_txt(url)
+            vulnerabilities = detect_vulnerability_in_robots_txt(robot_results)
+            robot_vulnerable = len(vulnerabilities) > 0
+            results['robot'] = {
+                'vulnerable': robot_vulnerable,
+                'details': vulnerabilities if robot_vulnerable else 'No vulnerabilities detected'
+             }
+    except Exception as e:
+        results['robot'] = {'error': str(e)}
+
 
     return jsonify(results)
 
