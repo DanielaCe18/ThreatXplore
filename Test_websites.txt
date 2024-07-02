@@ -21,5 +21,5 @@ os command injection = portswigger
 ssti = portswigger 
 csrf =portswigger 
 ajoute score cve et vulnerability description ameliorer blue team preventions, possibilite de telecharge un rapport et un scan summary, docker file, application et cli et documentation
-
+fix sql, os et xxe
 directory trasversal, dis, lfi, robot, rce detect, = bwapp
