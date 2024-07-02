@@ -127,6 +127,15 @@ function showBlueTeamInfo(scanType) {
     case 'csrf':
       message = 'Implement anti-CSRF tokens for each user session and validate them with each state-changing request.';
       break;
+    case 'http_methods':
+      message = 'test';
+      break;
+    case 'redirections':
+      message = 'test';
+      break
+    case 'security_headers':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -163,6 +172,15 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'csrf':
       message = `CSRF vulnerability detected: ${result}`;
+      break;
+    case 'http_methods':
+      message = `Uncommon HTTP methods vulnerability detected: ${result}`;
+      break;
+    case 'redirections':
+      message = `Redirection vulnerability detected: ${result}`;
+      break;
+    case 'security_headers':
+      message = `Uncommon security headers vulnerability detected: ${result}`;
       break;
   }
   alert(message);

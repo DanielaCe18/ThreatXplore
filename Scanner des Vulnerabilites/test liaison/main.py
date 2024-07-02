@@ -4,11 +4,12 @@ from whois_utils import fetch_whois_info, format_whois_info
 from sqli_xss_detect import scan_sql, scan_xss
 from OS_command_injection import scan_os_command_injection
 from ssti_detect import check_and_exploit_ssti
-from cors_detect import check_and_exploit_cors  # Import the CORS detection function
+from cors_detect import check_and_exploit_cors  
 from email_card_detect import find_emails, find_credit_cards
 from xxe_detect import check_xxe_vulnerability
 from ssrf_detect import check_ssrf
 from csrf_detector import detect_csrf_vulnerability
+from httpvuln_detect import check_uncommon_http_methods, check_redirections, check_security_headers
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -146,6 +147,39 @@ def scan():
             }
     except Exception as e:
         results['csrf'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['http_methods', 'all']:
+            methods_results = check_uncommon_http_methods(url)
+            methods_vulnerable = any(result['vulnerability'] for result in methods_results)
+            results['http_methods'] = {
+                'vulnerable': methods_vulnerable,
+                'details': [str(result) for result in methods_results] if methods_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['http_methods'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['redirections', 'all']:
+            redirection_results = check_redirections(url)
+            redirection_vulnerable = any(result['vulnerability'] for result in redirection_results)
+            results['redirections'] = {
+                'vulnerable': redirection_vulnerable,
+                'details': [str(result) for result in redirection_results] if redirection_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['redirections'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['security_headers', 'all']:
+            headers_results = check_security_headers(url)
+            headers_vulnerable = any(result['vulnerability'] for result in headers_results)
+            results['security_headers'] = {
+                'vulnerable': headers_vulnerable,
+                'details': [str(result) for result in headers_results] if headers_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['security_headers'] = {'error': str(e)}
 
     return jsonify(results)
 
