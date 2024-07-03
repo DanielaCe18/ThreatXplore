@@ -11,6 +11,7 @@ from ssrf_detect import check_ssrf
 from csrf_detector import detect_csrf_vulnerability
 from httpvuln_detect import check_uncommon_http_methods, check_redirections, check_security_headers
 from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
+from bufferoverflow import detect_buffer_overflow
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -194,6 +195,18 @@ def scan():
     except Exception as e:
         results['robot'] = {'error': str(e)}
 
+    try:
+        if scan_type in ['buffer_overflow', 'all']:
+            buffer_overflow_result = detect_buffer_overflow(url)
+            if buffer_overflow_result:
+                results['buffer_overflow'] = {
+                    'vulnerable': buffer_overflow_result['vulnerable'],
+                    'details': buffer_overflow_result
+                }
+            else:
+                results['buffer_overflow'] = 'No vulnerabilities detected'
+    except Exception as e:
+        results['buffer_overflow'] = {'error': str(e)}
 
     return jsonify(results)
 

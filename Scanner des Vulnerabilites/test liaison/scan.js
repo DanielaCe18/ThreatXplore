@@ -139,6 +139,9 @@ function showBlueTeamInfo(scanType) {
     case 'robot':
       message = 'test';
       break
+    case 'robot':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -187,6 +190,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'robot':
       message = `Robots.txt vulnerability detected: ${result}`;
+      break;
+    case 'buffer_overflow':
+      message = `Buffer Overflow vulnerability detected: ${result}`;
       break;
   }
   alert(message);
