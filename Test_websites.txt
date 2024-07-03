@@ -13,6 +13,7 @@ lfi : http://localhost/bWAPP/rlfi.php
 file upload : http://localhost/bWAPP
 path trasversal : https://0ac8005c03a0fc4781d2848d000b005d.web-security-academy.net/image 
 weak passwords = http://localhost/bWAPP/ba_weak_pwd.php
+websocket : https://portswigger.net/web-security/websockets/lab-manipulating-messages-to-exploit-vulnerabilities
 
 subdomain takeovers : http://portswigger-labs.net
 xxe = portswigger
