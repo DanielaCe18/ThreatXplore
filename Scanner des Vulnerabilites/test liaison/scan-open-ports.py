@@ -25,7 +25,7 @@ def print_scan_results(nm, target):
                     print(f"Script : {json.dumps(nm[host][proto][port]['script'])}")
 
 if __name__ == "__main__":
-    target = input("Enter the target URL or IP address: ")
+    target = "http://localhost/bWAPP/"
     options = "-sS -sV -O -p- --script=vuln"
     nm = scan_ports(target, options)
     print_scan_results(nm, target)

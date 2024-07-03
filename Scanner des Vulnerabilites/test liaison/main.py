@@ -11,7 +11,7 @@ from ssrf_detect import check_ssrf
 from csrf_detector import detect_csrf_vulnerability
 from httpvuln_detect import check_uncommon_http_methods, check_redirections, check_security_headers
 from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
-from bufferoverflow import detect_buffer_overflow
+from lfi_detect import advanced_lfi_detection, check_lfi_vulnerability
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -194,19 +194,18 @@ def scan():
              }
     except Exception as e:
         results['robot'] = {'error': str(e)}
-
+    
     try:
-        if scan_type in ['buffer_overflow', 'all']:
-            buffer_overflow_result = detect_buffer_overflow(url)
-            if buffer_overflow_result:
-                results['buffer_overflow'] = {
-                    'vulnerable': buffer_overflow_result['vulnerable'],
-                    'details': buffer_overflow_result
-                }
-            else:
-                results['buffer_overflow'] = 'No vulnerabilities detected'
+        if scan_type in ['lfi', 'all']:
+            lfi_results = advanced_lfi_detection(url)
+            lfi_vulnerable = any(result['vulnerable'] for result in lfi_results)
+            details = [f"{result['name']}:\n{result['details']}" for result in lfi_results]
+            results['lfi'] = {
+                'vulnerable': lfi_vulnerable,
+                'details': details if lfi_vulnerable else 'No vulnerabilities detected'
+            }
     except Exception as e:
-        results['buffer_overflow'] = {'error': str(e)}
+        results['lfi'] = {'error': str(e)}
 
     return jsonify(results)
 

