@@ -157,6 +157,9 @@ function showBlueTeamInfo(scanType) {
     case 'account_lockout':
       message = 'test';
       break
+    case 'websocket':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -223,6 +226,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'account_lockout':
       message = `Account lockout detected: ${result}`;
+      break;
+    case 'websocket':
+      message = `Vulnerability detected: ${result}`;
       break;
   }
   alert(message);

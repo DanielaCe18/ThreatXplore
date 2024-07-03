@@ -15,7 +15,8 @@ from lfi_detect import advanced_lfi_detection, check_lfi_vulnerability
 from file_upload import check_and_exploit_file_upload
 from path_trasversal import scan_path
 from weak_auth_detect import check_common_passwords, brute_force_attack, check_account_lockout, load_passwords
-
+from WebSocket import test_websocket, transform_url_to_ws
+import asyncio
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -278,6 +279,17 @@ def scan():
             }
     except Exception as e:
         results['account_lockout'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['websocket', 'all']:
+            websocket_results = asyncio.run(test_websocket(transform_url_to_ws(url))) or []
+            websocket_vulnerable = any('detected' in result for result in websocket_results)
+            results['websocket'] = {
+                'vulnerable': websocket_vulnerable,
+                'details': websocket_results if websocket_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['websocket'] = {'error': str(e)}
 
     return jsonify(results)
 
