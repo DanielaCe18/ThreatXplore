@@ -1,116 +1,98 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import sys
+import json
 import urllib
 from urllib.parse import urlparse
 
 import mechanize
 from bs4 import BeautifulSoup
 
+# Initialize global variables
+link_list = []
+stopped = False
+browser = mechanize.Browser()
 
-class WebCrawler:
+def initialize_browser(proxy=None, user_agent="Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101 Firefox/68.0"):
+    browser.set_handle_robots(False)
+    browser.addheaders = [("User-agent", user_agent)]
+    if proxy:
+        browser.set_proxies(proxy)
 
-    def __init__(self, url, proxy=None, user_agent="Mozilla/5.0 (X11; Linux i686; rv:68.0)\
-     Gecko/20100101 Firefox/68.0"):
-        if url.endswith("/"):
-            self.url = url.rstrip("/")
-        else:
-            self.url = url
-        self.proxy = proxy
-        self.user_agent = user_agent
-        self.browser = mechanize.Browser()
-        self.link_list = []
-        self.stopped = False
+def get_page_source(url):
+    """
+    Obtains the HTML source code of a web page.
+    :param url: The URL of the page.
+    :return: The HTML source code of the page.
+    """
+    try:
+        res = browser.open(url.strip())
+        return res.read().decode('utf-8', errors='replace')
+    except Exception as e:
+        print(f"[-] Error for page: {url} {str(e)}")
+        return None
 
-    def print_link_list(self):
-        """
-        Affiche la liste de liens ("crawlés") dans le Terminal
-        :return:
-        """
-        for link in self.link_list:
-            print(link)
+def get_page_links(url):
+    """
+    Obtains internal links from a web page.
+    :param url: The URL of the page.
+    :return: A list of internal links found on the page.
+    """
+    global browser
+    link_list = []
+    source = get_page_source(url)
 
-    def get_page_source(self, page=None):
-        """
-        Obtient le code source d'une page web
-        :param page: optionnel : la page recherchée, sinon utilise self.url
-        :return: Le code source HTML de la page
-        """
-        if page is None:
-            page = self.url
-        self.browser.set_handle_robots(False)
-        user_agent = {("User-agent", self.user_agent)}
-        self.browser.addheaders = user_agent
-        if self.proxy:
-            self.browser.set_proxies(self.proxy)
-        page = page.strip()
-        try:
-            res = self.browser.open(page)
-        except Exception as e:
-            print("[-] Erreur pour la page : " + page + " " + str(e))
-            return None
-        return res
+    if source is not None:
+        soup = BeautifulSoup(source, "html.parser")
+        uparse = urlparse(url)
+        for link in soup.find_all("a"):
+            href = link.get("href")
+            if href:
+                if "#" in href:
+                    href = href.split("#")[0]
+                new_link = urllib.parse.urljoin(url, href)
+                if uparse.hostname in new_link and new_link not in link_list:
+                    link_list.append(new_link)
+        return link_list
+    else:
+        return []
 
-    def get_page_links(self, page=None):
-        """
-        Obtient les liens disponibles sur une page web (href), excluant les liens externes
-        :param page: la page recherchée, sinon utilise self.url
-        :return: une liste contenant les liens d'une page, ou une liste vide à défaut
-        """
-        link_list = []  # la liste de liens internes à "page"
+def crawl(url, depth=3):
+    """
+    Recursively crawls and indexes a web page up to a specified depth.
+    :param url: The URL of the page.
+    :param depth: The depth of recursion.
+    """
+    global link_list, stopped
+    if depth == 0:
+        return
+    try:
+        page_links = get_page_links(url)
+        for link in page_links:
+            if stopped:
+                break
+            if link not in link_list:
+                link_list.append(link)
+                crawl(link, depth - 1)
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\nError: {str(e)}")
+        sys.exit(2)
 
-        if page is None:
-            page = self.url
-        source = self.get_page_source(page)
+def get_link_list():
+    """
+    Returns the list of crawled links as a JSON string.
+    """
+    global link_list
+    return json.dumps(link_list, ensure_ascii=False)
 
-        if source is not None:
-            soup = BeautifulSoup(source, "html.parser")
-            uparse = urlparse(page)
-            for link in soup.find_all("a"):
-                if not link.get("href") is None:
-                    href = link.get("href")
-                    if "#" in href:
-                        href = href.split("#")[0]
-                    new_link = urllib.parse.urljoin(page, href)
-                    if uparse.hostname in new_link and new_link not in link_list:
-                        link_list.append(new_link)
-            return link_list
-        else:
-            return []
+def start_crawling(url, depth=3):
+    initialize_browser()
+    crawl(url, depth)
+    return get_link_list()
 
-    def print_cookies(self):
-        """
-        Affiche les cookies de la session courante dans le Terminal
-        :return:
-        """
-        for cookie in self.browser.cookiejar:
-            print(cookie)
-
-    def get_cookies(self):
-        """
-        Retourne la liste des cookies de la session courante
-        :return: La liste (dictionnaire) des cookies
-        """
-        return self.browser.cookiejar
-
-    def crawl(self, page=None):
-        """
-        Crawl (indexe) une page de manière récursive
-        :param page: la page recherchée, sinon utilise self.url
-        :return:
-        """
-        try:
-            page_links = self.get_page_links(page)
-            for link in page_links:
-                if self.stopped:
-                    break
-                if link not in self.link_list:
-                    self.link_list.append(link)
-                    print("Lien ajouté à la liste : " + link)
-                    self.crawl(link)
-        except KeyboardInterrupt:
-            print("\nProgramme arrêté par l'utilisateur")
-            sys.exit(1)
-        except Exception as e:
-            print("\nErreur : " + str(e))
-            sys.exit(2)
+if __name__ == "__main__":
+    url = input("please enter the url to crawl :")
+    print(start_crawling(url))

@@ -61,6 +61,10 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
           resultDivContent.innerHTML = `
             <h3>${type.toUpperCase()} Scan Result</h3>
             <pre>${result.result}</pre>`;
+        } else if (type === 'crawl') {
+          resultDivContent.innerHTML = `
+            <h3>${type.toUpperCase()} Scan Result</h3>
+            <pre>${result.result.join('\n')}</pre>`;
         } else {
           const vulnerabilityFound = result.vulnerable;
           const labelClass = vulnerabilityFound ? 'label-red' : 'label-green';
@@ -93,6 +97,7 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
     resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
   }
 });
+
 
 function showBlueTeamInfo(scanType) {
   let message = '';

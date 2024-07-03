@@ -17,6 +17,8 @@ from path_trasversal import scan_path
 from weak_auth_detect import check_common_passwords, brute_force_attack, check_account_lockout, load_passwords
 from WebSocket import test_websocket, transform_url_to_ws
 import asyncio
+from crawler import start_crawling
+import json
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -41,8 +43,12 @@ def scan():
             formatted_info = format_whois_info(whois_info)
             results['whois'] = {
                 'result': formatted_info}
+        if scan_type in ['crawl', 'all']:
+            crawl_info = start_crawling(url)
+            results['crawl'] = {
+                'result': json.loads(crawl_info)}
     except Exception as e:
-        results['whois'] = {'error': str(e)}
+        results['crawl'] = {'error': str(e)}
 
 
     try:
