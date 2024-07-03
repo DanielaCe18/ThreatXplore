@@ -14,6 +14,8 @@ from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
 from lfi_detect import advanced_lfi_detection, check_lfi_vulnerability
 from file_upload import check_and_exploit_file_upload
 from path_trasversal import scan_path
+from weak_auth_detect import check_common_passwords, brute_force_attack, check_account_lockout, load_passwords
+
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -231,6 +233,51 @@ def scan():
     except Exception as e:
         results['path_trasversal'] = {'error': str(e)}
 
+    try:
+        username = 'bee'
+        password_file = 'common-password.txt'
+
+        with open(password_file, 'r') as f:
+            passwords = f.read().splitlines()
+        
+        if scan_type in ['common_passwords', 'all']:
+            passwords_results = check_common_passwords(url, username, passwords)
+            password_vulnerable = any('password found' in result for result in passwords_results)
+            results['common_passwords'] = {
+                'vulnerable': password_vulnerable,
+                'details': passwords_results if password_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['common_passwords'] = {'error': str(e)}
+
+    try:
+        username = 'bee'
+        password_file = 'common-password.txt'
+
+        with open(password_file, 'r') as f:
+            passwords = f.read().splitlines()
+
+        if scan_type in ['brut_force', 'all']:
+            brut_results = brute_force_attack(url, username, passwords)
+            brut_vulnerable = any('found' in result for result in brut_results)
+            results['brut_force'] = {
+                'vulnerable': brut_vulnerable,
+                'details': brut_results if brut_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['brut_force'] = {'error': str(e)}
+
+    try:
+        username = 'bee'
+        if scan_type in ['account_lockout', 'all']:
+            lockout_results = check_account_lockout(url, username)
+            password_vulnerable = any('No account' in result for result in lockout_results)
+            results['account_lockout'] = {
+                'vulnerable': password_vulnerable,
+                'details': lockout_results if password_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['account_lockout'] = {'error': str(e)}
 
     return jsonify(results)
 

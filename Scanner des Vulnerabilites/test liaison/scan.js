@@ -148,6 +148,15 @@ function showBlueTeamInfo(scanType) {
     case 'path_trasversal':
       message = 'test';
       break
+    case 'common_passwords':
+      message = 'test';
+      break
+    case 'brut_force':
+      message = 'test';
+      break
+    case 'account_lockout':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -205,6 +214,15 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'path_trasversal':
       message = `Path trasversal vulnerability detected: ${result}`;
+      break;
+    case 'common_passwords':
+      message = `Common passwords detected: ${result}`;
+      break;
+    case 'Brut force':
+      message = `Brut force detected: ${result}`;
+      break;
+    case 'account_lockout':
+      message = `Account lockout detected: ${result}`;
       break;
   }
   alert(message);
