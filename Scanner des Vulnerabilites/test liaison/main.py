@@ -13,6 +13,7 @@ from httpvuln_detect import check_uncommon_http_methods, check_redirections, che
 from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
 from lfi_detect import advanced_lfi_detection, check_lfi_vulnerability
 from file_upload import check_and_exploit_file_upload
+from path_trasversal import scan_path
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -218,6 +219,17 @@ def scan():
             }
     except Exception as e:
         results['file_upload'] = {'error': str(e)}
+    
+    try:
+        if scan_type in ['path_trasversal', 'all']:
+            path_results = scan_path(url)
+            path_vulnerable = any('vulnerability' in result for result in path_results)
+            results['path_trasversal'] = {
+                'vulnerable': path_vulnerable,
+                'details': path_results if path_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['path_trasversal'] = {'error': str(e)}
 
 
     return jsonify(results)

@@ -145,6 +145,9 @@ function showBlueTeamInfo(scanType) {
     case 'file_upload':
       message = 'test';
       break
+    case 'path_trasversal':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -199,6 +202,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'file_upload':
       message = `Unrestricted file upload vulnerability detected: ${result}`;
+      break;
+    case 'path_trasversal':
+      message = `Path trasversal vulnerability detected: ${result}`;
       break;
   }
   alert(message);
