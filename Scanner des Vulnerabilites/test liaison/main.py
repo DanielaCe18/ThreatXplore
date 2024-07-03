@@ -12,6 +12,7 @@ from csrf_detector import detect_csrf_vulnerability
 from httpvuln_detect import check_uncommon_http_methods, check_redirections, check_security_headers
 from robot_detect import check_robots_txt, detect_vulnerability_in_robots_txt
 from lfi_detect import advanced_lfi_detection, check_lfi_vulnerability
+from file_upload import check_and_exploit_file_upload
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -206,6 +207,18 @@ def scan():
             }
     except Exception as e:
         results['lfi'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['file_upload', 'all']:
+            file_results = check_and_exploit_file_upload(url)
+            file_vulnerable = any('available' in result for result in file_results)
+            results['file_upload'] = {
+                'vulnerable': file_vulnerable,
+                'details': file_results if file_vulnerable else 'No vulnerabilities detected'
+            }
+    except Exception as e:
+        results['file_upload'] = {'error': str(e)}
+
 
     return jsonify(results)
 

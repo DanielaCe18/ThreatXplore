@@ -142,6 +142,9 @@ function showBlueTeamInfo(scanType) {
     case 'lfi':
       message = 'test';
       break
+    case 'file_upload':
+      message = 'test';
+      break
   }
   alert(message);
 }
@@ -193,6 +196,9 @@ function showRedTeamInfo(scanType, result) {
       break;
     case 'lfi':
       message = `LFI vulnerability detected: ${result}`;
+      break;
+    case 'file_upload':
+      message = `Unrestricted file upload vulnerability detected: ${result}`;
       break;
   }
   alert(message);

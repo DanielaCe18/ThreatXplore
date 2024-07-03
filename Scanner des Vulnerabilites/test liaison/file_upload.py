@@ -30,24 +30,33 @@ def file_upload_vulnerability(session, url):
         forms = soup.find_all('form')
         for form in forms:
             if form.find('input', {'type': 'file'}):
-                print(f"[+] File Upload Function available at {url}")
-                return True
-        return False
+                payload = {'file': ('test.txt', 'This is a test file.', 'text/plain')}
+                response = session.post(url, files=payload)
+                if response.status_code == 200:
+                    return f"[+] File Upload Function available at {url}\nPayload used: {payload}"
+                else:
+                    return f"File upload attempt failed at {url} with status code: {response.status_code}"
+        return f"No file upload function found at {url}"
     except requests.RequestException as e:
-        print(f"Error accessing {url}: {e}")
-        return False
+        return f"Error accessing {url}: {e}"
 
-# Example usage
-base_url = "http://localhost/bWAPP"
-username = "bee"
-password = "bug"
+def check_and_exploit_file_upload(target_url):
+    username = "bee"
+    password = "bug"
+    base_url = target_url
 
-session = create_session()
-login(session, base_url, username, password)
+    session = create_session()
+    login(session, base_url, username, password)
+    urlfile = base_url + "/unrestricted_file_upload.php"
+    
+    results = []
+    result = file_upload_vulnerability(session, urlfile)
+    results.append(f"URL tested: {urlfile}")
+    results.append(result)
+    return results
 
-urlfile = base_url + "/unrestricted_file_upload.php"
-
-if file_upload_vulnerability(session, urlfile):
-    print(f"{urlfile} is vulnerable to unrestricted file upload")
-
-
+if __name__ == "__main__":
+    target_url = input('Enter the URL to test for file upload vulnerability: ')
+    results = check_and_exploit_file_upload(target_url)
+    for result in results:
+        print(result)
