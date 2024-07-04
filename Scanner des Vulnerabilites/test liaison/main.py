@@ -257,7 +257,7 @@ def scan():
     try:
         if scan_type in ['path_trasversal', 'all']:
             path_results = scan_path(url)
-            path_vulnerable = any('vulnerability' in result for result in path_results)
+            path_vulnerable = not any('No vulnerability found' in result for result in path_results)
             results['path_trasversal'] = {
                 'vulnerable': path_vulnerable,
                 'details': path_results if path_vulnerable else 'No vulnerabilities detected'

@@ -1,7 +1,5 @@
 import requests
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import concurrent.futures
 import time
 
 # Function to load passwords from a file
@@ -42,6 +40,15 @@ def check_account_lockout(url, username):
         results.append("No account lockout mechanism detected.")
     return results
 
+# Timeout wrapper function
+def execute_with_timeout(func, *args, timeout=15):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(func, *args)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            return ["Function execution exceeded timeout."]
+
 # Combine functions and execute
 def main():
     target_url = "http://localhost/bWAPP/ba_weak_pwd.php"
@@ -51,14 +58,14 @@ def main():
     # Load passwords from file
     passwords = load_passwords(password_file)
     
-    # Check for common weak passwords
-    common_password_results = check_common_passwords(target_url, username, passwords)
+    # Check for common weak passwords with timeout
+    common_password_results = execute_with_timeout(check_common_passwords, target_url, username, passwords)
     
-    # Simulate brute force attack
-    brute_force_results = brute_force_attack(target_url, username, passwords)
+    # Simulate brute force attack with timeout
+    brute_force_results = execute_with_timeout(brute_force_attack, target_url, username, passwords)
     
-    # Check for account lockout mechanism
-    account_lockout_results = check_account_lockout(target_url, username)
+    # Check for account lockout mechanism with timeout
+    account_lockout_results = execute_with_timeout(check_account_lockout, target_url, username)
     
     # Print all results separately
     print("Common Password Check Results:")

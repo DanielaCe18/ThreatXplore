@@ -162,13 +162,13 @@ function showBlueTeamInfo(scanType) {
       message = 'Validate and sanitize user input to prevent directory traversal sequences like ../ from being processed.';
       break;
     case 'common_passwords':
-      message = 'test';
+      message = 'Implement strong password policies, use password managers, enforce regular password changes, and enable multi-factor authentication.';
       break;
     case 'brut_force':
-      message = 'test';
+      message = 'Limit login attempts, implement CAPTCHA, use account lockout mechanisms, and enforce strong password policies.';
       break;
     case 'account_lockout':
-      message = 'test';
+      message = 'Implement CAPTCHA, monitor for unusual activity, provide a secure way to unlock accounts, and limit lockout durations.';
       break;
     case 'websocket':
       message = 'Implement strong authentication, input validation, and use secure WebSocket protocols (wss://) to protect communications.';
@@ -177,7 +177,7 @@ function showBlueTeamInfo(scanType) {
       message = 'Implement strict certificate validation policies, including checking the certificate chain, expiration date, and revocation status.';
       break;
     case 'tls_ssl':
-      message = 'Ensure your server supports only strong TLS protocols and ciphers, and that certificates are properly configured.';
+      message = 'Defense measures include updating OpenSSL, disabling outdated protocols (SSL 3.0, TLS 1.0), enforcing HSTS, supporting only secure ciphers, and ensuring servers are configured to use strong security practices.';
       break;
     case 'scan_ports':
       message = 'Close unnecessary ports and implement proper firewall rules and access controls';
@@ -241,22 +241,22 @@ function showRedTeamInfo(scanType, result) {
       message = `${result}`;
       break;
     case 'common_passwords':
-      message = `Common passwords detected: ${result}`;
+      message = `${result}`;
       break;
     case 'brut_force':
-      message = `Brut force detected: ${result}`;
+      message = `Brut force executed : ${result}`;
       break;
     case 'account_lockout':
-      message = `Account lockout detected: ${result}`;
+      message = `${result}`;
       break;
     case 'websocket':
       message = `${result}`;
       break;
     case 'certificate_issues':
-      message = `Certificate issues detected: ${result}`;
+      message = `${result}`;
       break;
     case 'tls_ssl':
-      message = `TLS/SSL issues detected: ${result}`;
+      message = `${result}`;
       break;
     case 'scan_ports':
       message = `Open ports detected: ${result}`;
