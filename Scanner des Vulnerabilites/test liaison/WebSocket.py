@@ -71,7 +71,7 @@ async def test_websocket(url):
 
 
 if __name__ == "__main__":
-    target_url = "https://0ac500ab0475c1068141eda40078002b.web-security-academy.net/chat"
+    target_url = "ws://myges.fr"
     ws_url = transform_url_to_ws(target_url)
     asyncio.run(test_websocket(ws_url))
     

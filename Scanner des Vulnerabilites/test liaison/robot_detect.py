@@ -41,7 +41,7 @@ def detect_vulnerability_in_robots_txt(robot_results):
     return vulnerabilities
     
 if __name__ == "__main__":
-    target_url = "http://localhost/bWAPP"
+    target_url = "http://myges.fr"
     results = check_robots_txt(target_url)
     for result in results:
         print(result)

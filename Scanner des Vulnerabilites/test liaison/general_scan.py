@@ -4,13 +4,16 @@ import dns.resolver
 import ssl
 import socket
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timedelta
 
-def get_domain_info(url):
-    domain = urlparse(url).netloc
-    ips = dns.resolver.resolve(domain, 'A')
-    ip_list = [ip.to_text() for ip in ips]
-    return domain, ip_list
+def resolve_domain_to_ip(domain):
+    try:
+        ip_address = socket.gethostbyname(domain)
+        result = f"Domain: {domain}\nIPs: {ip_address}\n"
+        return result
+    except socket.gaierror as e:
+        error_message = f"Error resolving domain {domain}: {e}\n"
+        return error_message
 
 def get_http_https_transfers(url):
     response = requests.get(url)
@@ -19,21 +22,31 @@ def get_http_https_transfers(url):
         transfers.append((response.status_code, response.url))
     else:
         transfers = [(response.status_code, response.url)]
-    return transfers
+    transfers_formatted = "\n".join([f"Status Code: {code}, URL: {url}" for code, url in transfers])
+    result = f"HTTP/HTTPS Transfers:\n{transfers_formatted}\n"
+    return result
 
 def get_all_page_links(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     links = {link.get('href') for link in soup.find_all('a', href=True)}
-    return links
+    links_formatted = "\n".join(links)
+    result = f"All Page Links:\n{links_formatted}\n"
+    return result
 
 def get_cookies(url):
     response = requests.get(url)
-    return response.cookies.get_dict()
+    cookies = response.cookies.get_dict()
+    cookies_formatted = "\n".join([f"{key}: {value}" for key, value in cookies.items()])
+    result = f"Cookies:\n{cookies_formatted}\n"
+    return result
 
 def get_headers(url):
     response = requests.get(url)
-    return response.headers
+    headers = response.headers
+    headers_formatted = "\n".join([f"{key}: {value}" for key, value in headers.items()])
+    result = f"Headers:\n{headers_formatted}\n"
+    return result
 
 def get_certificate_info(url):
     domain = urlparse(url).netloc
@@ -50,42 +63,34 @@ def get_certificate_info(url):
                 'notAfter': cert['notAfter'],
                 'subjectAltName': cert['subjectAltName']
             }
-            # Converting notBefore and notAfter to datetime for better readability
             cert_info['notBefore'] = datetime.strptime(cert_info['notBefore'], '%b %d %H:%M:%S %Y %Z')
             cert_info['notAfter'] = datetime.strptime(cert_info['notAfter'], '%b %d %H:%M:%S %Y %Z')
-    return cert_info
+            cert_info_formatted = "\n".join([f"{key}: {value}" for key, value in cert_info.items()])
+            result = f"Certificate Info:\n{cert_info_formatted}\n"
+            return result
 
 def get_outgoing_links(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     outgoing_links = {link.get('href') for link in soup.find_all('a', href=True) if urlparse(link.get('href')).netloc != urlparse(url).netloc}
-    return outgoing_links
+    outgoing_links_formatted = "\n".join(outgoing_links)
+    result = f"Outgoing Links:\n{outgoing_links_formatted}\n"
+    return result
 
-def main():
-    url = input("Enter the URL: ")
-    print("Gathering information for:", url)
-    
-    domain, ips = get_domain_info(url)
-    print("Domain:", domain)
-    print("IPs:", ips)
-    
-    transfers = get_http_https_transfers(url)
-    print("HTTP/HTTPS Transfers:", transfers)
-    
-    links = get_all_page_links(url)
-    print("All Page Links:", links)
-    
-    cookies = get_cookies(url)
-    print("Cookies:", cookies)
-    
-    headers = get_headers(url)
-    print("Headers:", headers)
-    
-    cert_info = get_certificate_info(url)
-    print("Certificate Info:", cert_info)
-    
-    outgoing_links = get_outgoing_links(url)
-    print("Outgoing Links:", outgoing_links)
+def general_scan_url(url):
+    results = []
+    domain = urlparse(url).netloc
+    results.append(resolve_domain_to_ip(domain))
+    results.append(get_http_https_transfers(url))
+    results.append(get_all_page_links(url))
+    results.append(get_cookies(url))
+    results.append(get_headers(url))
+    results.append(get_certificate_info(url))
+    results.append(get_outgoing_links(url))
+    return results
 
 if __name__ == "__main__":
-    main()
+    target_url = input("Enter the URL: ")
+    results = general_scan_url(target_url)
+    for result in results:
+        print(result)

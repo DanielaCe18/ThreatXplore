@@ -58,7 +58,9 @@ def check_security_headers(url):
         'X-Content-Type-Options',
         'X-Frame-Options',
         'Strict-Transport-Security',
-        'X-XSS-Protection'
+        'X-XSS-Protection',
+        'Expect-CT',
+        'Referrer-Policy'
     ]
     
     try:

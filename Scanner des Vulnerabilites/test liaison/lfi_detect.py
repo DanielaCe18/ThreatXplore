@@ -52,7 +52,7 @@ def advanced_lfi_detection(base_url):
     return results
 
 if __name__ == "__main__":
-    target_url = input('Enter the URL to test for LFI vulnerability: ')
+    target_url = "http://localhost/bWAPP/rlfi.ph"
     results = advanced_lfi_detection(target_url)
     for result in results:
         print(result)

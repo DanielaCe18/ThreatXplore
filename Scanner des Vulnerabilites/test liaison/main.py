@@ -19,6 +19,10 @@ from WebSocket import test_websocket, transform_url_to_ws
 import asyncio
 from crawler import start_crawling
 import json
+from urllib.parse import urlparse
+from ssl_detect import check_certificate_issues, check_ssltls
+from scan_open_ports import resolve_domain_to_ip, scan_ports, collect_scan_results
+from general_scan import general_scan_url
 
 app = Flask(__name__, static_folder='')
 CORS(app)  # Enable CORS for all routes
@@ -47,8 +51,29 @@ def scan():
             crawl_info = start_crawling(url)
             results['crawl'] = {
                 'result': json.loads(crawl_info)}
+        if scan_type in['certificate_issues', 'all']:
+            certificate_info = check_certificate_issues(url)
+            results['certificate_issues'] = {
+                'result': certificate_info,
+                'vulnerable': len(certificate_info) > 0,
+                'details': certificate_info
+            }
+        if scan_type in['tls_ssl', 'all']:
+            ssl_info = check_ssltls(url)
+            results['tls_ssl'] = {
+                'result': ssl_info,
+                'vulnerable': len(ssl_info) > 0,
+                'details': ssl_info
+            }
+        if scan_type in['scan_gen', 'all']:
+            general_info = general_scan_url(url)
+            results['scan_gen'] = {
+                'result': general_info,
+                'vulnerable': len(general_info) > 0,
+                'details': general_info
+            }
     except Exception as e:
-        results['crawl'] = {'error': str(e)}
+        results['error'] = {'error': str(e)}
 
 
     try:
@@ -131,7 +156,7 @@ def scan():
     try:
         if scan_type in ['xxe', 'all']:
             xxe_results = check_xxe_vulnerability(url)
-            xxe_vulnerable = len(xxe_results) > 0
+            xxe_vulnerable = any('application is vulnerable' in result for result in xxe_results)
             results['xxe'] = {
                 'vulnerable': xxe_vulnerable,
                 'details': xxe_results if xxe_vulnerable else 'No vulnerabilities detected'
@@ -296,6 +321,26 @@ def scan():
             }
     except Exception as e:
         results['websocket'] = {'error': str(e)}
+
+    try:
+        if scan_type in ['scan_ports', 'all']:
+            parsed_url = urlparse(url)
+            domain = parsed_url.hostname
+            ip_address = resolve_domain_to_ip(domain)
+
+            if ip_address:
+                options = "-sS -sV -O -p- --script=vuln"
+                nm = scan_ports(ip_address, options)
+                port_results = collect_scan_results(nm)
+                open_ports_found = any(proto['Ports'] for result in port_results for proto in result['Protocols'])
+                results['port_scan'] = {
+                    'vulnerable': open_ports_found,
+                    'details': port_results if open_ports_found else 'No open ports found'
+                }
+            else:
+                results['port_scan'] = {'error': 'Failed to resolve domain to an IP address.'}
+    except Exception as e:
+        results['port_scan'] = {'error': str(e)}
 
     return jsonify(results)
 

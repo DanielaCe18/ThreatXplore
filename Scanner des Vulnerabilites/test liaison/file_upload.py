@@ -33,7 +33,7 @@ def file_upload_vulnerability(session, url):
                 payload = {'file': ('test.txt', 'This is a test file.', 'text/plain')}
                 response = session.post(url, files=payload)
                 if response.status_code == 200:
-                    return f"[+] File Upload Function available at {url}\nPayload used: {payload}"
+                    return f"File Upload Function available at {url}\nPayload used: {payload}"
                 else:
                     return f"File upload attempt failed at {url} with status code: {response.status_code}"
         return f"No file upload function found at {url}"
@@ -51,7 +51,6 @@ def check_and_exploit_file_upload(target_url):
     
     results = []
     result = file_upload_vulnerability(session, urlfile)
-    results.append(f"URL tested: {urlfile}")
     results.append(result)
     return results
 

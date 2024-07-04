@@ -57,16 +57,25 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
           <h3>${type.toUpperCase()} Scan Error</h3>
           <pre class="error">${result.error}</pre>`;
       } else {
-        if (type === 'whois') {
+        if (type === 'whois' || type === 'scan_gen') {
           resultDivContent.innerHTML = `
             <h3>${type.toUpperCase()} Scan Result</h3>
             <pre>${result.result}</pre>`;
         } else if (type === 'crawl') {
           resultDivContent.innerHTML = `
             <h3>${type.toUpperCase()} Scan Result</h3>
-            <pre>${result.result.join('\n')}</pre>`;
+            <pre>${Array.isArray(result.result) ? result.result.join('\n') : result.result}</pre>`;
         } else {
-          const vulnerabilityFound = result.vulnerable;
+          let vulnerabilityFound;
+          let details;
+          if (type === 'certificate_issues' || type === 'tls_ssl') {
+            vulnerabilityFound = result.result && result.result.length > 0;
+            details = Array.isArray(result.result) ? result.result.join('\n') : result.result;
+          } else {
+            vulnerabilityFound = result.vulnerable;
+            details = Array.isArray(result.details) ? result.details.join('\n') : result.details;
+          }
+
           const labelClass = vulnerabilityFound ? 'label-red' : 'label-green';
           const labelText = vulnerabilityFound ? 'Vulnerability Found' : 'No Vulnerability';
 
@@ -76,7 +85,7 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
 
           if (vulnerabilityFound) {
             // Properly escape the details for safe insertion into HTML
-            const escapedDetails = escapeHtml(result.details.join('\n'));
+            const escapedDetails = escapeHtml(details);
 
             resultDivContent.innerHTML += `
               <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
@@ -98,24 +107,23 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
   }
 });
 
-
 function showBlueTeamInfo(scanType) {
   let message = '';
   switch(scanType) {
     case 'sqli':
-      message = 'Use parameterized queries and ORM libraries to prevent SQL Injection attacks.';
+      message = 'Use parameterized queries or prepared statements to prevent malicious SQL code execution.';
       break;
     case 'xss':
       message = 'Implement input validation, output encoding, and use Content Security Policy (CSP) to mitigate XSS risks.';
       break;
     case 'os_command_injection':
-      message = 'Use proper input validation and sanitization to prevent OS Command Injection attacks.';
+      message = 'Use parameterized functions or APIs that execute commands without directly involving shell interpreters.';
       break;
     case 'ssti':
-      message = 'Ensure proper input validation and escaping to prevent SSTI vulnerabilities.';
+      message = 'Validate and sanitize all user inputs, and avoid using user input directly in templates.';
       break;
     case 'cors':
-      message = 'Ensure proper CORS configuration to prevent unauthorized access from untrusted origins.';
+      message = 'Properly configure the CORS policy to specify allowed origins, methods, and headers, and avoid using wildcards.';
       break;
     case 'email':
       message = 'Use methods like encoding email addresses, using contact forms, displaying email addresses as images, implementing CAPTCHA on forms, using CSS techniques, leveraging email address cloaking tools, and employing JavaScript frameworks to protect email addresses from disclosure on websites.';
@@ -124,7 +132,7 @@ function showBlueTeamInfo(scanType) {
       message = 'Use encryption (SSL/TLS) for data transmission, implement tokenization, follow PCI DSS compliance, use secure payment gateways, regularly update and patch systems, monitor for suspicious activity, and educate users on security practices to protect credit card information disclosure on websites.';
       break;
     case 'xxe':
-      message = 'Ensure your XML parsers are securely configured to disable external entity processing.';
+      message = 'Disable external entity processing in XML parsers to prevent the inclusion of malicious external entities.';
       break;
     case 'ssrf':
       message = 'Implement strict input validation and sanitation, limit outbound connections, use a whitelist of permitted URLs, and employ network segmentation to restrict internal network access.';
@@ -133,37 +141,46 @@ function showBlueTeamInfo(scanType) {
       message = 'Implement anti-CSRF tokens for each user session and validate them with each state-changing request.';
       break;
     case 'http_methods':
-      message = 'test';
+      message = 'Disable or properly configure uncommon HTTP methods in the web server or application settings.';
       break;
     case 'redirections':
-      message = 'test';
-      break
+      message = 'Validate and restrict URLs used in redirection, ensuring they are within a trusted domain.';
+      break;
     case 'security_headers':
-      message = 'test';
-      break
+      message = 'Configure and implement appropriate HTTP security headers to protect against common web vulnerabilities.';
+      break;
     case 'robot':
-      message = 'test';
-      break
+      message = 'Avoid listing sensitive or confidential URLs in the robots.txt file and use alternative methods for securing these URLs.';
+      break;
     case 'lfi':
-      message = 'test';
-      break
+      message = 'Validate and sanitize user input to prevent directory traversal and file inclusion attacks';
+      break;
     case 'file_upload':
-      message = 'test';
-      break
+      message = 'Implement strict file type validation, limit upload size, and use secure storage locations for uploaded files.';
+      break;
     case 'path_trasversal':
-      message = 'test';
-      break
+      message = 'Validate and sanitize user input to prevent directory traversal sequences like ../ from being processed.';
+      break;
     case 'common_passwords':
       message = 'test';
-      break
+      break;
     case 'brut_force':
       message = 'test';
-      break
+      break;
     case 'account_lockout':
       message = 'test';
-      break
+      break;
     case 'websocket':
-      message = 'test';
+      message = 'Implement strong authentication, input validation, and use secure WebSocket protocols (wss://) to protect communications.';
+      break;
+    case 'certificate_issues':
+      message = 'Implement strict certificate validation policies, including checking the certificate chain, expiration date, and revocation status.';
+      break;
+    case 'tls_ssl':
+      message = 'Ensure your server supports only strong TLS protocols and ciphers, and that certificates are properly configured.';
+      break;
+    case 'scan_ports':
+      message = 'Close unnecessary ports and implement proper firewall rules and access controls';
       break
   }
   alert(message);
@@ -173,34 +190,34 @@ function showRedTeamInfo(scanType, result) {
   let message = '';
   switch(scanType) {
     case 'sqli':
-      message = `SQLi vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'xss':
-      message = `XSS vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'os_command_injection':
-      message = `OS Command Injection vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'ssti':
-      message = `SSTI vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'cors':
-      message = `CORS vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'email':
-      message = `Email disclosure detected: ${result}`;
+      message = `${result}`;
       break;
     case 'credit card':
-      message = `Credit card disclosure detected: ${result}`;
+      message = `${result}`;
       break;
     case 'xxe':
-      message = `XXE vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'ssrf':
       message = `SSRF vulnerability detected: ${result}`;
       break;
     case 'csrf':
-      message = `CSRF vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'http_methods':
       message = `Uncommon HTTP methods vulnerability detected: ${result}`;
@@ -209,37 +226,47 @@ function showRedTeamInfo(scanType, result) {
       message = `Redirection vulnerability detected: ${result}`;
       break;
     case 'security_headers':
-      message = `Uncommon security headers vulnerability detected: ${result}`;
+      message = `Security headers missing: ${result}`;
       break;
     case 'robot':
-      message = `Robots.txt vulnerability detected: ${result}`;
+      message = `Robots.txt vulnerability detected and here is it's content: ${result}`;
       break;
     case 'lfi':
       message = `LFI vulnerability detected: ${result}`;
       break;
     case 'file_upload':
-      message = `Unrestricted file upload vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'path_trasversal':
-      message = `Path trasversal vulnerability detected: ${result}`;
+      message = `${result}`;
       break;
     case 'common_passwords':
       message = `Common passwords detected: ${result}`;
       break;
-    case 'Brut force':
+    case 'brut_force':
       message = `Brut force detected: ${result}`;
       break;
     case 'account_lockout':
       message = `Account lockout detected: ${result}`;
       break;
     case 'websocket':
-      message = `Vulnerability detected: ${result}`;
+      message = `${result}`;
+      break;
+    case 'certificate_issues':
+      message = `Certificate issues detected: ${result}`;
+      break;
+    case 'tls_ssl':
+      message = `TLS/SSL issues detected: ${result}`;
+      break;
+    case 'scan_ports':
+      message = `Open ports detected: ${result}`;
       break;
   }
   alert(message);
 }
 
 function escapeHtml(unsafe) {
+  if (!unsafe) return '';
   return unsafe
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

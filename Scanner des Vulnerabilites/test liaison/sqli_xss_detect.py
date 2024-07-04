@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 # Enhanced SQL Injection payloads
 sqli_payloads = [
@@ -97,11 +97,15 @@ def is_vulnerable_to_xss(response):
 def scan_sql(url):
     results = []
     for payload in sqli_payloads:
-        new_url = f"{url}{payload}"
-        res = requests.get(new_url)
-        if is_vulnerable_to_sqli(res):
-            results.append(f"SQLi vulnerability detected in form: {url} with payload: {payload}")
-            return results
+        encoded_payload = quote(payload)
+        new_url = f"{url}{encoded_payload}"
+        try:
+            res = requests.get(new_url)
+            if is_vulnerable_to_sqli(res):
+                results.append(f"SQLi vulnerability detected in URL: {url} with payload: {payload}")
+                return results
+        except requests.RequestException as e:
+            results.append(f"Error occurred while testing URL: {new_url} with payload: {payload}. Error: {e}")
 
     forms = get_forms(url)
     results.append(f"[+] Detected {len(forms)} forms on {url}.")
@@ -115,13 +119,16 @@ def scan_sql(url):
                 elif input_tag["type"] != "submit":
                     data[input_tag["name"]] = f"test{payload}"
             target_url = urljoin(url, details["action"])
-            if details["method"] == "post":
-                res = requests.post(target_url, data=data)
-            elif details["method"] == "get":
-                res = requests.get(target_url, params=data)
-            if is_vulnerable_to_sqli(res):
-                results.append(f"SQLi vulnerability detected in form: {details} with payload: {payload}")
-                return results
+            try:
+                if details["method"] == "post":
+                    res = requests.post(target_url, data=data)
+                elif details["method"] == "get":
+                    res = requests.get(target_url, params=data)
+                if is_vulnerable_to_sqli(res):
+                    results.append(f"SQLi vulnerability detected in form: {details} with payload: {payload}")
+                    return results
+            except requests.RequestException as e:
+                results.append(f"Error occurred while testing form at: {target_url} with payload: {payload}. Error: {e}")
 
     results.append("[-] No SQL Injection vulnerabilities detected.")
     return results
@@ -129,7 +136,7 @@ def scan_sql(url):
 def scan_xss(url):
     results = []
     forms = get_forms(url)
-    results.append(f"[+] Detected {len(forms)} forms on {url}.")
+    results.append(f" Detected {len(forms)} forms on {url}.")
     for form in forms:
         details = form_details(form)
         for payload in xss_payloads:
@@ -139,13 +146,18 @@ def scan_xss(url):
                     data[input_tag['name']] = payload
                 else:
                     data[input_tag['name']] = input_tag.get('value')
-            if details['method'] == 'post':
-                res = requests.post(urljoin(url, details['action']), data=data)
-            else:
-                res = requests.get(urljoin(url, details['action']), params=data)
-            if is_vulnerable_to_xss(res):
-                results.append(f"XSS vulnerability detected in form: {details} with payload: {payload}")
-                break  # Stop after finding a vulnerability in a form
+            target_url = urljoin(url, details['action'])
+            try:
+                if details['method'] == 'post':
+                    res = requests.post(target_url, data=data)
+                else:
+                    res = requests.get(target_url, params=data)
+                if is_vulnerable_to_xss(res):
+                    results.append(f"XSS vulnerability detected in form: {details} with payload: {payload}")
+                    break  # Stop after finding a vulnerability in a form
+            except requests.RequestException as e:
+                results.append(f"Error occurred while testing form at: {target_url} with payload: {payload}. Error: {e}")
+
     if len(results) == 1:  # No vulnerabilities found
         results.append("[-] No XSS vulnerabilities detected.")
     return results

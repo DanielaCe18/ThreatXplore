@@ -1,6 +1,7 @@
 import nmap
 import json
 import socket
+import subprocess
 from urllib.parse import urlparse
 
 def resolve_domain_to_ip(domain):
@@ -11,13 +12,21 @@ def resolve_domain_to_ip(domain):
         print(f"Error resolving domain {domain}: {e}")
         return None
 
-def scan_ports(target, options):
+def scan_ports(target, options, timeout=10):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments=options)
-    return nm
+    try:
+        result = subprocess.run(['nmap', target] + options.split(), capture_output=True, text=True, timeout=timeout)
+        nm.analyse_nmap_xml_scan(result.stdout)
+        return nm
+    except subprocess.TimeoutExpired:
+        return None
 
 def collect_scan_results(nm):
     results = []
+    if not nm:
+        print("No open ports found")
+        return results
+
     for host in nm.all_hosts():
         result = {
             'Host': host,
@@ -45,10 +54,14 @@ def collect_scan_results(nm):
                 proto_info['Ports'].append(port_info)
             result['Protocols'].append(proto_info)
         results.append(result)
+
+    if not results:
+        print("No open ports found")
+        
     return results
 
 if __name__ == "__main__":
-    target_url = input('Enter the URL to test for CORS vulnerability: ')
+    target_url = "http://cyberini.com"
     
     parsed_url = urlparse(target_url)
     domain = parsed_url.hostname
@@ -56,7 +69,6 @@ if __name__ == "__main__":
     ip_address = resolve_domain_to_ip(domain)
     
     if ip_address:
-        print(f"Resolved IP address of {domain} is {ip_address}")
         options = "-sS -sV -O -p- --script=vuln"
         nm = scan_ports(ip_address, options)
         scan_results = collect_scan_results(nm)

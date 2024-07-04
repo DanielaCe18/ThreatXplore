@@ -23,7 +23,7 @@ def check_and_exploit_ssti(url):
                 try:
                     response = requests.get(test_url)
                     if response.status_code == 200 and "49" in response.text:
-                        results.append(f"[+] SSTI vulnerability detected with {engine} payload: {payload}")
+                        results.append(f"SSTI vulnerability detected with {engine} payload: {payload}")
                         return True, engine
                 except requests.RequestException as e:
                     pass

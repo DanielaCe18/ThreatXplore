@@ -36,7 +36,7 @@ def find_credit_cards(url):
         for card_type, pattern in credit_card_patterns.items():
             matches = re.findall(pattern, content)
             for match in matches:
-                found_cards.append(f"[+] Website has a {card_type} card: {match}")
+                found_cards.append(f"Website has a {card_type} card: {match}")
         return found_cards
     except requests.RequestException as e:
         print(f"Error accessing {url}: {e}")
