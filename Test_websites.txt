@@ -27,3 +27,4 @@ ajoute score cve et vulnerability description ameliorer blue team preventions, p
 fix sql, os et xxe, buffer overflow et ddos, path trasversal,changer le resultat, choisir parmi le scan
 directory trasversal, dis, lfi, robot, rce detect, = bwapp
 contributing.md, codeof conduct.md
+augmente la taille du hidden message>
