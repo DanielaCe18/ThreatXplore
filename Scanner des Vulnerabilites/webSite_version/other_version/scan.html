@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatXplore</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a class="logo" href="#">ThreatXplore<span>.</span></a>
+      <ul class="menu-links">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about_us.html">About us</a></li>
+        <li><a href="attacks.html">Vulnerabilities</a></li>
+        <li><a href="scan.html">Scan</a></li>
+        <li><a href="result.html">Result Scan</a></li>
+        <li><a href="download.html">Download</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero-section">
+    <div class="content">
+      <h1>Scan Your Website for Vulnerabilities</h1>
+      <p>Enter a URL to scan for potential security vulnerabilities.</p>
+      <form id="scan-form" class="scan-form">
+        <input type="text" id="url-input" placeholder="Enter URL" required>
+        <div class="scan-type-selection">
+          <label><input type="checkbox" name="scan-type" value="whois" checked> WHOIS</label>
+          <label><input type="checkbox" name="scan-type" value="sqli"> SQLi</label>
+          <label><input type="checkbox" name="scan-type" value="xss"> XSS</label>
+          <label><input type="checkbox" name="scan-type" value="os_command_injection"> OS command injection</label>
+          <label><input type="checkbox" name="scan-type" value="cors"> CORS</label>
+          <label><input type="checkbox" name="scan-type" value="ssti"> SSTI</label>
+          <label><input type="checkbox" name="scan-type" value="email"> email</label>
+          <label><input type="checkbox" name="scan-type" value="credit card"> credit card</label>
+          <label><input type="checkbox" name="scan-type" value="xxe"> XXE</label>
+          <label><input type="checkbox" name="scan-type" value="ssrf"> SSRF</label>
+          <label><input type="checkbox" name="scan-type" value="csrf"> CSRF</label>
+          <label><input type="checkbox" name="scan-type" value="http_methods"> HTTP methods</label>
+          <label><input type="checkbox" name="scan-type" value="redirections"> HTTP redirections</label>
+          <label><input type="checkbox" name="scan-type" value="security_headers"> HTTP headers</label>
+          <label><input type="checkbox" name="scan-type" value="robot"> Robots.txt available </label>
+          <label><input type="checkbox" name="scan-type" value="lfi"> Local File Inclusion </label>
+          <label><input type="checkbox" name="scan-type" value="file_upload"> Unrestricted file upload </label>
+          <label><input type="checkbox" name="scan-type" value="path_trasversal"> Path Trasversal </label>
+          <label><input type="checkbox" name="scan-type" value="common_passwords"> Common passwords</label>
+          <label><input type="checkbox" name="scan-type" value="brut_force"> Brut Force</label>
+          <label><input type="checkbox" name="scan-type" value="account_lockout"> Account Lockout</label>
+          <label><input type="checkbox" name="scan-type" value="scan_ports"> Scan open ports</label>
+          <label><input type="checkbox" name="scan-type" value="crawl"> Crawl</label>
+          <label><input type="checkbox" name="scan-type" value="websocket"> WebSocket Manipulation</label>
+          <label><input type="checkbox" name="scan-type" value="scan_gen"> General Information Scan</label>
+          <label><input type="checkbox" name="scan-type" value="certificate_issues"> Certificate issues</label>
+          <label><input type="checkbox" name="scan-type" value="tls_ssl"> SSL/TLS vulnerabilities</label>
+          <label><input type="checkbox" name="scan-type" value="all"> All</label>
+        </div>
+        <button type="submit">Scan</button>
+      </form>
+      <div id="progress-container" class="hidden">
+        <div id="light-blue-box">Scanning URL: <span id="target-url"></span></div>
+        <div id="progress-bar-container">
+          <div id="progress-bar"></div>
+        </div>
+        <div id="progress-text">Scanning target...</div>
+      </div>
+      <div id="result"></div>
+    </div>
+  </section>
+
+  <section id="findings-section" class="findings-section hidden">
+    <div class="findings-content">
+      <h2>Findings</h2>
+      <div id="findings-result"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 ThreatXplore. All rights reserved.</p>
+  </footer>
+
+  <script src="scan.js"></script>
+</body>
+</html>
