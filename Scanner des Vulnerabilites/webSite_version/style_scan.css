@@ -1,0 +1,228 @@
+.scan-form {
+  text-align: center;
+}
+
+.scan-form input[type="text"] {
+  width: 80%;
+  max-width: 500px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.scan-form .scan-type-selection {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.scan-form button {
+  background: #ff4c4c;
+  padding: 12px 30px;
+  border: none;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+  color: white;
+}
+
+.scan-form button:hover {
+  background: #cc0000;
+}
+
+/* Light blue box */
+#light-blue-box {
+  background-color: #444;
+  color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: center;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  margin-top: 20px; /* Added spacing between the scan button and the Scanning URL text */
+}
+
+/* Progress bar */
+#progress-bar-container {
+  width: 100%;
+  background-color: #666;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+#progress-bar {
+  width: 0%;
+  height: 20px;
+  background-color: #ff4c4c;
+  text-align: center;
+  line-height: 20px;
+  color: white;
+  transition: width 0.2s;
+}
+
+#progress-bar-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    #888,
+    #888 10px,
+    #666 10px,
+    #666 20px
+  );
+  opacity: 0.5;
+}
+
+/* Progress text */
+#progress-text {
+  color: #ccc;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Findings Section */
+.findings-section {
+  padding: 40px 20px;
+  background-color: #fff;
+}
+
+.findings-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.findings-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+#findings-result {
+  color: #333;
+}
+
+/* Result styles */
+.scan-result {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  color: #000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  white-space: pre-wrap; /* Ensure white spaces and new lines are preserved */
+}
+
+.scan-result h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.scan-result .label {
+  padding: 5px;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.label-red {
+  background-color: red;
+}
+
+.label-green {
+  background-color: green;
+}
+
+.blue-team-btn, .red-team-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  margin-right: 10px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.blue-team-btn {
+  background-color: #007bff;
+}
+
+.blue-team-btn:hover {
+  background-color: #0056b3;
+}
+
+.red-team-btn {
+  background-color: #ff4c4c;
+}
+
+.red-team-btn:hover {
+  background-color: #cc0000;
+}
+
+.downloadButton {
+  background-color: orangered;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  margin-right: 10px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.downloadButton:hover {
+  background-color: darkorange;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .scan-form input[type="text"] {
+    width: 100%;
+  }
+
+  .scan-form .scan-type-selection {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navbar .menu-links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-section .content {
+    padding: 20px;
+  }
+
+  .scan-result {
+    padding: 15px;
+  }
+}
+
+
+/*pour la page web*/
