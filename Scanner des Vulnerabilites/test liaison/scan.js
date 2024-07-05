@@ -1,7 +1,7 @@
 document.getElementById('scan-form').addEventListener('submit', async function(event) {
   event.preventDefault();
   const url = document.getElementById('url-input').value;
-  const scanType = document.querySelector('input[name="scan-type"]:checked').value;
+  const scanTypes = Array.from(document.querySelectorAll('input[name="scan-type"]:checked')).map(cb => cb.value);
   const resultDiv = document.getElementById('result');
   const findingsDiv = document.getElementById('findings-result');
   const findingsSection = document.getElementById('findings-section');
@@ -41,7 +41,7 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url, scan_type: scanType }),
+      body: JSON.stringify({ url, scan_types: scanTypes }), // Updated to send multiple scan types
     });
     const results = await response.json();
     clearInterval(interval);
