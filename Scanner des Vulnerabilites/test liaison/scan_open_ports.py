@@ -5,6 +5,15 @@ import subprocess
 from urllib.parse import urlparse
 
 def resolve_domain_to_ip(domain):
+    """
+    Resolves a domain to its IP address.
+    
+    Args:
+        domain (str): The domain to resolve.
+    
+    Returns:
+        str: The resolved IP address, or None if resolution fails.
+    """
     try:
         ip_address = socket.gethostbyname(domain)
         return ip_address
@@ -13,6 +22,17 @@ def resolve_domain_to_ip(domain):
         return None
 
 def scan_ports(target, options, timeout=10):
+    """
+    Scans ports on a target using nmap with specified options.
+    
+    Args:
+        target (str): The target IP address or domain to scan.
+        options (str): The nmap options for the scan.
+        timeout (int, optional): The timeout for the scan in seconds.
+    
+    Returns:
+        nmap.PortScanner: The scan results, or None if the scan times out.
+    """
     nm = nmap.PortScanner()
     try:
         result = subprocess.run(['nmap', target] + options.split(), capture_output=True, text=True, timeout=timeout)
@@ -22,6 +42,15 @@ def scan_ports(target, options, timeout=10):
         return None
 
 def collect_scan_results(nm):
+    """
+    Collects and formats scan results from nmap.
+    
+    Args:
+        nm (nmap.PortScanner): The nmap scan results.
+    
+    Returns:
+        list: A list of formatted scan results.
+    """
     results = []
     if not nm:
         print("No open ports found")
@@ -61,7 +90,7 @@ def collect_scan_results(nm):
     return results
 
 if __name__ == "__main__":
-    target_url = "http://cyberini.com"
+    target_url = input("Enter the URL to scan: ")
     
     parsed_url = urlparse(target_url)
     domain = parsed_url.hostname

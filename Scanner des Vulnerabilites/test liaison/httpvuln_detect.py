@@ -1,6 +1,15 @@
 import requests
 
 def check_uncommon_http_methods(url):
+    """
+    Checks for uncommon HTTP methods support on the given URL.
+    
+    Args:
+        url (str): The URL to check.
+    
+    Returns:
+        list: A list of results indicating the support and vulnerability of each uncommon HTTP method.
+    """
     uncommon_methods = ['OPTIONS', 'TRACE', 'CONNECT', 'PUT', 'DELETE']
     results = []
 
@@ -38,6 +47,15 @@ def check_uncommon_http_methods(url):
     return results
 
 def check_redirections(url):
+    """
+    Checks if the given URL performs redirections.
+    
+    Args:
+        url (str): The URL to check.
+    
+    Returns:
+        list: A list of results indicating whether redirections are present and their details.
+    """
     try:
         response = requests.get(url, allow_redirects=False)
         if response.is_redirect:
@@ -53,6 +71,15 @@ def check_redirections(url):
         return [{'vulnerability': True, 'error': str(e), 'reason': 'Exception occurred.'}]
 
 def check_security_headers(url):
+    """
+    Checks for the presence of common security headers on the given URL.
+    
+    Args:
+        url (str): The URL to check.
+    
+    Returns:
+        list: A list of results indicating whether security headers are missing and their details.
+    """
     required_headers = [
         'Content-Security-Policy',
         'X-Content-Type-Options',
@@ -78,3 +105,21 @@ def check_security_headers(url):
             return [{'vulnerability': False, 'reason': 'All required security headers are present.'}]
     except Exception as e:
         return [{'vulnerability': True, 'error': str(e), 'reason': 'Exception occurred.'}]
+
+if __name__ == "__main__":
+    target_url = input("Enter the URL to test: ")
+    
+    print("Checking uncommon HTTP methods:")
+    results = check_uncommon_http_methods(target_url)
+    for result in results:
+        print(result)
+    
+    print("\nChecking redirections:")
+    results = check_redirections(target_url)
+    for result in results:
+        print(result)
+    
+    print("\nChecking security headers:")
+    results = check_security_headers(target_url)
+    for result in results:
+        print(result)

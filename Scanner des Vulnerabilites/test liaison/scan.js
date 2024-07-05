@@ -48,6 +48,8 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
     updateProgressBar(100);
     progressText.textContent = 'Scan completed.';
 
+    const reportData = [];
+
     for (const [type, result] of Object.entries(results)) {
       const resultDivContent = document.createElement('div');
       resultDivContent.classList.add('scan-result');
@@ -61,10 +63,24 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
           resultDivContent.innerHTML = `
             <h3>${type.toUpperCase()} Scan Result</h3>
             <pre>${result.result}</pre>`;
+          // Add to report data
+          reportData.push({
+            type,
+            vulnerabilityFound: false,
+            description: '',
+            details: result.result
+          });
         } else if (type === 'crawl') {
           resultDivContent.innerHTML = `
             <h3>${type.toUpperCase()} Scan Result</h3>
             <pre>${Array.isArray(result.result) ? result.result.join('\n') : result.result}</pre>`;
+          // Add to report data
+          reportData.push({
+            type,
+            vulnerabilityFound: false,
+            description: '',
+            details: Array.isArray(result.result) ? result.result.join('\n') : result.result
+          });
         } else {
           let vulnerabilityFound;
           let details;
@@ -156,6 +172,12 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
             default:
               description = 'Description not available.';
               break;
+            case 'whois':
+                description = 'This is a whois scan.';
+                break;
+            case 'scan_gen':
+              description = 'This is a general web scan.';
+              break;
           }
 
           resultDivContent.innerHTML = `
@@ -171,6 +193,14 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
               <button class="blue-team-btn" onclick="showBlueTeamInfo('${type}')">Blue Team</button>
               <button class="red-team-btn" onclick="showRedTeamInfo('${type}', \`${escapedDetails}\`)">Red Team</button>`;
           }
+
+          // Add to report data
+          reportData.push({
+            type,
+            vulnerabilityFound,
+            description,
+            details: vulnerabilityFound ? details : 'No vulnerability detected.'
+          });
         }
       }
 
@@ -179,6 +209,13 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
     }
 
     findingsSection.classList.remove('hidden');
+
+    // Add button to download the report
+    const downloadButton = document.createElement('button');
+    downloadButton.textContent = 'Download Report';
+    downloadButton.classList.add('downloadButton'); // Apply the class here
+    downloadButton.addEventListener('click', () => downloadReport(reportData));
+    findingsDiv.appendChild(downloadButton);
   } catch (error) {
     clearInterval(interval);
     updateProgressBar(100);
@@ -248,7 +285,7 @@ function showBlueTeamInfo(scanType) {
       message = 'Limit login attempts, implement CAPTCHA, use account lockout mechanisms, and enforce strong password policies.';
       break;
     case 'account_lockout':
-      message = 'Implement CAPTCHA, monitor for unusual activity, provide a secure way to unlock accounts, and limit lockout durations.';
+      message = 'Implement CAPTCHA, monitor for unusual activity, provide a secure way to unlock accounts and limit lockout durations.';
       break;
     case 'websocket':
       message = 'Implement strong authentication, input validation, and use secure WebSocket protocols (wss://) to protect communications.';
@@ -261,7 +298,7 @@ function showBlueTeamInfo(scanType) {
       break;
     case 'scan_ports':
       message = 'Close unnecessary ports and implement proper firewall rules and access controls';
-      break
+      break;
   }
   alert(message);
 }
@@ -309,7 +346,7 @@ function showRedTeamInfo(scanType, result) {
       message = `Security headers missing: ${result}`;
       break;
     case 'robot':
-      message = `Robots.txt vulnerability detected and here is it's content: ${result}`;
+      message = `Robots.txt vulnerability detected and here is its content: ${result}`;
       break;
     case 'lfi':
       message = `LFI vulnerability detected: ${result}`;
@@ -324,7 +361,7 @@ function showRedTeamInfo(scanType, result) {
       message = `${result}`;
       break;
     case 'brut_force':
-      message = `Brut force executed : ${result}`;
+      message = `Brut force executed: ${result}`;
       break;
     case 'account_lockout':
       message = `${result}`;
@@ -353,4 +390,22 @@ function escapeHtml(unsafe) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function downloadReport(data) {
+  const reportContent = data.map(item => `
+    Type: ${item.type.toUpperCase()}
+    Vulnerability Found: ${item.vulnerabilityFound ? 'Yes' : 'No'}
+    Description: ${item.description}
+    Details: ${item.details}
+  `).join('\n\n');
+
+  const blob = new Blob([reportContent], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scan_report.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }

@@ -7,6 +7,15 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 
 def resolve_domain_to_ip(domain):
+    """
+    Resolves a domain to its IP address.
+    
+    Args:
+        domain (str): The domain to resolve.
+    
+    Returns:
+        str: A formatted string with the domain and its resolved IP address or an error message.
+    """
     try:
         ip_address = socket.gethostbyname(domain)
         result = f"Domain: {domain}\nIPs: {ip_address}\n"
@@ -16,6 +25,15 @@ def resolve_domain_to_ip(domain):
         return error_message
 
 def get_http_https_transfers(url):
+    """
+    Retrieves the HTTP/HTTPS transfer history for a given URL.
+    
+    Args:
+        url (str): The URL to check.
+    
+    Returns:
+        str: A formatted string with the HTTP/HTTPS transfer history.
+    """
     response = requests.get(url)
     if response.history:
         transfers = [(resp.status_code, resp.url) for resp in response.history]
@@ -27,6 +45,15 @@ def get_http_https_transfers(url):
     return result
 
 def get_all_page_links(url):
+    """
+    Retrieves all links from a webpage.
+    
+    Args:
+        url (str): The URL of the webpage to retrieve links from.
+    
+    Returns:
+        str: A formatted string with all the links found on the page.
+    """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     links = {link.get('href') for link in soup.find_all('a', href=True)}
@@ -35,6 +62,15 @@ def get_all_page_links(url):
     return result
 
 def get_cookies(url):
+    """
+    Retrieves cookies from a webpage.
+    
+    Args:
+        url (str): The URL of the webpage to retrieve cookies from.
+    
+    Returns:
+        str: A formatted string with the cookies found on the page.
+    """
     response = requests.get(url)
     cookies = response.cookies.get_dict()
     cookies_formatted = "\n".join([f"{key}: {value}" for key, value in cookies.items()])
@@ -42,6 +78,15 @@ def get_cookies(url):
     return result
 
 def get_headers(url):
+    """
+    Retrieves headers from a webpage.
+    
+    Args:
+        url (str): The URL of the webpage to retrieve headers from.
+    
+    Returns:
+        str: A formatted string with the headers found on the page.
+    """
     response = requests.get(url)
     headers = response.headers
     headers_formatted = "\n".join([f"{key}: {value}" for key, value in headers.items()])
@@ -49,6 +94,15 @@ def get_headers(url):
     return result
 
 def get_certificate_info(url):
+    """
+    Retrieves SSL certificate information from a domain.
+    
+    Args:
+        url (str): The URL of the webpage to retrieve the SSL certificate from.
+    
+    Returns:
+        str: A formatted string with the SSL certificate information.
+    """
     domain = urlparse(url).netloc
     context = ssl.create_default_context()
     with socket.create_connection((domain, 443)) as sock:
@@ -70,6 +124,15 @@ def get_certificate_info(url):
             return result
 
 def get_outgoing_links(url):
+    """
+    Retrieves outgoing links from a webpage.
+    
+    Args:
+        url (str): The URL of the webpage to retrieve outgoing links from.
+    
+    Returns:
+        str: A formatted string with the outgoing links found on the page.
+    """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     outgoing_links = {link.get('href') for link in soup.find_all('a', href=True) if urlparse(link.get('href')).netloc != urlparse(url).netloc}
@@ -78,6 +141,15 @@ def get_outgoing_links(url):
     return result
 
 def general_scan_url(url):
+    """
+    Performs a general scan of a given URL, retrieving various information.
+    
+    Args:
+        url (str): The URL to scan.
+    
+    Returns:
+        list: A list of results containing the information retrieved from the scan.
+    """
     results = []
     domain = urlparse(url).netloc
     results.append(resolve_domain_to_ip(domain))

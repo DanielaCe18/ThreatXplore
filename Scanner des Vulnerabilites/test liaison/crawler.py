@@ -1,19 +1,22 @@
-#!/usr/bin/env python3
-# coding:utf-8
 import sys
 import json
 import urllib
 from urllib.parse import urlparse
-
 import mechanize
 from bs4 import BeautifulSoup
 
-# Initialize global variables
 link_list = []
 stopped = False
 browser = mechanize.Browser()
 
 def initialize_browser(proxy=None, user_agent="Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101 Firefox/68.0"):
+    """
+    Initializes the mechanize browser with optional proxy and user agent settings.
+    
+    Args:
+        proxy (dict, optional): Proxy settings for the browser.
+        user_agent (str, optional): User agent string for the browser.
+    """
     browser.set_handle_robots(False)
     browser.addheaders = [("User-agent", user_agent)]
     if proxy:
@@ -22,8 +25,12 @@ def initialize_browser(proxy=None, user_agent="Mozilla/5.0 (X11; Linux i686; rv:
 def get_page_source(url):
     """
     Obtains the HTML source code of a web page.
-    :param url: The URL of the page.
-    :return: The HTML source code of the page.
+    
+    Args:
+        url (str): The URL of the page.
+    
+    Returns:
+        str: The HTML source code of the page, or None if an error occurs.
     """
     try:
         res = browser.open(url.strip())
@@ -35,8 +42,12 @@ def get_page_source(url):
 def get_page_links(url):
     """
     Obtains internal links from a web page.
-    :param url: The URL of the page.
-    :return: A list of internal links found on the page.
+    
+    Args:
+        url (str): The URL of the page.
+    
+    Returns:
+        list: A list of internal links found on the page.
     """
     global browser
     link_list = []
@@ -60,8 +71,10 @@ def get_page_links(url):
 def crawl(url, depth=3):
     """
     Recursively crawls and indexes a web page up to a specified depth.
-    :param url: The URL of the page.
-    :param depth: The depth of recursion.
+    
+    Args:
+        url (str): The URL of the page.
+        depth (int, optional): The depth of recursion.
     """
     global link_list, stopped
     if depth == 0:
@@ -84,11 +97,24 @@ def crawl(url, depth=3):
 def get_link_list():
     """
     Returns the list of crawled links as a JSON string.
+    
+    Returns:
+        str: JSON string of the crawled links.
     """
     global link_list
     return json.dumps(link_list, ensure_ascii=False)
 
 def start_crawling(url, depth=3):
+    """
+    Initializes the browser, starts the crawling process, and returns the list of crawled links.
+    
+    Args:
+        url (str): The URL to start crawling.
+        depth (int, optional): The depth of recursion.
+    
+    Returns:
+        str: JSON string of the crawled links.
+    """
     initialize_browser()
     crawl(url, depth)
     return get_link_list()

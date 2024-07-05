@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-# Define a list of payloads for visible OS command injection
 visible_payloads = [
     '1|whoami',
     '1|id',
@@ -24,6 +23,15 @@ visible_payloads = [
 ]
 
 def find_form_action_and_params(url):
+    """
+    Finds the form action URL and input parameters from a given URL.
+    
+    Args:
+        url (str): The URL to scan for forms.
+    
+    Returns:
+        tuple: A tuple containing the form action URL and a dictionary of input parameters.
+    """
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     forms = soup.find_all('form')
@@ -36,6 +44,19 @@ def find_form_action_and_params(url):
     return None, None
 
 def test_visible_injection(url, method, action, initial_params, payloads):
+    """
+    Tests for visible OS command injection vulnerabilities using various payloads.
+    
+    Args:
+        url (str): The base URL of the website.
+        method (str): The HTTP method to use ('GET' or 'POST').
+        action (str): The form action URL.
+        initial_params (dict): The initial parameters to include in the form.
+        payloads (list): A list of payloads to test for OS command injection.
+    
+    Returns:
+        str: A result message indicating whether a vulnerability was detected.
+    """
     full_url = urljoin(url, action)
     for payload in payloads:
         params = initial_params.copy()
@@ -62,6 +83,15 @@ def test_visible_injection(url, method, action, initial_params, payloads):
     return 'No OS command injection vulnerabilities detected.'
 
 def scan_os_command_injection(url):
+    """
+    Scans a given URL for OS command injection vulnerabilities.
+    
+    Args:
+        url (str): The URL to scan.
+    
+    Returns:
+        str: A result message indicating the outcome of the scan.
+    """
     action, initial_params = find_form_action_and_params(url)
     
     if action is None or initial_params is None:

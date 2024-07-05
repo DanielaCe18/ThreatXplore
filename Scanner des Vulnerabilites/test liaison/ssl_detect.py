@@ -7,6 +7,15 @@ import subprocess
 import re
 
 def get_certificate(url):
+    """
+    Retrieves the SSL certificate for a given URL.
+    
+    Args:
+        url (str): The URL to retrieve the certificate from.
+    
+    Returns:
+        dict: The SSL certificate details, or None if an error occurs.
+    """
     try:
         hostname = url.split("//")[-1].split("/")[0]
         context = ssl.create_default_context()
@@ -19,6 +28,15 @@ def get_certificate(url):
         return None
 
 def check_certificate_issues(url):
+    """
+    Checks for issues in the SSL certificate of a given URL.
+    
+    Args:
+        url (str): The URL to check for certificate issues.
+    
+    Returns:
+        list: A list of detected certificate issues.
+    """
     cert = get_certificate(url)
     if not cert:
         return ["Unable to retrieve certificate"]
@@ -69,6 +87,15 @@ def check_certificate_issues(url):
     return issues
 
 def check_ssltls(url):
+    """
+    Checks for SSL/TLS vulnerabilities on a given URL.
+    
+    Args:
+        url (str): The URL to check for SSL/TLS vulnerabilities.
+    
+    Returns:
+        list: A list of detected SSL/TLS vulnerabilities.
+    """
     issues = []
     hostname = url.split("//")[-1].split("/")[0]
 

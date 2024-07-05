@@ -41,7 +41,7 @@ def format_whois_info(w):
     else:
         expires_in_str = 'Unknown'
 
-    # Ensure all fields are checked for None or null values
+   
     domain_name = ' | '.join(w.domain_name) if isinstance(w.domain_name, list) else (w.domain_name or 'Unknown')
     registrar = w.registrar or 'Unknown'
     status = ' | '.join(w.status) if isinstance(w.status, list) else (w.status or 'Unknown')
@@ -52,7 +52,7 @@ def format_whois_info(w):
     registrar_email = getattr(w, 'registrar_email', 'Unknown')
     registrar_url = getattr(w, 'registrar_url', 'Unknown')
 
-    # Ensure other WHOIS fields are not null
+    
     name = w.name or 'Unknown'
     org = w.org or 'Unknown'
     address = w.address or 'Unknown'

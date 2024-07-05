@@ -2,7 +2,6 @@ import requests
 from urllib.parse import urljoin
 import concurrent.futures
 
-# SSRF payloads
 payloads = [
     # Localhost and internal IPs
     "http://127.0.0.1",
@@ -40,9 +39,29 @@ payloads = [
 ]
 
 def check_ssrf(base_url):
+    """
+    Checks for SSRF vulnerabilities on the given base URL using a list of payloads.
+    
+    Args:
+        base_url (str): The base URL to test for SSRF vulnerabilities.
+    
+    Returns:
+        list: A list of results indicating detected SSRF vulnerabilities.
+    """
     results = []
 
     def analyze_response(response, url, payload=None):
+        """
+        Analyzes the response to determine if it indicates an SSRF vulnerability.
+        
+        Args:
+            response (requests.Response): The HTTP response object.
+            url (str): The URL that was tested.
+            payload (str, optional): The payload used in the test.
+        
+        Returns:
+            str: A message indicating the detected SSRF vulnerability, or None if no vulnerability is detected.
+        """
         if response.status_code == 200:
             if "Admin interface" in response.text or "/admin/delete?username=carlos" in response.text:
                 return f"Admin interface accessed via SSRF: {url} with payload {payload}"
@@ -57,6 +76,15 @@ def check_ssrf(base_url):
         return None
 
     def test_ssrf_post(base_url):
+        """
+        Tests for SSRF vulnerabilities using POST requests with various payloads.
+        
+        Args:
+            base_url (str): The base URL to test.
+        
+        Returns:
+            list: A list of detected SSRF vulnerabilities from the test.
+        """
         test_results = []
         for payload in payloads:
             data = {"stockApi": payload}

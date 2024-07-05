@@ -2,6 +2,15 @@ import requests
 import re
 
 def find_emails(url):
+    """
+    Finds email addresses on a given webpage.
+    
+    Args:
+        url (str): The URL of the webpage to search for email addresses.
+    
+    Returns:
+        list: A list of found email addresses, or an empty list if an error occurs or no emails are found.
+    """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
@@ -16,6 +25,15 @@ def find_emails(url):
         return []
 
 def find_credit_cards(url):
+    """
+    Finds credit card numbers on a given webpage.
+    
+    Args:
+        url (str): The URL of the webpage to search for credit card numbers.
+    
+    Returns:
+        list: A list of found credit card details with their types, or an empty list if an error occurs or no cards are found.
+    """
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
@@ -43,7 +61,7 @@ def find_credit_cards(url):
         return []
 
 if __name__ == "__main__":
-    urlemail = "https://esgi.fr"  # Replace with the target URL
+    urlemail = "https://esgi.fr"  
     results = find_emails(urlemail)
     for result in results:
         print(result)

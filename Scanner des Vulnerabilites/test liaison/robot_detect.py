@@ -1,6 +1,15 @@
 import requests
 
 def check_robots_txt(url):
+    """
+    Checks for the presence and content of the robots.txt file on a given URL.
+    
+    Args:
+        url (str): The base URL to check for the robots.txt file.
+    
+    Returns:
+        list: A list of results containing the content of the robots.txt file or an error message.
+    """
     # Ensure the URL ends with a slash
     if not url.endswith('/'):
         url += '/'
@@ -29,6 +38,15 @@ def check_robots_txt(url):
     return results
 
 def detect_vulnerability_in_robots_txt(robot_results):
+    """
+    Detects potential vulnerabilities in the content of the robots.txt file.
+    
+    Args:
+        robot_results (list): The results from the robots.txt check.
+    
+    Returns:
+        list: A list of detected vulnerabilities related to sensitive directories.
+    """
     sensitive_directories = ['admin', 'documents', 'images', 'passwords']
     vulnerabilities = []
 
@@ -39,9 +57,17 @@ def detect_vulnerability_in_robots_txt(robot_results):
                     vulnerabilities.append(f"Sensitive directory found: /{directory}/")
 
     return vulnerabilities
-    
+
 if __name__ == "__main__":
-    target_url = "http://myges.fr"
+    target_url = input("Enter the URL to check for robots.txt vulnerabilities: ")
     results = check_robots_txt(target_url)
     for result in results:
         print(result)
+    
+    vulnerabilities = detect_vulnerability_in_robots_txt(results)
+    if vulnerabilities:
+        print("Detected vulnerabilities:")
+        for vulnerability in vulnerabilities:
+            print(vulnerability)
+    else:
+        print("No vulnerabilities detected in robots.txt.")

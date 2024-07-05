@@ -6,6 +6,15 @@ import urllib.parse
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 def detect_csrf_vulnerability(base_url):
+    """
+    Detects CSRF vulnerability on a given base URL.
+    
+    Args:
+        base_url (str): The base URL of the website to test.
+    
+    Returns:
+        list: A list of results, including whether the site is likely vulnerable to CSRF and the CSRF exploit HTML payload.
+    """
     results = []
     
     # Define the URLs and credentials
