@@ -76,45 +76,25 @@ def download_report():
 def show_help():
     messagebox.showinfo("Help", "To use this scanner:\n1. Enter a URL.\n2. Click 'Scan'.\n3. Choose Red or Blue Team action.\n4. Download the report.")
 
-# Function to toggle between dark and light modes
-def toggle_mode():
-    global dark_mode
-    dark_mode = not dark_mode
-    if dark_mode:
-        root.config(background="#1e1e1e")
-        style.configure("TFrame", background="#1e1e1e")
-        style.configure("TLabel", background="#1e1e1e", foreground="#ffffff")
-        style.configure("TButton", background="#3a3a3a", foreground="#ffffff")
-        result_label.config(background="#1e1e1e", foreground="#ffffff")
-    else:
-        root.config(background="#f0f0f0")
-        style.configure("TFrame", background="#f0f0f0")
-        style.configure("TLabel", background="#f0f0f0", foreground="#000000")
-        style.configure("TButton", background="#dcdcdc", foreground="#000000")
-        result_label.config(background="#f0f0f0", foreground="#000000")
-
 # Initialize the main application window
 root = tk.Tk()
-root.title("Vulnerability Scanner")
+root.title("ThreatXplore")
 root.geometry("1080x720")
 root.minsize(480, 360)
-root.config(background="#1e1e1e")
-
-dark_mode = True
+root.config(background="#ADD8E6")
 
 # Configure styles
 style = ttk.Style()
-style.configure("TFrame", background="#1e1e1e")
-style.configure("TLabel", background="#1e1e1e", foreground="#ffffff", font=("Arial", 15))
-style.configure("TButton", background="#3a3a3a", foreground="#ffffff", font=("Arial", 15), padding=10)
-style.map("TButton", background=[("active", "#565656")])
+style.configure("TFrame", background="#ADD8E6")
+style.configure("TLabel", background="#ADD8E6", foreground="#000000", font=("Arial", 15))
+style.configure("TButton", background="#dcdcdc", foreground="#000000", font=("Arial", 15), padding=10)
+style.map("TButton", background=[("active", "#c0c0c0")])
 
-# Add menu bar with Help and Dark Mode toggle
+# Add menu bar with Help
 menu_bar = tk.Menu(root)
 help_menu = tk.Menu(menu_bar, tearoff=0)
 help_menu.add_command(label="Help", command=show_help)
 menu_bar.add_cascade(label="Help", menu=help_menu)
-menu_bar.add_command(label="Toggle Dark Mode", command=toggle_mode)
 root.config(menu=menu_bar)
 
 # Create and place frames for better layout management
@@ -134,11 +114,11 @@ result_frame.pack(pady=20)
 logo = Image.open("logo.png")  # Replace with your logo file path
 logo = logo.resize((100, 100), Image.LANCZOS)
 logo = ImageTk.PhotoImage(logo)
-logo_label = ttk.Label(header_frame, image=logo, background="#1e1e1e")
+logo_label = ttk.Label(header_frame, image=logo, background="#ADD8E6")
 logo_label.pack(side=tk.LEFT, padx=20)
 
 # Title label
-title_label = ttk.Label(header_frame, text="Vulnerability Scanner", font=("Arial", 35, "bold"))
+title_label = ttk.Label(header_frame, text="ThreatXplore", font=("Arial", 35, "bold"))
 title_label.pack(side=tk.LEFT, padx=20)
 
 # URL entry
@@ -148,7 +128,7 @@ entry = ttk.Entry(input_frame, font=("Arial", 15), width=50)
 entry.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
 
 # Tooltips for URL entry
-url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#1e1e1e", foreground="#888")
+url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#ADD8E6", foreground="#888")
 url_tooltip.grid(row=1, column=1, pady=5)
 
 # Scan button
@@ -157,7 +137,7 @@ scan_button.grid(row=0, column=2, padx=10, pady=10)
 
 # Result label
 result_text = tk.StringVar()
-result_label = ttk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="#1e1e1e")
+result_label = ttk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="#ADD8E6")
 result_label.pack()
 
 # Progress bar
@@ -175,5 +155,9 @@ blue_team_button.grid(row=0, column=1, padx=20, pady=10)
 # Download report button
 download_button = ttk.Button(root, text="Download Report", command=download_report)
 download_button.pack(pady=20)
+
+# Add results section
+results_section = ttk.Label(root, text="Results Section", font=("Arial", 20), background="#ADD8E6")
+results_section.pack(pady=20)
 
 root.mainloop()
