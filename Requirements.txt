@@ -1,2 +1,10 @@
-for XSS and SQLi = pip install requests beautifulsoup4
-download nmap 
+requests
+beautifulsoup4
+mechanize
+dnspython
+flask
+flask-cors
+nmap
+pyopenssl
+websockets
+python-whois
