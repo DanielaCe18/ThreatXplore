@@ -4,7 +4,7 @@ mechanize
 dnspython
 flask
 flask-cors
-nmap
+python-nmap
 pyopenssl
 websockets
 python-whois
