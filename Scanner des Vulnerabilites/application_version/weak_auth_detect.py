@@ -15,28 +15,32 @@ def check_common_passwords(url, username, passwords):
     for password in passwords:
         response = requests.post(url, data={'username': username, 'password': password})
         if response.status_code == 200:
-            print(f"Weak password found: {password}")
-            return True
-    return False
+            message = f"Weak password found: {password}"
+            print(message)
+            return True, message
+    return False, "No weak passwords found."
 
 # Brute force attack simulation
 def brute_force_attack(url, username, password_list):
     for password in password_list:
         response = requests.post(url, data={'username': username, 'password': password})
         if response.status_code == 200:
-            print(f"Password found: {password}")
-            return True
-    return False
+            message = f"Password found: {password}"
+            print(message)
+            return True, message
+    return False, "No passwords found via brute force."
 
 # Checking for account lockout mechanism
 def check_account_lockout(url, username):
     for i in range(10):
         response = requests.post(url, data={'username': username, 'password': 'wrongpassword'})
         if response.status_code == 429:  # Too Many Requests
-            print("Account lockout mechanism detected.")
-            return True
-    print("No account lockout mechanism detected.")
-    return False
+            message = "Account lockout mechanism detected."
+            print(message)
+            return False, message  # Changed to False since this is not a vulnerability
+    message = "No account lockout mechanism detected."
+    print(message)
+    return True, message  # Changed to True since this is a vulnerability
 
 # Check for password recovery vulnerabilities
 def check_password_recovery(url):
@@ -75,16 +79,16 @@ def main():
     passwords = load_passwords(password_file)
     
     # Check for common weak passwords
-    if check_common_passwords(target_url, username, passwords):
-        print("Weak authentication vulnerability found.")
+    vulnerabilities_found, description = check_common_passwords(target_url, username, passwords)
+    print(description)
     
     # Simulate brute force attack
-    if brute_force_attack(target_url, username, passwords):
-        print("Brute force vulnerability found.")
+    vulnerabilities_found, description = brute_force_attack(target_url, username, passwords)
+    print(description)
     
     # Check for account lockout mechanism
-    if not check_account_lockout(target_url, username):
-        print("Account lockout mechanism not implemented.")
+    vulnerabilities_found, description = check_account_lockout(target_url, username)
+    print(description)
     
     # Check for password recovery vulnerabilities
     check_password_recovery(target_url)

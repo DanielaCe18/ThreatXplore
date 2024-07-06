@@ -77,10 +77,6 @@ vulnerability_descriptions = {
         "or external services from a vulnerable server. This can lead to unauthorized access to internal systems, "
         "sensitive data exposure, and other attacks."
     ),
-    'Subdomain Enumeration': (
-        "Subdomain Enumeration involves discovering subdomains associated with a main domain. It can reveal forgotten, "
-        "unsecured, or potentially vulnerable subdomains, which can be exploited by attackers."
-    ),
     'Common Passwords': (
         "Common Passwords detection involves checking if an application allows the use of weak or commonly used passwords, "
         "which can compromise the security of user accounts."
@@ -163,7 +159,6 @@ def scan_vulnerabilities(selected_scan):
         'Path Traversal': 'path_traversal',
         'Robots.txt': 'robot_detect',
         'SSRF': 'ssrf_detect',
-        'Subdomain Enumeration': 'subdomain_enum',
         'Common Passwords': 'weak_auth_detect',
         'Brute Force': 'weak_auth_detect',
         'Account Lockout': 'weak_auth_detect',
@@ -305,13 +300,6 @@ def scan_vulnerabilities(selected_scan):
             results.append(("Vulnerabilities found!", "SSRF", description))
         else:
             results.append(("No vulnerabilities found.", "SSRF", description))
-
-    elif selected_scan == 'Subdomain Enumeration':
-        vulnerabilities_found, description = module.main(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Subdomain Enumeration", description))
-        else:
-            results.append(("No vulnerabilities found.", "Subdomain Enumeration", description))
 
     elif selected_scan == 'Common Passwords':
         username = "bee"  # Replace with actual username
@@ -528,7 +516,7 @@ scan_type_label = ttk.Label(input_frame, text="Select Scan Type:")
 scan_type_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.E)
 scan_type_combobox = ttk.Combobox(input_frame, textvariable=scan_type_var, values=[
     "OS Command Injection", "SQL Injection", "XSS", "SSTI", "WebSocket", "CORS", "CSRF", 
-    "File Upload", "LFI", "Path Traversal", "Robots.txt", "SSRF", "Subdomain Enumeration",
+    "File Upload", "LFI", "Path Traversal", "Robots.txt", "SSRF",
     "Common Passwords", "Brute Force", "Account Lockout", "XXE", "Uncommon HTTP Methods", 
     "HTTP Redirections", "Security Headers", "Open Ports", "WHOIS", "General Info",
     "Email Disclosure", "Credit Card Disclosure"
