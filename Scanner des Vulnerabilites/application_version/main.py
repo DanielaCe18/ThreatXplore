@@ -394,8 +394,8 @@ def scan_vulnerabilities(selected_scan):
             general_info = module.scan_general_info(url)
             result_text_box.config(state=tk.NORMAL)
             result_text_box.delete(1.0, tk.END)
-            for info in general_info:
-                result_text_box.insert(tk.END, f"{info}\n", "black")
+            for key, info in general_info.items():
+                result_text_box.insert(tk.END, f"{key.capitalize()}: {info}\n", "black")
             result_text_box.config(state=tk.DISABLED)
             return  # Exit the function as General Info doesn't need further processing
         except Exception as e:

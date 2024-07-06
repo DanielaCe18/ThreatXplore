@@ -61,31 +61,31 @@ def get_outgoing_links(url):
     outgoing_links = {link.get('href') for link in soup.find_all('a', href=True) if urlparse(link.get('href')).netloc != urlparse(url).netloc}
     return outgoing_links
 
-def main():
-    url = input("Enter the URL: ")
-    print("Gathering information for:", url)
+def scan_general_info(url):
+    info = {}
     
     domain, ips = get_domain_info(url)
-    print("Domain:", domain)
-    print("IPs:", ips)
+    info['domain'] = domain
+    info['ips'] = ips
     
     transfers = get_http_https_transfers(url)
-    print("HTTP/HTTPS Transfers:", transfers)
+    info['transfers'] = transfers
     
     links = get_all_page_links(url)
-    print("All Page Links:", links)
+    info['links'] = links
     
     cookies = get_cookies(url)
-    print("Cookies:", cookies)
+    info['cookies'] = cookies
     
     headers = get_headers(url)
-    print("Headers:", headers)
+    info['headers'] = headers
     
     cert_info = get_certificate_info(url)
-    print("Certificate Info:", cert_info)
+    info['cert_info'] = cert_info
     
     outgoing_links = get_outgoing_links(url)
-    print("Outgoing Links:", outgoing_links)
+    info['outgoing_links'] = outgoing_links
+    
+    return info
 
-if __name__ == "__main__":
-    main()
+# No need for the main() function if we are using this as a module.
