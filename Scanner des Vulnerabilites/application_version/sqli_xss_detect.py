@@ -140,13 +140,15 @@ def scan_xss(url):
             else:
                 res = requests.get(urljoin(url, details['action']), params=data)
             if is_vulnerable_to_xss(res):
-                print(f"XSS vulnerability detected in form: {details} with payload: {payload}")
-                break  # Stop after finding a vulnerability in a form
+                description = f"XSS vulnerability detected in form: {details} with payload: {payload}"
+                return True, description
+
+    return False, "No XSS vulnerabilities detected."
 
 if __name__ == "__main__":
     urlsql = "https://myges.fr"  # Replace with the target URL
     print("Scanning for SQL Injection...")
     scan_sql(urlsql)
-    #urlxss = "https://vulnerable-website.com/blog"
-    #print("\nScanning for XSS...")
-    #scan_xss(urlxss)
+    urlxss = "https://myges.fr"  # Replace with the target URL
+    print("\nScanning for XSS...")
+    scan_xss(urlxss)

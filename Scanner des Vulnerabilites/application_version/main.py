@@ -184,11 +184,11 @@ def scan_vulnerabilities(selected_scan):
         return
 
     if selected_scan == 'OS Command Injection':
-        vulnerabilities_found, description = module.scan_sql(url)
+        vulnerabilities_found, description = module.scan_os_command_injection(url)
         if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "SQL Injection", description))
+            results.append(("Vulnerabilities found!", "OS Command Injection", description))
         else:
-            results.append(("No vulnerabilities found.", "SQL Injection", description))
+            results.append(("No vulnerabilities found.", "OS Command Injection", description))
     
     elif selected_scan == 'SQL Injection':
         vulnerabilities_found, description = module.scan_sql(url)
