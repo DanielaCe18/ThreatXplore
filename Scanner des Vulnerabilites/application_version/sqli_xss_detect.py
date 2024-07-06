@@ -95,22 +95,22 @@ def is_vulnerable_to_xss(response):
     return False
 
 def scan_sql(url):
+    # Test payloads directly in the URL
     for payload in sqli_payloads:
-        new_url = f"{url}{payload}"
+        new_url = f"{url}?param={payload}"
         res = requests.get(new_url)
         if is_vulnerable_to_sqli(res):
-            print(f"SQLi vulnerability detected in form: {url} with payload: {payload}")
-            return
+            description = f"SQLi vulnerability detected in URL: {new_url} with payload: {payload}"
+            return True, description
 
     forms = get_forms(url)
-    print(f"[+] Detected {len(forms)} forms on {url}.")
     for form in forms:
         details = form_details(form)
         for payload in sqli_payloads:
             data = {}
             for input_tag in details["inputs"]:
                 if input_tag["type"] == "hidden" or input_tag.get("value"):
-                    data[input_tag["name"]] = input_tag["value"] + payload
+                    data[input_tag["name"]] = input_tag.get("value", '') + payload
                 elif input_tag["type"] != "submit":
                     data[input_tag["name"]] = f"test{payload}"
             target_url = urljoin(url, details["action"])
@@ -119,10 +119,10 @@ def scan_sql(url):
             elif details["method"] == "get":
                 res = requests.get(target_url, params=data)
             if is_vulnerable_to_sqli(res):
-                print(f"SQLi vulnerability detected in form: {details} with payload: {payload}")
-                return
+                description = f"SQLi vulnerability detected in form: {details} with payload: {payload}"
+                return True, description
 
-    print("[-] No SQL Injection vulnerabilities detected.")
+    return False, "No SQL Injection vulnerabilities detected."
 
 def scan_xss(url):
     forms = get_forms(url)
@@ -134,7 +134,7 @@ def scan_xss(url):
                 if input_tag['type'] == 'text':
                     data[input_tag['name']] = payload
                 else:
-                    data[input_tag['name']] = input_tag.get('value')
+                    data[input_tag['name']] = input_tag.get('value', '')
             if details['method'] == 'post':
                 res = requests.post(urljoin(url, details['action']), data=data)
             else:
@@ -144,9 +144,9 @@ def scan_xss(url):
                 break  # Stop after finding a vulnerability in a form
 
 if __name__ == "__main__":
-    urlsql = "http://localhost/bWAPP/sqli_1.php"  # Replace with the target URL
+    urlsql = "https://myges.fr"  # Replace with the target URL
     print("Scanning for SQL Injection...")
     scan_sql(urlsql)
     #urlxss = "https://vulnerable-website.com/blog"
     #print("\nScanning for XSS...")
-   # scan_xss(urlxss)
+    #scan_xss(urlxss)
