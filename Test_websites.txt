@@ -6,7 +6,7 @@ cors = https://portswigger.net/web-security/cors/lab-basic-origin-reflection-att
 ssti = https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic
 credit card = http://cyberini.com
 csrf = https://portswigger.net/web-security/csrf/lab-no-defenses
-pour l'url sans / a la fin et l'exploit serveur.
+pour l'url sans / a la fin 
 ssrf = https://portswigger.net/web-security/ssrf/lab-basic-ssrf-against-localhost et ajoute /product/stock a la fin
 robots.txt : http://localhost/bWAPP
 lfi : http://localhost/bWAPP/rlfi.php
