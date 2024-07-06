@@ -1,5 +1,5 @@
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -30,12 +30,16 @@ def file_upload_vulnerability(session, url):
         forms = soup.find_all('form')
         for form in forms:
             if form.find('input', {'type': 'file'}):
-                print(f"[+] File Upload Function available at {url}")
-                return True, "File upload function detected."
-        return False, "No file upload function detected."
+                message = f"File Upload Function available at {url}"
+                print(message)
+                return True, message
+        message = "No file upload function detected."
+        print(message)
+        return False, message
     except requests.RequestException as e:
-        print(f"Error accessing {url}: {e}")
-        return False, f"Error accessing {url}: {e}"
+        error_message = f"Error accessing {url}: {e}"
+        print(error_message)
+        return False, error_message
 
 # Example usage
 if __name__ == "__main__":
@@ -48,5 +52,6 @@ if __name__ == "__main__":
 
     urlfile = base_url + "/unrestricted_file_upload.php"
 
-    if file_upload_vulnerability(session, urlfile):
+    vulnerabilities_found, description = file_upload_vulnerability(session, urlfile)
+    if vulnerabilities_found:
         print(f"{urlfile} is vulnerable to unrestricted file upload")

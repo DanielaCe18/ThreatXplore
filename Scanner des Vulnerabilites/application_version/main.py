@@ -267,8 +267,12 @@ def scan_vulnerabilities(selected_scan):
         session = module.create_session()
         username = "bee"  # Replace with actual username
         password = "bug"  # Replace with actual password
+    
+        # Login and then check the specific file upload URL
         module.login(session, url, username, password)
-        vulnerabilities_found, description = module.file_upload_vulnerability(session, url)
+        file_upload_url = f"{url}/unrestricted_file_upload.php"  # Ensure this matches the URL you are checking
+    
+        vulnerabilities_found, description = module.file_upload_vulnerability(session, file_upload_url)
         if vulnerabilities_found:
             results.append(("Vulnerabilities found!", "File Upload", description))
         else:
