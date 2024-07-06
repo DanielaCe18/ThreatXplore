@@ -221,8 +221,8 @@ def scan_vulnerabilities(selected_scan):
             results.append(("No vulnerabilities found.", "Credit Card Disclosure", description))
 
     elif selected_scan == 'SSTI':
-        vulnerabilities_found, engine = module.check_ssti(url, "param")  # Replace "param" with actual parameter
-        description = f"SSTI vulnerability detected with {engine} engine." if vulnerabilities_found else "No SSTI vulnerabilities found."
+        vulnerabilities_found, engine, payload = module.check_ssti(url, "message")  # Replace "message" with actual parameter
+        description = f"SSTI vulnerability detected with {engine} payload: {payload}" if vulnerabilities_found else "No SSTI vulnerabilities found."
         if vulnerabilities_found:
             results.append(("Vulnerabilities found!", "SSTI", description))
         else:

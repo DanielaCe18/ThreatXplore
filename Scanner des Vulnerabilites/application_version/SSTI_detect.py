@@ -20,13 +20,14 @@ def check_ssti(url, param):
                 response = requests.get(test_url)
                 if response.status_code == 200 and "49" in response.text:
                     print(f"[+] SSTI vulnerability detected with {engine} payload: {payload}")
-                    return True, engine
+                    return True, engine, payload
                 else:
                     print(f"[-] SSTI vulnerability not detected with {engine} payload: {payload}")
             except requests.RequestException as e:
                 print(f"[-] An error occurred: {e}")
     
-    return False, None
+    return False, None, None
+
 
 # Function to exploit SSTI vulnerability
 def exploit_ssti(url, param, engine, command):
