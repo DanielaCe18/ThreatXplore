@@ -255,12 +255,14 @@ def scan_vulnerabilities(selected_scan):
             results.append(("Failed to login.", "CORS", "Could not log in to test for CORS vulnerability."))
 
     elif selected_scan == 'CSRF':
-        vulnerabilities_found, description = module.check_csrf_vulnerability(url)
-        if vulnerabilities_found:
+        base_url = entry.get()
+        description = module.detect_csrf_vulnerability(base_url)
+    
+        if "likely vulnerable" in description:
             results.append(("Vulnerabilities found!", "CSRF", description))
         else:
             results.append(("No vulnerabilities found.", "CSRF", description))
-            
+
     elif selected_scan == 'File Upload':
         session = module.create_session()
         username = "bee"  # Replace with actual username
