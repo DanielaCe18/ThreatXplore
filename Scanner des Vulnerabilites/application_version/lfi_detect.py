@@ -38,19 +38,21 @@ def advanced_lfi_detection(url):
 
         response = send_request(session, url, payload)
         if re.search(response_pattern, response):
-            print(f"URL is vulnerable to {name} attack")
-            print(f"Used payload: {payload}")
-            return True
-    return False
+            message = f"URL is vulnerable to {name} attack\nUsed payload: {payload}"
+            print(message)
+            return True, message
+    return False, "No LFI vulnerabilities detected."
 
 def main():
     # Example usage
     url_lfi = "http://localhost/bWAPP/rlfi.php"
     
-    if advanced_lfi_detection(url_lfi):
+    vulnerabilities_found, description = advanced_lfi_detection(url_lfi)
+    if vulnerabilities_found:
         print(f"{url_lfi} is vulnerable to LFI")
     else:
         print(f"{url_lfi} is not vulnerable to LFI")
+    print(description)
 
 if __name__ == "__main__":
     main()
