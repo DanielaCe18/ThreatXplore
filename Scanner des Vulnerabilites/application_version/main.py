@@ -239,19 +239,18 @@ def scan_vulnerabilities(selected_scan):
             results.append(("No vulnerabilities found.", "WebSocket", "No WebSocket vulnerabilities detected."))
 
     elif selected_scan == 'CORS':
-        login_url = "https://example.com/login"  # Replace with actual login URL
-        target_url = "https://example.com/accountDetails"  # Replace with actual target URL
-        evil_origin = "https://evil.com"  # Replace with actual evil origin
-        username = "username"  # Replace with actual username
-        password = "password"  # Replace with actual password
+        exploit_server_url = "https://exploit-0a8d004004b6bc7486346adb017d0039.exploit-server.net"
+        base_url = entry.get()
+        login_url = f"{base_url}/login"  # Replace with actual login URL
+        target_url = f"{base_url}/accountDetails"  # Replace with actual target URL
+        evil_origin = "https://example.com"   # Replace with actual evil origin
+        username = "wiener"  # Replace with actual username
+        password = "peter"  # Replace with actual password
         session = module.login_and_get_session(login_url, username, password)
         if session:
-            vulnerabilities_found = module.check_cors_vulnerability(session, target_url, evil_origin)
-            description = "CORS vulnerability detected." if vulnerabilities_found else "No CORS vulnerabilities found."
-            if vulnerabilities_found:
-                results.append(("Vulnerabilities found!", "CORS", description))
-            else:
-                results.append(("No vulnerabilities found.", "CORS", description))
+            vulnerabilities_found, cors_details = module.check_cors_vulnerability(session, target_url, evil_origin)
+            description = f"CORS vulnerability detected. Details: {cors_details}" if vulnerabilities_found else "No CORS vulnerabilities found."
+            results.append(("Vulnerabilities found!", "CORS", description)) if vulnerabilities_found else results.append(("No vulnerabilities found.", "CORS", description))
         else:
             results.append(("Failed to login.", "CORS", "Could not log in to test for CORS vulnerability."))
 

