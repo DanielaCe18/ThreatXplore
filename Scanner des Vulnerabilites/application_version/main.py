@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import re
 import logging
 import whois_scan
+import asyncio
 
 # Import only when needed
 import importlib
@@ -229,11 +230,13 @@ def scan_vulnerabilities(selected_scan):
             results.append(("No vulnerabilities found.", "SSTI", description))
 
     elif selected_scan == 'WebSocket':
-        vulnerabilities_found, description = asyncio.run(module.test_websocket(url))
+        url = module.transform_url_to_ws(url)
+        vulnerabilities_found = asyncio.run(module.test_websocket(url))
         if vulnerabilities_found:
+            description = '\n'.join(vulnerabilities_found)
             results.append(("Vulnerabilities found!", "WebSocket", description))
         else:
-            results.append(("No vulnerabilities found.", "WebSocket", description))
+            results.append(("No vulnerabilities found.", "WebSocket", "No WebSocket vulnerabilities detected."))
 
     elif selected_scan == 'CORS':
         login_url = "https://example.com/login"  # Replace with actual login URL
