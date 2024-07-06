@@ -1,4 +1,3 @@
-# sqli_xss_scanner.py
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -100,9 +99,11 @@ def scan_sql(url):
         new_url = f"{url}{payload}"
         res = requests.get(new_url)
         if is_vulnerable_to_sqli(res):
-            return True, f"SQLi vulnerability detected with payload: {payload}"
+            print(f"SQLi vulnerability detected in form: {url} with payload: {payload}")
+            return
 
     forms = get_forms(url)
+    print(f"[+] Detected {len(forms)} forms on {url}.")
     for form in forms:
         details = form_details(form)
         for payload in sqli_payloads:
@@ -118,9 +119,10 @@ def scan_sql(url):
             elif details["method"] == "get":
                 res = requests.get(target_url, params=data)
             if is_vulnerable_to_sqli(res):
-                return True, f"SQLi vulnerability detected in form: {details} with payload: {payload}"
+                print(f"SQLi vulnerability detected in form: {details} with payload: {payload}")
+                return
 
-    return False, "No SQL Injection vulnerabilities detected."
+    print("[-] No SQL Injection vulnerabilities detected.")
 
 def scan_xss(url):
     forms = get_forms(url)
@@ -138,17 +140,13 @@ def scan_xss(url):
             else:
                 res = requests.get(urljoin(url, details['action']), params=data)
             if is_vulnerable_to_xss(res):
-                return True, f"XSS vulnerability detected in form: {details} with payload: {payload}"
+                print(f"XSS vulnerability detected in form: {details} with payload: {payload}")
+                break  # Stop after finding a vulnerability in a form
 
-    return False, "No XSS vulnerabilities detected."
-
-def scan(url):
-    sqli_found, sqli_description = scan_sql(url)
-    if sqli_found:
-        return True, sqli_description
-
-    xss_found, xss_description = scan_xss(url)
-    if xss_found:
-        return True, xss_description
-
-    return False, "No SQLi or XSS vulnerabilities detected."
+if __name__ == "__main__":
+    urlsql = "http://localhost/bWAPP/sqli_1.php"  # Replace with the target URL
+    print("Scanning for SQL Injection...")
+    scan_sql(urlsql)
+    #urlxss = "https://vulnerable-website.com/blog"
+    #print("\nScanning for XSS...")
+   # scan_xss(urlxss)

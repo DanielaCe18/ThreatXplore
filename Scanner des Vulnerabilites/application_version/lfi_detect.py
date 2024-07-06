@@ -43,8 +43,14 @@ def advanced_lfi_detection(url):
             return True
     return False
 
-# Example usage
-url_lfi = "http://localhost/bWAPP/rlfi.php"
+def main():
+    # Example usage
+    url_lfi = "http://localhost/bWAPP/rlfi.php"
+    
+    if advanced_lfi_detection(url_lfi):
+        print(f"{url_lfi} is vulnerable to LFI")
+    else:
+        print(f"{url_lfi} is not vulnerable to LFI")
 
-if advanced_lfi_detection(url_lfi):
-    print(f"{url_lfi} is vulnerable to LFI")
+if __name__ == "__main__":
+    main()

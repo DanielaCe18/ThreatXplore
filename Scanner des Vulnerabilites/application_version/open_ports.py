@@ -33,3 +33,16 @@ def get_scan_results(nm):
             host_info["protocols"].append(proto_info)
         results.append(host_info)
     return results
+
+def main():
+    # Example usage
+    target = "127.0.0.1"
+    options = "-sV"  # Example options for nmap scan
+    
+    nm = scan_ports(target, options)
+    scan_results = get_scan_results(nm)
+    
+    print(json.dumps(scan_results, indent=4))
+
+if __name__ == "__main__":
+    main()

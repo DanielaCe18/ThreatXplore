@@ -7,6 +7,15 @@ import subprocess
 import re
 
 def get_certificate(url):
+    """
+    Retrieves the SSL certificate for a given URL.
+    
+    Args:
+        url (str): The URL to retrieve the certificate from.
+    
+    Returns:
+        dict: The SSL certificate details, or None if an error occurs.
+    """
     try:
         hostname = url.split("//")[-1].split("/")[0]
         context = ssl.create_default_context()
@@ -18,11 +27,22 @@ def get_certificate(url):
         print(f"Error getting certificate: {e}")
         return None
 
-def check_certificate_issues(cert):
-    issues = []
+def check_certificate_issues(url):
+    """
+    Checks for issues in the SSL certificate of a given URL.
+    
+    Args:
+        url (str): The URL to check for certificate issues.
+    
+    Returns:
+        list: A list of detected certificate issues.
+    """
+    cert = get_certificate(url)
     if not cert:
         return ["Unable to retrieve certificate"]
-    
+
+    issues = []
+
     # Expired Certificates
     not_after = datetime.datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
     if not_after < datetime.datetime.now():
@@ -37,194 +57,132 @@ def check_certificate_issues(cert):
     if sig_alg and ('md5' in sig_alg or 'sha1' in sig_alg):
         issues.append("Weak signature algorithm")
 
-    return issues
-
-def check_mismatched_hostnames(cert, url):
+    # Hostname Mismatch
     hostname = url.split("//")[-1].split("/")[0]
     common_name = [entry[0][1] for entry in cert['subject'] if entry[0][0] == 'commonName'][0]
     if hostname != common_name:
-        return ["Hostname mismatch: certificate is for " + common_name]
-    return []
+        issues.append(f"Hostname mismatch: certificate is for {common_name}")
 
-def check_ssl_tls_protocols(url):
-    protocols = ['ssl2', 'ssl3', 'tls1', 'tls1_1']
+    # Certificate Pinning
+    if cert['issuer'] == cert['subject']:
+        issues.append("Self-signed certificate")
+    else:
+        issues.append("Certificate pinning must be checked on the client side")
+
+    # Certificate Chain
+    output = subprocess.getoutput(f"openssl s_client -showcerts -connect {hostname}:443")
+    if 'Verify return code: 0 (ok)' not in output:
+        issues.append("Certificate chain issue")
+
+    # OCSP Stapling
+    output = subprocess.getoutput(f"openssl s_client -status -connect {hostname}:443")
+    if 'OCSP Response Status: successful' not in output:
+        issues.append("OCSP stapling not supported")
+
+    # DNS CAA Records
+    output = subprocess.getoutput(f"dig caa {hostname} +short")
+    if not output:
+        issues.append("No DNS CAA records found")
+
+    return issues
+
+def check_ssltls(url):
+    """
+    Checks for SSL/TLS vulnerabilities on a given URL.
+    
+    Args:
+        url (str): The URL to check for SSL/TLS vulnerabilities.
+    
+    Returns:
+        list: A list of detected SSL/TLS vulnerabilities.
+    """
     issues = []
+    hostname = url.split("//")[-1].split("/")[0]
+
+    # SSL/TLS Protocols
+    protocols = ['TLSv1', 'TLSv1_1', 'TLSv1_2', 'TLSv1_3']
     for proto in protocols:
         try:
-            context = ssl.SSLContext(getattr(ssl, f"PROTOCOL_{proto.upper()}"))
-            with socket.create_connection((url, 443)) as sock:
-                with context.wrap_socket(sock, server_hostname=url) as ssock:
+            context = ssl.SSLContext(getattr(ssl, f"PROTOCOL_{proto.replace('.', '_').upper()}"))
+            with socket.create_connection((hostname, 443)) as sock:
+                with context.wrap_socket(sock, server_hostname=hostname) as ssock:
                     pass
-            issues.append(f"{proto.upper()} supported")
+            issues.append(f"{proto} supported")
+        except AttributeError:
+            issues.append(f"Error checking {proto}: {proto} is not supported by the ssl module")
         except ssl.SSLError:
             pass
         except Exception as e:
-            issues.append(f"Error checking {proto.upper()}: {e}")
-    return issues
+            issues.append(f"Error checking {proto}: {e}")
 
-def check_weak_ciphers(url):
-    output = subprocess.getoutput(f"sslscan {url}")
+    # Weak Ciphers
+    output = subprocess.getoutput(f"sslscan {hostname}")
     weak_ciphers = re.findall(r'(RC4|DES|3DES)', output)
-    return weak_ciphers
+    issues.extend(weak_ciphers)
 
-def check_perfect_forward_secrecy(url):
-    output = subprocess.getoutput(f"sslscan {url}")
+    # Perfect Forward Secrecy
     if 'DH' in output:
-        return ["No Perfect Forward Secrecy (PFS)"]
-    return []
+        issues.append("No Perfect Forward Secrecy (PFS)")
 
-def check_implementation_flaws(url):
-    flaws = []
+    # Implementation Flaws
     # Heartbleed
-    result = subprocess.getoutput(f"nmap --script ssl-heartbleed -p 443 {url}")
+    result = subprocess.getoutput(f"nmap --script ssl-heartbleed -p 443 {hostname}")
     if "VULNERABLE" in result:
-        flaws.append("Heartbleed")
+        issues.append("Vulnerable to Heartbleed")
 
     # POODLE
-    result = subprocess.getoutput(f"nmap --script ssl-poodle -p 443 {url}")
+    result = subprocess.getoutput(f"nmap --script ssl-poodle -p 443 {hostname}")
     if "VULNERABLE" in result:
-        flaws.append("POODLE")
+        issues.append("Vulnerable to POODLE")
 
     # BEAST
-    output = subprocess.getoutput(f"testssl.sh --beast {url}")
+    output = subprocess.getoutput(f"testssl.sh --beast {hostname}")
     if 'not vulnerable' not in output:
-        flaws.append("BEAST")
+        issues.append("Vulnerable to BEAST")
 
     # CRIME and BREACH
-    output = subprocess.getoutput(f"testssl.sh --crime --breach {url}")
+    output = subprocess.getoutput(f"testssl.sh --crime --breach {hostname}")
     if 'not vulnerable' not in output:
-        flaws.append("CRIME/BREACH")
+        issues.append("Vulnerable to CRIME/BREACH")
 
-    return flaws
-
-def check_hsts(url):
+    # HSTS
     try:
-        response = requests.get(f"https://{url}")
+        response = requests.get(f"https://{hostname}")
         if 'Strict-Transport-Security' not in response.headers:
-            return ["HSTS not implemented"]
+            issues.append("HSTS not implemented")
     except Exception as e:
-        return [f"Error checking HSTS: {e}"]
-    return []
+        issues.append(f"Error checking HSTS: {e}")
 
-def check_certificate_pinning(url):
-    cert = get_certificate(url)
-    if not cert:
-        return ["Unable to retrieve certificate"]
-    if cert['issuer'] == cert['subject']:
-        return ["Self-signed certificate"]
-    return ["Certificate pinning must be checked on the client side"]
-
-def check_tls_fallback_scsv(url):
-    output = subprocess.getoutput(f"testssl.sh --fallback {url}")
+    # TLS Fallback SCSV
+    output = subprocess.getoutput(f"testssl.sh --fallback {hostname}")
     if 'not vulnerable' not in output:
-        return ["TLS Fallback SCSV not supported"]
-    return []
+        issues.append("TLS Fallback SCSV not supported")
 
-def check_insecure_renegotiation(url):
-    output = subprocess.getoutput(f"testssl.sh --reneg {url}")
+    # Insecure Renegotiation
+    output = subprocess.getoutput(f"testssl.sh --reneg {hostname}")
     if 'Secure Renegotiation IS supported' not in output:
-        return ["Insecure renegotiation"]
-    return []
+        issues.append("Insecure renegotiation")
 
-def check_tls_1_3_support(url):
-    output = subprocess.getoutput(f"sslscan {url}")
+    # TLS 1.3 Support
     if 'TLSv1.3' not in output:
-        return ["TLS 1.3 not supported"]
-    return []
+        issues.append("TLS 1.3 not supported")
 
-def check_certificate_chain(url):
-    output = subprocess.getoutput(f"openssl s_client -showcerts -connect {url}:443")
-    if 'Verify return code: 0 (ok)' not in output:
-        return ["Certificate chain issue"]
-    return []
-
-def check_ocsp_stapling(url):
-    output = subprocess.getoutput(f"openssl s_client -status -connect {url}:443")
-    if 'OCSP Response Status: successful' not in output:
-        return ["OCSP stapling not supported"]
-    return []
-
-def check_dns_caa_records(url):
-    hostname = url.split("//")[-1].split("/")[0]
-    output = subprocess.getoutput(f"dig caa {hostname} +short")
-    if not output:
-        return ["No DNS CAA records found"]
-    return []
-
-def check_headers(url):
-    headers_issues = []
-    try:
-        response = requests.get(f"https://{url}")
-        headers = response.headers
-        
-        # Check HSTS
-        if 'Strict-Transport-Security' not in headers:
-            headers_issues.append("HSTS not implemented")
-
-        # Check Expect-CT
-        if 'Expect-CT' not in headers:
-            headers_issues.append("Expect-CT header not set")
-
-        # Check Content Security Policy (CSP)
-        if 'Content-Security-Policy' not in headers:
-            headers_issues.append("Content Security Policy (CSP) not implemented")
-
-        # Check Referrer Policy
-        if 'Referrer-Policy' not in headers:
-            headers_issues.append("Referrer Policy header not set")
-
-        # Check X-Content-Type-Options
-        if 'X-Content-Type-Options' not in headers or headers['X-Content-Type-Options'] != 'nosniff':
-            headers_issues.append("X-Content-Type-Options header not set to 'nosniff'")
-
-        # Check X-Frame-Options
-        if 'X-Frame-Options' not in headers:
-            headers_issues.append("X-Frame-Options header not set")
-
-        # Check X-XSS-Protection
-        if 'X-XSS-Protection' not in headers or headers['X-XSS-Protection'] != '1; mode=block':
-            headers_issues.append("X-XSS-Protection header not set to '1; mode=block'")
-    except Exception as e:
-        headers_issues.append(f"Error checking headers: {e}")
-    return headers_issues
-
-def scan_url(url):
-    results = {}
-    cert = get_certificate(url)
-
-    # Certificate issues
-    results['certificate_issues'] = check_certificate_issues(cert)
-    results['mismatched_hostnames'] = check_mismatched_hostnames(cert, url)
-
-    # Protocol issues
-    results['protocol_issues'] = check_ssl_tls_protocols(url)
-
-    # Configuration issues
-    results['weak_ciphers'] = check_weak_ciphers(url)
-    results['pfs_issues'] = check_perfect_forward_secrecy(url)
-
-    # Implementation flaws
-    results['implementation_flaws'] = check_implementation_flaws(url)
-
-    # Misconfigurations
-    results['hsts_issues'] = check_hsts(url)
-    results['certificate_pinning'] = check_certificate_pinning(url)
-    results['tls_fallback_scsv'] = check_tls_fallback_scsv(url)
-    results['insecure_renegotiation'] = check_insecure_renegotiation(url)
-
-    # Enhanced checks
-    results['tls_1_3_support'] = check_tls_1_3_support(url)
-    results['certificate_chain'] = check_certificate_chain(url)
-    results['ocsp_stapling'] = check_ocsp_stapling(url)
-    results['dns_caa_records'] = check_dns_caa_records(url)
-    results['header_issues'] = check_headers(url)
-
-    return results
+    return issues
 
 if __name__ == "__main__":
-    url = input("Enter the URL to scan: ")
-    url = url.replace('https://', '').replace('http://', '').strip('/')
-    scan_results = scan_url(url)
-
-    for key, value in scan_results.items():
-        print(f"{key}: {value}")
+    target_url = input('Enter the URL to test for vulnerability: ')
+    certificate_results = check_certificate_issues(target_url)
+    print("\nCertificate Issues:")
+    if certificate_results:
+        for result in certificate_results:
+            print(f"- {result}")
+    else:
+        print("No certificate issues found.")
+    
+    ssl_tls_results = check_ssltls(target_url)
+    print("\nSSL/TLS Issues:")
+    if ssl_tls_results:
+        for result in ssl_tls_results:
+            print(f"- {result}")
+    else:
+        print("No SSL/TLS issues found.")

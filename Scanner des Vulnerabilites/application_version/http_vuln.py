@@ -112,6 +112,10 @@ def scan_url(url):
             print("Potential Vulnerability Detected!")
         print(f"Reason: {headers_result['reason']}")
 
-# Example usage
-url = 'http://example.com'
-scan_url(url)
+def main():
+    # Example usage
+    url = 'http://example.com'
+    scan_url(url)
+
+if __name__ == "__main__":
+    main()
