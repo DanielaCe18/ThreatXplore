@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /web
 
 # Copy the requirements file into the container at /web
-COPY ../src/requirements.txt .
+COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
