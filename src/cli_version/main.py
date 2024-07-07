@@ -176,86 +176,90 @@ def NewScan():
     
     while True:
         if input_choice == 1:
+            print("\n Begin scan Crawler..\n")
             crawler()
             break
         elif input_choice == 2:
-            print("\nExiting the program...\n\n")
-            EndProgram()
+            print("\nBegin scan Csrf..\n")
+            csrf_detector()
             break
         elif input_choice == 3:
-            print("\nExiting the program...\n\n")
-            EndProgram()
+            print("\nBegin scan Email card..\n")
+            email_card_detect()
             break
         elif input_choice == 4:
-            print("\nExiting the program...\n\n")
-            EndProgram()
+            print("\nBegin scan File upload..\n")
+            file_upload()
             break
         elif input_choice == 5:
-            print("\nExiting the program...\n\n")
-            EndProgram()
-            break
+            print("\Begin scan HTTP vulnerability")
+            http_vulnerability()
         elif input_choice == 6:
-            Help()
+            print("\nBegin scan LFI..\n")
+            lfi_detect()
             break
         elif input_choice == 7:
-            Help()
+            print("\nBegin scan OS command injection..\n")
+            OS_command_injection()
             break
         elif input_choice == 8:
-            Help()
+            print("\nBegin scan Path trasversal..\n")
+            path_trasversal()
             break
         elif input_choice == 9:
-            Help()
+            print("\nBegin scan Robot.txt..\n")
+            robot_detect()
             break
         elif input_choice == 10:
-            Help()
+            print("\nBegin Scan open ports..\n")
+            scan_open_ports()
             break
         elif input_choice == 11:
-            Help()
+            print("\nBegin Scan..\n")
+            scan()
             break
         elif input_choice == 12:
-            Help()
+            print("\nBegin scan SQLI XSS..\n")
+            ssl_vuln_detect()
             break
         elif input_choice == 13:
+            print("\nBegin scan SSRF..\n")
             Help()
             break
         elif input_choice == 14:
+            print("\nBegin scan SSL..\n")
             Help()
             break
         elif input_choice == 15:
+            print("\nBegin scan SSTI..\n")
             Help()
             break
         elif input_choice == 16:
+            print("\nBegin scan Weak Authentication..\n")
             Help()
             break
         elif input_choice == 17:
+            print("\nBegin scan WebSocket..\n")
             Help()
             break
         elif input_choice == 18:
+            print("\nBegin scan WHOIS..\n")
             Help()
             break
         elif input_choice == 19:
+            print("\nBegin scan WHOIS..\n")
             Help()
             break
         elif input_choice == 20:
+            print("\nBegin scan CORS..\n")
             Help()
             break
         elif input_choice == 21:
-            Help()
-            break
-        elif input_choice == 22:
-            Help()
-            break
-        elif input_choice == 23:
-            EndProgram()
+            print("\nBegin scan ALL..\n")
+            all()
             break
         else:
-            input_choice = int(input("Key invalid. Choose another number: "))
-
-
-
-def ListScan():
-    print("List Previous Scan")
-    EndProgram()
+            input = int(input("Key invalid. Choose another number: "))
 
 def scan():
     scan.main()
@@ -300,6 +304,9 @@ def sqli_xss_detect():
 def ssl_vuln_detect():
     pass
 
+def ssrf_detect():
+    pass
+
 def SSTI_detect():
     pass
 
@@ -316,7 +323,26 @@ def xxe_detect():
     pass
 
 def all():
-    pass
+    scan()
+    cors_detect()
+    crawler()
+    csrf_detector()
+    email_card_detect()
+    file_upload()
+    http_vulnerability()
+    lfi_detect()
+    OS_command_injection()
+    path_trasversal()
+    robot_detect()
+    scan_open_ports()
+    sqli_xss_detect()
+    ssl_vuln_detect()
+    ssrf_detect()
+    STI_detect()
+    weak_auth_detect()
+    WebSocket()
+    whois()
+    xxe_detect()
 
 
 if __name__ == "__main__":
