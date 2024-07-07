@@ -4,20 +4,35 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../scripts')))
 
+import importlib
+
 import scan
 import crawler
 import cors_detect
 import csrf_detector
-import email-card_detect
+
+email_card_detect = importlib.import_module("email-card_detect")
+import email_card_detect
+
 import file_upload
-import http-vulnerabilities
+
+http_vulnerabilities = importlib.import_module("http-vulnerabilities")
+import http_vulnerabilities
+
 import lfi_detect
 import OS_command_injection
 import path_trasversal
 import robot_detect
-import scan-open-ports
-import sqli-vuln_detect
-import ssl-vuln_detect
+
+scan_open_ports = importlib.import_module("scan-open-ports")
+import scan_open_ports
+
+sqli_vuln_detect = importlib.import_module("sqli-vuln_detect")
+import sqli_vuln_detect
+
+ssl_vuln_detect = importlib.import_module("ssl-vuln_detect")
+import ssl_vuln_detect
+
 import ssrf_detect
 import SSTI_detect
 import weak-auth_detect
