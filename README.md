@@ -6,7 +6,7 @@ ThreatXplore is a web vulnerability scanner written in Python.
 
 ThreatXplore operates as a comprehensive vulnerability scanner designed to scrutinize the pages of deployed web applications. It systematically extracts links and forms, conducts script attacks, sends payloads, and monitors for error messages, specific strings, or unusual behaviors. Upon identifying a vulnerability, ThreatXplore offers two options: a blue team button for preventative measures and a red team button for attack assistance. ThreatXplore is accessible via a website, as an executable file, and through a CLI.
 
-*FYI: This is an annual school project.* :warning: *(in italic, red)*
+*<span style="color:red;">FYI: This is an annual school project.</span>* :loudspeaker:
 
 ## General features 
 - One-step installation.
@@ -55,39 +55,46 @@ Clone this repository:
 
 ```sh
 git clone https://github.com/DanielaCe18/ThreatXplore.git
+```
 
-Usage
-Without Docker:
+## Usage 
+
+### Without Docker:
+
 Install requirements:
-
-sh
-Copy code
+```sh
 pip install -r requirements.txt
+```
+
 For the website:
+1. Navigate to the `src/website_version` folder.
+2. Run `python3 main.py`.
+3. Navigate to `http://127.0.0.1:5000` once the Flask server is running.
 
-Navigate to the src/website_version folder.
-Run python3 main.py.
-Navigate to http://127.0.0.1:5000 once the Flask server is running.
 For the application:
+1. Navigate to the `src/application_version` folder.
+2. Run `python3 app.py` and start scanning.
 
-Navigate to the src/application_version folder.
-Run python3 app.py and start scanning.
-With Docker:
+### With Docker:
+
 For the website:
+1. Locate to `Docker/`.
+2. Build the Docker image: `docker build -t website .`
+3. Run the Docker container: `docker run -p 5000:5000 website`
 
-Locate to Docker/.
-Build the Docker image: docker build -t website .
-Run the Docker container: docker run -p 5000:5000 website
 For the application:
+1. Locate to `Docker/`.
+2. Build the Docker image: `docker build -t app .`
+3. Run the Docker container: `docker run -it --rm app`
 
-Locate to Docker/.
-Build the Docker image: docker build -t app .
-Run the Docker container: docker run -it --rm app
-Authors
-Licensing
-ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on GitHub.
+## Authors
 
-Disclaimer
+DanielaCe18 & sdiop61 :crossed_fingers:
+
+## Licensing
+
+ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on [GitHub](https://github.com/DanielaCe18/ThreatXplore).
+
+## Disclaimer :warning:
+
 Usage of ThreatXplore for attacking a target without prior consent of its owner is illegal. It is the end user's responsibility to obey all applicable local laws.
-
-Developers and people involved in the ThreatXplore project assume no liability and are not responsible for any misuse or damage caused by this program.
