@@ -5,13 +5,13 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the requirements file into the container
-COPY src/requirements.txt .
+COPY requirements.txt .
 
 # Install the required packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code into the container
-COPY application_version/app.py .
+COPY src/application_version/ .
 
 # Make your Python application executable
 RUN chmod +x app.py
