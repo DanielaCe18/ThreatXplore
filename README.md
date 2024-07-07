@@ -4,7 +4,7 @@ ThreatXplore is a web vulnerability scanner written in Python.
 
 ## How it works 
 
-ThreatXplore operates as a comprehensive vulnerability scanner designed to scrutinize the pages of deployed web applications. It systematically extracts links and forms, conducts script attacks, sends payloads, and monitors for error messages, specific strings, or unusual behaviors. Upon identifying a vulnerability, ThreatXplore offers two options: a blue team button for preventative measures and a red team button for attack assistance. ThreatXplore is accessible via a website, as an executable file, and through a CLI.
+ThreatXplore operates as a comprehensive vulnerability scanner designed to scrutinize the pages of deployed web applications. It systematically extracts links and forms, conducts script attacks, sends payloads, and monitors for error messages, specific strings, or unusual behaviors. Upon identifying a vulnerability, ThreatXplore offers two options: a blue team button for preventative measures and a red team button for attack assistance. ThreatXplore is accessible via a website, as an executable file.
 
 *<span style="color:red;">FYI: This is an annual school project.</span>* :loudspeaker:
 
