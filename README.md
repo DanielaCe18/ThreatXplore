@@ -8,6 +8,9 @@ ThreatXplore operates as a comprehensive vulnerability scanner designed to scrut
 
 *<span style="color:red;">FYI: This is an annual school project.</span>* :loudspeaker:
 
+![image](https://github.com/DanielaCe18/ThreatXplore/assets/145435353/5ea435f0-5b45-45e5-a29d-e8b63fb78174)
+
+
 ## General features 
 - One-step installation.
 - Executes a multitude of security scanning tools, does other custom coded checks and prints the results spontaneously.
