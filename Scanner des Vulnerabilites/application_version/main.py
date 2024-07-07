@@ -329,6 +329,7 @@ def scan_vulnerabilities(selected_scan):
 
     elif selected_scan == 'XXE':
         vulnerabilities_found, description = module.scan_xxe(url)
+        print(f"XXE - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
         if vulnerabilities_found:
             results.append(("Vulnerabilities found!", "XXE", description))
         else:
