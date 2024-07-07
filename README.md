@@ -95,9 +95,6 @@ DanielaCe18 & sdiop61 :crossed_fingers:
 
 ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on [GitHub](https://github.com/DanielaCe18/ThreatXplore).
 
-## Disclaimer 	:warning:
+## Disclaimer :warning:
 
 Usage of ThreatXplore for attacking a target without prior consent of its owner is illegal. It is the end user's responsibility to obey all applicable local laws.
-
-Developers and people involved in the ThreatXplore project assume no liability and are not responsible for any misuse or damage caused by this program.
-```
