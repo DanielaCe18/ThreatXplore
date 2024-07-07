@@ -266,61 +266,61 @@ def scan():
     NewScan()
 
 def cors_detect():
-    pass
+    NewScan()
 
 def crawler():
-    pass
+    NewScan()
 
 def csrf_detector():
-    pass
+    NewScan()
 
 def email_card_detect():
-    pass
+    NewScan()
 
 def file_upload():
-    pass
+    NewScan()
 
 def http_vulnerability():
-    pass
+    NewScan()
 
 def lfi_detect():
-    pass
+    NewScan()
 
 def OS_command_injection():
-    pass
+    NewScan()
 
 def path_trasversal():
-    pass
+    NewScan()
 
 def robot_detect():
-    pass
+    NewScan()
 
 def scan_open_ports():
-    pass
+    NewScan()
 
 def sqli_xss_detect():
-    pass
+    NewScan()
 
 def ssl_vuln_detect():
-    pass
+    NewScan()
 
 def ssrf_detect():
-    pass
+    NewScan()
 
 def SSTI_detect():
-    pass
+    NewScan()
 
 def weak_auth_detect():
-    pass
+    NewScan()
 
 def webSocket():
-    pass
+    NewScan()
 
 def whois():
-    pass
+    NewScan()
 
 def xxe_detect():
-    pass
+    NewScan()
 
 def all():
     scan()
