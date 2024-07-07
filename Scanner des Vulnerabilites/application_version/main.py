@@ -166,7 +166,7 @@ def scan_vulnerabilities(selected_scan):
         'Uncommon HTTP Methods': 'http_vuln',
         'HTTP Redirections': 'http_vuln',
         'Security Headers': 'http_vuln',
-        'Open Ports': 'scan_open_ports',
+        'Open Ports': 'open_ports',
         'WHOIS': 'whois_scan',
         'General Info': 'scangen',
         'Email Disclosure': 'email_card_detect',
@@ -365,8 +365,8 @@ def scan_vulnerabilities(selected_scan):
         nm = module.scan_ports(url, options)
         scan_results = module.get_scan_results(nm)
         if scan_results:
-            for result in scan_results:
-                results.append(("Vulnerabilities found!", "Open Ports", json.dumps(result)))
+            description = json.dumps(scan_results, indent=4)
+            results.append(("Vulnerabilities found!", "Open Ports", description))
         else:
             results.append(("No vulnerabilities found.", "Open Ports", "No open ports detected."))
 
