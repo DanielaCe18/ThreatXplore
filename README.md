@@ -6,7 +6,7 @@ ThreatXplore is a web vulnerability scanner written in Python.
 
 ThreatXplore operates as a comprehensive vulnerability scanner designed to scrutinize the pages of deployed web applications. It systematically extracts links and forms, conducts script attacks, sends payloads, and monitors for error messages, specific strings, or unusual behaviors. Upon identifying a vulnerability, ThreatXplore offers two options: a blue team button for preventative measures and a red team button for attack assistance. ThreatXplore is accessible via a website, as an executable file, and through a CLI.
 
-*FYI: This is an annual school project.* :warning: *(in italic, red)*
+*FYI: This is an annual school project.* :loudspeaker: *(in italic, red)*
 
 ## General features 
 - One-step installation.
@@ -89,11 +89,13 @@ For the application:
 
 ## Authors
 
+DanielaCe18 & sdiop61 :crossed_fingers:
+
 ## Licensing
 
 ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on [GitHub](https://github.com/DanielaCe18/ThreatXplore).
 
-## Disclaimer
+## Disclaimer 	:warning:
 
 Usage of ThreatXplore for attacking a target without prior consent of its owner is illegal. It is the end user's responsibility to obey all applicable local laws.
 
