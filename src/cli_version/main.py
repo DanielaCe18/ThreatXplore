@@ -220,39 +220,39 @@ def NewScan():
             break
         elif input_choice == 12:
             print("\nBegin scan SQLI XSS..\n")
-            ssl_vuln_detect()
+            sqli_vuln_detect()
             break
         elif input_choice == 13:
             print("\nBegin scan SSRF..\n")
-            Help()
+            ssrf_detect()
             break
         elif input_choice == 14:
             print("\nBegin scan SSL..\n")
-            Help()
+            ssl_vuln_detect()
             break
         elif input_choice == 15:
             print("\nBegin scan SSTI..\n")
-            Help()
+            SSTI_detect()
             break
         elif input_choice == 16:
             print("\nBegin scan Weak Authentication..\n")
-            Help()
+            weak_auth_detect()
             break
         elif input_choice == 17:
             print("\nBegin scan WebSocket..\n")
-            Help()
+            webSocket()
             break
         elif input_choice == 18:
             print("\nBegin scan WHOIS..\n")
-            Help()
+            whois()
             break
         elif input_choice == 19:
-            print("\nBegin scan WHOIS..\n")
-            Help()
+            print("\nBegin scan XXE..\n")
+            xxe_detect()
             break
         elif input_choice == 20:
             print("\nBegin scan CORS..\n")
-            Help()
+            cors_detect()
             break
         elif input_choice == 21:
             print("\nBegin scan ALL..\n")
@@ -313,7 +313,7 @@ def SSTI_detect():
 def weak_auth_detect():
     pass
 
-def WebSocket():
+def webSocket():
     pass
 
 def whois():
@@ -340,7 +340,7 @@ def all():
     ssrf_detect()
     STI_detect()
     weak_auth_detect()
-    WebSocket()
+    webSocket()
     whois()
     xxe_detect()
 
