@@ -336,13 +336,13 @@ def scan_vulnerabilities(selected_scan):
             results.append(("No vulnerabilities found.", "XXE", description))
 
     elif selected_scan == 'Uncommon HTTP Methods':
-        methods_results = module.check_uncommon_http_methods(url)
-        for method, result in methods_results.items():
-            description = result['reason']
-            if result['vulnerability']:
-                results.append(("Vulnerabilities found!", f"Uncommon HTTP Method: {method}", description))
-            else:
-                results.append(("No vulnerabilities found.", f"Uncommon HTTP Method: {method}", description))
+        vulnerabilities_found, method_descriptions = module.check_uncommon_http_methods(url)
+        description = "\n".join(method_descriptions)
+        print(f"Uncommon HTTP Methods - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
+        if vulnerabilities_found:
+            results.append(("Vulnerabilities found!", "Uncommon HTTP Methods", description))
+        else:
+            results.append(("No vulnerabilities found.", "Uncommon HTTP Methods", description))
     
     elif selected_scan == 'HTTP Redirections':
         redirection_result = module.check_redirections(url)

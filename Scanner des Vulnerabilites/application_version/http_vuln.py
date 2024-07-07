@@ -2,7 +2,8 @@ import requests
 
 def check_uncommon_http_methods(url):
     uncommon_methods = ['OPTIONS', 'TRACE', 'CONNECT', 'PUT', 'DELETE']
-    results = {}
+    vulnerabilities_found = False
+    results = []
 
     for method in uncommon_methods:
         try:
@@ -12,23 +13,16 @@ def check_uncommon_http_methods(url):
             body = response.text[:500]  # Limit body to first 500 chars for brevity
             
             if status_code not in [405, 501]:
-                results[method] = {
-                    'status_code': status_code,
-                    'headers': headers,
-                    'body': body,
-                    'vulnerability': True,
-                    'reason': f'{method} method is allowed with status code {status_code}.'
-                }
+                vulnerabilities_found = True
+                results.append(f'{method} method is allowed with status code {status_code}.')
             else:
-                results[method] = {
-                    'status_code': status_code,
-                    'vulnerability': False,
-                    'reason': 'Method Not Allowed or Not Implemented.'
-                }
+                results.append(f'{method} method is not allowed (status code {status_code}).')
         except Exception as e:
-            results[method] = {'error': str(e), 'vulnerability': True, 'reason': 'Exception occurred.'}
+            vulnerabilities_found = True
+            results.append(f'Error testing {method} method: {e}')
 
-    return results
+    return vulnerabilities_found, results
+
 
 def check_redirections(url):
     try:
@@ -78,39 +72,18 @@ def scan_url(url):
     # Checking for uncommon HTTP methods
     print('\nChecking for uncommon HTTP methods...')
     methods_results = check_uncommon_http_methods(url)
-    for method, result in methods_results.items():
-        print(f'\nMethod: {method}')
-        if 'error' in result:
-            print(f"Error: {result['error']}")
-        else:
-            print(f"Status Code: {result['status_code']}")
-            if result['vulnerability']:
-                print("Potential Vulnerability Detected!")
-            print(f"Reason: {result['reason']}")
-            if 'headers' in result:
-                print(f"Headers: {result['headers']}")
-            if 'body' in result:
-                print(f"Body: {result['body']}")
+    for result in methods_results:
+        print(result)
     
     # Checking for HTTP redirections
     print('\nChecking for HTTP redirections...')
     redirection_result = check_redirections(url)
-    if 'error' in redirection_result:
-        print(f"Error: {redirection_result['error']}")
-    else:
-        if redirection_result['vulnerability']:
-            print("Potential Vulnerability Detected!")
-        print(f"Reason: {redirection_result['reason']}")
+    print(redirection_result)
     
     # Checking for HTTP security headers
     print('\nChecking for HTTP security headers...')
     headers_result = check_security_headers(url)
-    if 'error' in headers_result:
-        print(f"Error: {headers_result['error']}")
-    else:
-        if headers_result['vulnerability']:
-            print("Potential Vulnerability Detected!")
-        print(f"Reason: {headers_result['reason']}")
+    print(headers_result)
 
 def main():
     # Example usage
