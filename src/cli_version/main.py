@@ -1,4 +1,9 @@
+# Add repo2 to PYTHONPATH
+repo2_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../repo2'))
+sys.path.insert(0, repo2_path)
+
 import time
+
 
 
 def BeginProgram():
