@@ -5,6 +5,25 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../scripts')))
 
 import scan
+import crawler
+import cors_detect
+import csrf_detector
+import email-card_detect
+import file_upload
+import http-vulnerabilities
+import lfi_detect
+import OS_command_injection
+import path_trasversal
+import robot_detect
+import scan-open-ports
+import sqli-vuln_detect
+import ssl-vuln_detect
+import ssrf_detect
+import SSTI_detect
+import weak-auth_detect
+import WebSocket
+import whois
+import xxe_detect
 
 import time
 
@@ -131,20 +150,95 @@ def NewScan():
     print("19 - XXE")
     print("20 - CORS")
     print("21 - ALL")
-    print("22 - Return")
+    print("22 - Accueil")
     print("23 - QUIT")
     print("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**")
     print("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**\n\n")
 
     print("Scan ongoing ..")
     
-    print("Scan finished. End of the program..")
-    EndProgram()
+    while True:
+        if input_choice == 1:
+            crawler()
+            break
+        elif input_choice == 2:
+            print("\nExiting the program...\n\n")
+            EndProgram()
+            break
+        elif input_choice == 3:
+            print("\nExiting the program...\n\n")
+            EndProgram()
+            break
+        elif input_choice == 4:
+            print("\nExiting the program...\n\n")
+            EndProgram()
+            break
+        elif input_choice == 5:
+            print("\nExiting the program...\n\n")
+            EndProgram()
+            break
+        elif input_choice == 6:
+            Help()
+            break
+        elif input_choice == 7:
+            Help()
+            break
+        elif input_choice == 8:
+            Help()
+            break
+        elif input_choice == 9:
+            Help()
+            break
+        elif input_choice == 10:
+            Help()
+            break
+        elif input_choice == 11:
+            Help()
+            break
+        elif input_choice == 12:
+            Help()
+            break
+        elif input_choice == 13:
+            Help()
+            break
+        elif input_choice == 14:
+            Help()
+            break
+        elif input_choice == 15:
+            Help()
+            break
+        elif input_choice == 16:
+            Help()
+            break
+        elif input_choice == 17:
+            Help()
+            break
+        elif input_choice == 18:
+            Help()
+            break
+        elif input_choice == 19:
+            Help()
+            break
+        elif input_choice == 20:
+            Help()
+            break
+        elif input_choice == 21:
+            Help()
+            break
+        elif input_choice == 22:
+            Help()
+            break
+        elif input_choice == 23:
+            EndProgram()
+            break
+        else:
+            input_choice = int(input("Key invalid. Choose another number: "))
+
+
 
 def ListScan():
     print("List Previous Scan")
     EndProgram()
-
 
 def scan():
     scan.main()
@@ -153,7 +247,7 @@ def scan():
 def cors_detect():
     pass
 
-def crawlerFile():
+def crawler():
     pass
 
 def csrf_detector():
