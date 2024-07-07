@@ -1,6 +1,16 @@
 import requests
 
 def check_uncommon_http_methods(url):
+    """
+    Checks if the given URL supports uncommon HTTP methods.
+
+    Args:
+        url (str): The URL to test for uncommon HTTP methods.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if any vulnerabilities were found,
+               and a list of strings with the results for each HTTP method tested.
+    """
     uncommon_methods = ['OPTIONS', 'TRACE', 'CONNECT', 'PUT', 'DELETE']
     vulnerabilities_found = False
     results = []
@@ -23,8 +33,17 @@ def check_uncommon_http_methods(url):
 
     return vulnerabilities_found, results
 
-
 def check_redirections(url):
+    """
+    Checks if the given URL performs HTTP redirections.
+
+    Args:
+        url (str): The URL to check for redirections.
+
+    Returns:
+        dict: A dictionary with the result of the redirection check, including
+              whether a vulnerability was found and the reason for the result.
+    """
     try:
         response = requests.get(url, allow_redirects=False)
         if response.is_redirect:
@@ -40,6 +59,16 @@ def check_redirections(url):
         return {'vulnerability': True, 'error': str(e), 'reason': 'Exception occurred.'}
 
 def check_security_headers(url):
+    """
+    Checks if the given URL has the necessary security headers.
+
+    Args:
+        url (str): The URL to check for security headers.
+
+    Returns:
+        dict: A dictionary with the result of the security headers check, including
+              whether a vulnerability was found and the reason for the result.
+    """
     required_headers = [
         'Content-Security-Policy',
         'X-Content-Type-Options',
@@ -67,11 +96,20 @@ def check_security_headers(url):
         return {'vulnerability': True, 'error': str(e), 'reason': 'Exception occurred.'}
 
 def scan_url(url):
+    """
+    Scans the given URL for various security vulnerabilities.
+
+    Args:
+        url (str): The URL to scan.
+
+    Returns:
+        None
+    """
     print(f'Scanning URL: {url}')
     
     # Checking for uncommon HTTP methods
     print('\nChecking for uncommon HTTP methods...')
-    methods_results = check_uncommon_http_methods(url)
+    vulnerabilities_found, methods_results = check_uncommon_http_methods(url)
     for result in methods_results:
         print(result)
     
@@ -86,7 +124,6 @@ def scan_url(url):
     print(headers_result)
 
 def main():
-    # Example usage
     url = 'http://example.com'
     scan_url(url)
 
