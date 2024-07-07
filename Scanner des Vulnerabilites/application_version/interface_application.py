@@ -76,104 +76,124 @@ def download_report():
 def show_help():
     messagebox.showinfo("Help", "To use this scanner:\n1. Enter a URL.\n2. Click 'Scan'.\n3. Choose Red or Blue Team action.\n4. Download the report.")
 
-# Function to toggle between dark and light modes
-def toggle_mode():
-    global dark_mode
-    dark_mode = not dark_mode
-    if dark_mode:
-        root.config(background="#1e1e1e")
-        style.configure("TFrame", background="#1e1e1e")
-        style.configure("TLabel", background="#1e1e1e", foreground="#ffffff")
-        style.configure("TButton", background="#3a3a3a", foreground="#ffffff")
-        result_label.config(background="#1e1e1e", foreground="#ffffff")
-    else:
-        root.config(background="#f0f0f0")
-        style.configure("TFrame", background="#f0f0f0")
-        style.configure("TLabel", background="#f0f0f0", foreground="#000000")
-        style.configure("TButton", background="#dcdcdc", foreground="#000000")
-        result_label.config(background="#f0f0f0", foreground="#000000")
-
 # Initialize the main application window
 root = tk.Tk()
-root.title("Vulnerability Scanner")
+root.title("ThreatXplore")
 root.geometry("1080x720")
 root.minsize(480, 360)
-root.config(background="#1e1e1e")
-
-dark_mode = True
+root.config(background="#ADD8E6")
 
 # Configure styles
 style = ttk.Style()
-style.configure("TFrame", background="#1e1e1e")
-style.configure("TLabel", background="#1e1e1e", foreground="#ffffff", font=("Arial", 15))
-style.configure("TButton", background="#3a3a3a", foreground="#ffffff", font=("Arial", 15), padding=10)
-style.map("TButton", background=[("active", "#565656")])
+style.configure("TFrame", background="#ADD8E6")
+style.configure("TLabel", background="#ADD8E6", foreground="#000000", font=("Arial", 15))
+style.configure("TButton", font=("Arial", 15), padding=10)
+style.map("TButton", background=[("active", "#c0c0c0")])
 
-# Add menu bar with Help and Dark Mode toggle
+# Add menu bar with Help
 menu_bar = tk.Menu(root)
 help_menu = tk.Menu(menu_bar, tearoff=0)
 help_menu.add_command(label="Help", command=show_help)
 menu_bar.add_cascade(label="Help", menu=help_menu)
-menu_bar.add_command(label="Toggle Dark Mode", command=toggle_mode)
 root.config(menu=menu_bar)
 
+# Create a canvas for scrolling
+canvas = tk.Canvas(root, background="#ADD8E6")
+canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+# Add a scrollbar to the canvas
+scrollbar = ttk.Scrollbar(root, orient=tk.VERTICAL, command=canvas.yview)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+canvas.configure(yscrollcommand=scrollbar.set)
+
+# Create a frame to contain the widgets
+main_frame = tk.Frame(canvas, background="#ADD8E6")
+
+# Add the main frame to the canvas
+canvas_window = canvas.create_window((0, 0), window=main_frame, anchor="nw")
+
 # Create and place frames for better layout management
-header_frame = ttk.Frame(root)
+header_frame = tk.Frame(main_frame, background="#ADD8E6")
 header_frame.pack(pady=20)
 
-input_frame = ttk.Frame(root)
+input_frame = tk.Frame(main_frame, background="#ADD8E6")
 input_frame.pack(pady=20)
 
-action_frame = ttk.Frame(root)
-action_frame.pack(pady=20)
-
-result_frame = ttk.Frame(root)
+result_frame = tk.Frame(main_frame, background="#ADD8E6")
 result_frame.pack(pady=20)
+
+action_frame = tk.Frame(main_frame, background="#ADD8E6")
+action_frame.pack(pady=20)
 
 # Load and display logo
 logo = Image.open("logo.png")  # Replace with your logo file path
 logo = logo.resize((100, 100), Image.LANCZOS)
 logo = ImageTk.PhotoImage(logo)
-logo_label = ttk.Label(header_frame, image=logo, background="#1e1e1e")
-logo_label.pack(side=tk.LEFT, padx=20)
+logo_label = ttk.Label(header_frame, image=logo, background="#ADD8E6")
+logo_label.pack()
 
 # Title label
-title_label = ttk.Label(header_frame, text="Vulnerability Scanner", font=("Arial", 35, "bold"))
-title_label.pack(side=tk.LEFT, padx=20)
+title_label = ttk.Label(header_frame, text="ThreatXplore", font=("Arial", 35, "bold"), background="#ADD8E6")
+title_label.pack()
 
 # URL entry
-entry_label = ttk.Label(input_frame, text="Enter URL:")
-entry_label.grid(row=0, column=0, padx=10, pady=10, sticky=tk.E)
+entry_label = ttk.Label(input_frame, text="Enter URL:", background="#ADD8E6")
+entry_label.grid(row=0, column=0, padx=10, pady=10, sticky="e")
 entry = ttk.Entry(input_frame, font=("Arial", 15), width=50)
-entry.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
+entry.grid(row=0, column=1, padx=10, pady=10)
 
 # Tooltips for URL entry
-url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#1e1e1e", foreground="#888")
-url_tooltip.grid(row=1, column=1, pady=5)
+url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#ADD8E6", foreground="#888")
+url_tooltip.grid(row=1, column=1, pady=5, sticky="w")
 
 # Scan button
 scan_button = ttk.Button(input_frame, text="Scan", command=start_scan)
 scan_button.grid(row=0, column=2, padx=10, pady=10)
 
+# Progress bar
+progress = ttk.Progressbar(input_frame, orient="horizontal", mode="indeterminate", length=300)
+progress.grid(row=2, column=0, columnspan=3, pady=20)
+
+# Findings label
+findings_label = ttk.Label(result_frame, text="Findings", font=("Arial", 20), background="#ADD8E6")
+findings_label.pack(pady=10)
+
 # Result label
 result_text = tk.StringVar()
-result_label = ttk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="#1e1e1e")
-result_label.pack()
-
-# Progress bar
-progress = ttk.Progressbar(result_frame, orient="horizontal", mode="indeterminate", length=300)
-progress.pack(pady=20)
+result_label = tk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="white", width=50, height=10, relief="sunken", anchor="nw")
+result_label.pack(pady=10)
 
 # Red Team button
-red_team_button = ttk.Button(action_frame, text="Red Team Action", command=red_team_action, state=tk.DISABLED)
-red_team_button.grid(row=0, column=0, padx=20, pady=10)
+red_team_button = tk.Button(result_frame, text="Red Team Action", command=red_team_action, state=tk.DISABLED, bg="red", fg="white", font=("Arial", 15), padx=10, pady=10)
+red_team_button.pack(side=tk.LEFT, padx=20, pady=10)
 
 # Blue Team button
-blue_team_button = ttk.Button(action_frame, text="Blue Team Action", command=blue_team_action, state=tk.DISABLED)
-blue_team_button.grid(row=0, column=1, padx=20, pady=10)
+blue_team_button = tk.Button(result_frame, text="Blue Team Action", command=blue_team_action, state=tk.DISABLED, bg="blue", fg="white", font=("Arial", 15), padx=10, pady=10)
+blue_team_button.pack(side=tk.RIGHT, padx=20, pady=10)
 
 # Download report button
-download_button = ttk.Button(root, text="Download Report", command=download_report)
+download_button = ttk.Button(main_frame, text="Download Report", command=download_report)
 download_button.pack(pady=20)
+
+# Update the scroll region and center the main frame
+def on_configure(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+    canvas_width = event.width
+    canvas_height = event.height
+    main_frame_width = main_frame.winfo_reqwidth()
+    main_frame_height = main_frame.winfo_reqheight()
+
+    # Center the main_frame horizontally and vertically
+    x_offset = max((canvas_width - main_frame_width) // 2, 0)
+    y_offset = max((canvas_height - main_frame_height) // 2, 0)
+    canvas.coords(canvas_window, x_offset, y_offset)
+
+canvas.bind("<Configure>", on_configure)
+
+# Bind the mouse wheel to scroll
+def on_mouse_wheel(event):
+    canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+
+canvas.bind_all("<MouseWheel>", on_mouse_wheel)
 
 root.mainloop()
