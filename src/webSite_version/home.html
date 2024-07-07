@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThreatXplore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <section class="header">
+        <nav>
+            <a href="home.html" class="logo">ThreatXplore<span>.</span></a>
+            <div class="nav-links" id="navLinks">
+                <i class="fa fa-times" onclick="hideMenu()"></i>
+                <ul>
+                    <li><a href="home.html">HOME</a></li>
+                    <li><a href="learnMore.html">LEARN MORE</a></li>
+                    <li><a href="contactUs.html">CONTACT US</a></li>
+                    <li><a href="scanner.html">SCANNER</a></li>
+                    <li><a href="download.html">DOWNLOAD</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" onclick="showMenu()"></i>
+        </nav>
+
+        <div class="text-box">
+            <h1>For Safer E-Life</h1>
+            <p>Less Vulnerability. More Security</p>
+            <a href="#apropos" class="hero-btn">Visit Us To Now More</a>
+        </div>
+    </section>
+
+
+    <!--ABOUT US-->
+    <section class="apropos" id="apropos">
+        <h1>ABOUT US</h1>
+        <p>Welcome to our website <span class="oblique">ThreatXplore</span>. </p>
+
+        <div class="row">
+            <div class="apropos_items"> <!--course-col-->
+                <h3>Who Are We ?</h3>
+                <p>We are 3rd year students in Cybersecurity at ESGI (Ecole Supérieure de Génie Informatique) localised in Paris, 12rd arrondissment. This website has been created 
+                    as an annual project.
+                </p>
+            </div>
+            <div class="apropos_items">
+                <h3>Purpose of this website</h3>
+                <p>This website is web vulnerability scanner. Its purpose is to offer an open source solution to 
+                    detect the vulnerabilities present in a website and give solutions to secure it in case of risk. </p>
+            </div>
+            <div class="apropos_items">
+                <h3>Get Started</h3>
+                <p>
+                    <p>To directly begin to scan your website, you can navigate to the <span class="oblique">SCANNER</span> section or directly click on the link below.
+                    <button type="submit" class="hero-btn red-btn" onclick="location.href='scanner.html';">START</button></p>
+                    <p>To learn more about the scanner, you can go to the <span class="oblique">LEARN MORE</span> section or click in the 
+                    link below
+                    <button type="submit" class="hero-btn red-btn" onclick="location.href='learnMore.html';">LEARN</button></p>
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!--Call To Action -> Contact Us-->
+    <section class="cta">
+        <h1>Want To Know More ?</h1>
+        <a href="contactUs.html" class="hero-btn" href="#contactUs">CONTACT US</a>
+    </section>
+
+        
+    <!--FOOTER-->
+    <section class="footer">
+        <h5>About Us</h5>
+        <div class="icons">
+            <i class="fa fa-github"></i>
+        </div>
+        <p>Made with <i class="fa fa-heart-o"></i> by Daniela CERAKU & Salla DIOP</p>
+    </section>
+
+    
+    <script src="script.js"></script>
+</body>
+</html>

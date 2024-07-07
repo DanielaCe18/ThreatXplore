@@ -1,0 +1,21 @@
+In order to test each vulnerability, you can install the bWAPP labs to you machine or use the portswigger labs :
+
+SQLi : http://testphp.vulnweb.com/artists.php?artist=1
+XSS : https://xss-game.appspot.com/level1/frame
+XXE  : https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files
+OS command injection : https://portswigger.net/web-security/os-command-injection/lab-simple
+CORS : https://portswigger.net/web-security/cors/lab-basic-origin-reflection-attack
+SSTI : https://portswigger.net/web-security/server-side-template-injection/exploiting/lab-server-side-template-injection-basic
+Credit Card & Email disclosure : Any website of your choice
+CSRF : https://portswigger.net/web-security/csrf/lab-no-defenses (remove / at the end of the url)
+SSRF : https://portswigger.net/web-security/ssrf/lab-basic-ssrf-against-localhost (add /product/stock at the of the url)
+Robots.txt : http://localhost/bWAPP
+LFI : http://localhost/bWAPP/rlfi.php
+Unrestricted file upload : http://localhost/bWAPP
+Path Traversal : https://portswigger.net/web-security/file-path-traversal/lab-simple (add /image at the end of the url)
+Weak authentication Vulnerabilities : http://localhost/bWAPP/ba_weak_pwd.php
+Websocket manipulation : https://portswigger.net/web-security/websockets/lab-manipulating-messages-to-exploit-vulnerabilities (add /chat at the end of the url)
+crawler : any website of your choice (https://vulnerable-website.com/)
+HTTP related vulnerabilites : any website of your choice
+SSL&certificate related vulnerabilites : any website of your choice
+Open ports : any website of your choice
