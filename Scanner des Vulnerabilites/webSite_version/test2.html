@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability List</title>
+    <style>
+        /* CSS for the vulnerability list and content display */
+        .vulnerability-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .vulnerability-list li {
+            padding: 10px;
+            background-color: #f0f0f0;
+            margin: 5px 0;
+            position: relative;
+        }
+
+        .vulnerability-content {
+            display: none;
+            position: absolute;
+            left: 150px;
+            top: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 300px;
+            z-index: 1;
+        }
+
+        .vulnerability-list li:hover .vulnerability-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <section class="SCANNER">
+        <h1>SCANNER</h1>
+        <!-- Your existing scanner HTML -->
+        <div class="content_scanner">
+            <!-- List of vulnerabilities -->
+            <ul class="vulnerability-list">
+                <li>SQL Injection (SQLi)
+                    <div class="vulnerability-content">
+                        Explanation and details about SQL Injection vulnerability.
+                    </div>
+                </li>
+                <li>Cross-Site Scripting (XSS)
+                    <div class="vulnerability-content">
+                        Explanation and details about XSS vulnerability.
+                    </div>
+                </li>
+                <li>Path Traversal
+                    <div class="vulnerability-content">
+                        Explanation and details about Path Traversal vulnerability.
+                    </div>
+                </li>
+                <!-- Add more vulnerabilities as needed -->
+            </ul>
+        </div>
+    </section>
+</body>
+</html>

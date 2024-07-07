@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerability List</title>
+    <style>
+        /* CSS for the button and list */
+        .vulnerability-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .vulnerability-list {
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            border: 1px solid #ccc;
+            width: 200px;
+            background-color: #fff;
+        }
+
+        .vulnerability-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .vulnerability-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <section class="SCANNER">
+        <h1>SCANNER</h1>
+        <!-- Your existing scanner HTML -->
+        <div class="content_scanner">
+            <!-- Button to display vulnerabilities -->
+            <button class="vulnerability-button" onclick="toggleVulnerabilityList()">List Vulnerabilities</button>
+            <!-- Hidden list of vulnerabilities -->
+            <ul class="vulnerability-list" id="vulnerabilityList">
+                <li>ALL</li>
+                <li>WHOIS</li>
+                <li>SQLi</li>
+                <li>XSS</li>
+                <li>OS Command Injection</li>
+                <li>CORS</li>
+                <li>SSTI</li>
+                <li>Email</li>
+                <li>Credit Card</li>
+                <li>XXE</li>
+                <li>SSRF</li>
+                <li>CSRF</li>
+                <li>HTTP Methods</li>
+                <li>HTTP Redirections</li>
+                <li>HTTP Headers</li>
+                <li>Rebots.txt Available</li>
+                <li>Local File Inclusion</li>
+                <li>Unrestricted File Upload</li>
+                <li>Path Trasversal</li>
+                <li>Common Passwords</li>
+                <li>Brut Force</li>
+                <li>Account Lockout</li>
+                <li>Scan Open Ports</li>
+                <li>Crawl</li>
+                <li>WebSocket Manipulation</li>
+                <li>General Information Scan</li>
+                <li>Certificate Issues</li>
+                <li>SSL/TLS Vulnerabilities</li>
+            </ul>
+        </div>
+    </section>
+
+    <script>
+        // JavaScript to toggle the display of the vulnerability list
+        function toggleVulnerabilityList() {
+            var list = document.getElementById('vulnerabilityList');
+            if (list.style.display === 'none' || list.style.display === '') {
+                list.style.display = 'block';
+            } else {
+                list.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

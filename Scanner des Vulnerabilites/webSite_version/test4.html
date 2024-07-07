@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThreatXplore</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Vulnerability Scanner</title>
 </head>
 <body>
     <section class="sub-header">
         <nav>
-            <a href="home.html" class="logo">ThreatXplore<span>.</span></a>
+            <a href="home.html"><img src="images/logo-removebg-preview.png" alt=""></a>
             <div class="nav-links" id="navLinks">
                 <i class="fa fa-times" onclick="hideMenu()"></i>
                 <ul>
@@ -31,18 +26,13 @@
         <h1>SCANNER</h1>
     </section>
 
-
-    <section class="aboutus">
-        <h1>SCANNER</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia maiores consectetur similique in nemo inventore id commodi, quasi laudantium repudiandae quis error. Quas vitae necessitatibus quae quod voluptates, veritatis dolorum!
-        </p>
-    </section>
-
-    
     <!--SCANNER-->
-    <section class="hero-section">
-            
-            <div class="content">
+    <section class="SCANNER">
+        <h1>SCANNER</h1>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
+
+        <div class="row">
+            <div class="content_scanner">
                 <h1>Scan Your Website for Vulnerabilities</h1>
                 <p>Enter a URL to scan for potential security vulnerabilities.</p>
 
@@ -53,8 +43,8 @@
 
                     <div class="dropdown" id="dropdown">
                         <button type="button" id="dropdownButton" onclick="toggleDropdown()">Select scan types <span class="arrow">></span></button>
-                        <div class="scan-type-selection">
-                            <label><input type="checkbox" name="select-" value="select-all" id="select-all"> Select All</label>
+                        <div class="dropdown-content">
+                            <label><input type="checkbox" id="select-all"> Select All</label>
                             <label><input type="checkbox" name="scan-type" value="whois"> WHOIS</label>
                             <label><input type="checkbox" name="scan-type" value="sqli"> SQLi</label>
                             <label><input type="checkbox" name="scan-type" value="xss"> XSS</label>
@@ -96,22 +86,16 @@
                   </div>
                   <div id="result"></div>
             </div>
-
-            
-            
-
-        
+        </div>
     </section>
-
 
     <section id="findings-section" class="findings-section hidden">
         <div class="findings-content">
           <h2>Findings</h2>
           <div id="findings-result"></div>
         </div>
-      </section>
+    </section>
 
-        
     <!--FOOTER-->
     <section class="footer">
         <h5>About Us</h5>
@@ -122,7 +106,6 @@
         <p>Made with <i class="fa fa-heart-o"></i> by Daniela CERAKU & Salla DIOP</p>
     </section>
 
-    
-    <script src="script2.js"></script>
+    <script src="script2.js" defer></script>
 </body>
 </html>
