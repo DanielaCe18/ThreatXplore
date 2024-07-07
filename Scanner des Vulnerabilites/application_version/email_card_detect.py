@@ -20,6 +20,8 @@ def find_credit_cards(url):
         'DISCOVER': r"6(?:011|5[0-9]{2})[0-9]{12}"
     }
 
+    results = []
+
     try:
         response = requests.get(url, verify=True)  # Default behavior
         response.raise_for_status()  # Check for request errors
@@ -30,17 +32,21 @@ def find_credit_cards(url):
             matches = re.findall(pattern, content)
             if matches:
                 for match in matches:
-                    print(f"[+] Website has a {card_type} card: {match}")
+                    results.append(f"[+] Website has a {card_type} card: {match}")
             else:
-                print(f"[-] Website doesn't have a {card_type} card.")
+                results.append(f"[-] Website doesn't have a {card_type} card.")
     except requests.RequestException as e:
-        print(f"Error accessing {url}: {e}")
+        results.append(f"Error accessing {url}: {e}")
+
+    return results
 
 def main():
     # Example usage
     url = "https://vulnerable-website.com/catalog/cart"
     find_emails(url)
-    find_credit_cards(url)
+    results = find_credit_cards(url)
+    for result in results:
+        print(result)
 
 if __name__ == "__main__":
     main()
