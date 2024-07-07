@@ -14,4 +14,15 @@ flask-cors
 importlib-metadata
 aiohttp
 tk
+re
+logging
+importlib
+json
+ssl
+socket
+datetime
+subprocess
+concurrent.futures
+sys
+urllib
 # Note: Remember to install 'nmap' separately. On Linux: sudo apt-get install nmap, on macOS: brew install nmap, on Windows: download from https://nmap.org/download.html
