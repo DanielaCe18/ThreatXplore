@@ -1,4 +1,3 @@
-```markdown
 # :shield: ThreatXplore - Web Vulnerability Scanner :snake:
 
 ThreatXplore is a web vulnerability scanner written in Python.
