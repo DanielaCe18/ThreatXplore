@@ -31,30 +31,25 @@
         <h1>SCANNER</h1>
     </section>
 
-
     <section class="aboutus">
         <h1>SCANNER</h1>
         <p>Test your web applications against the risks of almost 30 vulnerability.
         </p>
     </section>
 
-    
     <!--SCANNER-->
     <section class="hero-section">
-            
-            <div class="content">
-                <h1>Scan Your Website for Vulnerabilities</h1>
-                <p>Enter a URL to scan for potential security vulnerabilities.</p>
+        <div class="content">
+            <h1>Scan Your Website for Vulnerabilities</h1>
+            <p>Enter a URL to scan for potential security vulnerabilities.</p>
 
-                <div class="scan_instruction">
-                    <form id="scan-form" class="scan-form">
-                        <input type="text" id="url-input" placeholder="Enter URL" required>
-                    </form>
-
+            <div class="scan_instruction">
+                <form id="scan-form" class="scan-form">
+                    <input type="text" id="url-input" placeholder="Enter URL" required>
                     <div class="dropdown" id="dropdown">
                         <button type="button" id="dropdownButton" onclick="toggleDropdown()">Select scan types <span class="arrow">></span></button>
                         <div class="scan-type-selection">
-                            <label><input type="checkbox" name="scan-type" value="all" id="all"> Select All</label>
+                            <label><input type="checkbox" name="select-" value="select-all" id="select-all"> Select All</label>
                             <label><input type="checkbox" name="scan-type" value="whois"> WHOIS</label>
                             <label><input type="checkbox" name="scan-type" value="sqli"> SQLi</label>
                             <label><input type="checkbox" name="scan-type" value="xss"> XSS</label>
@@ -85,33 +80,27 @@
                         </div>
                     </div>
                     <button type="submit" class="hero-btn red-btn">BEGIN SCAN</button>
-                </div>
-
-                <div id="progress-container" class="hidden">
-                    <div id="light-blue-box">Scanning URL: <span id="target-url"></span></div>
-                    <div id="progress-bar-container">
-                      <div id="progress-bar"></div>
-                    </div>
-                    <div id="progress-text">Scanning target...</div>
-                  </div>
-                  <div id="result"></div>
+                </form>
             </div>
 
-            
-            
-
-        
+            <div id="progress-container" class="hidden">
+                <div id="light-blue-box">Scanning URL: <span id="target-url"></span></div>
+                <div id="progress-bar-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <div id="progress-text">Scanning target...</div>
+            </div>
+            <div id="result"></div>
+        </div>
     </section>
-
 
     <section id="findings-section" class="findings-section hidden">
         <div class="findings-content">
-          <h2>Findings</h2>
-          <div id="findings-result"></div>
+            <h2>Findings</h2>
+            <div id="findings-result"></div>
         </div>
-      </section>
+    </section>
 
-        
     <!--FOOTER-->
     <section class="footer">
         <h5>About Us</h5>
@@ -121,8 +110,6 @@
         </div>
         <p>Made with <i class="fa fa-heart-o"></i> by Daniela CERAKU & Salla DIOP</p>
     </section>
-
-    
-    <script src="script2.js"></script>
+    <script src="scan.js"></script>
 </body>
 </html>

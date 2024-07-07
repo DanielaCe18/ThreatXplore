@@ -210,20 +210,12 @@ document.getElementById('scan-form').addEventListener('submit', async function(e
 
     findingsSection.classList.remove('hidden');
 
-    // Clear previous download button
-    const existingButton = findingsDiv.querySelector('.downloadButton');
-    if (existingButton) {
-      existingButton.remove();
-    }
-
     // Add button to download the report
-    console.log('Creating download button');
     const downloadButton = document.createElement('button');
     downloadButton.textContent = 'Download Report';
     downloadButton.classList.add('downloadButton'); // Apply the class here
     downloadButton.addEventListener('click', () => downloadReport(reportData));
     findingsDiv.appendChild(downloadButton);
-    console.log('Download button appended');
   } catch (error) {
     clearInterval(interval);
     updateProgressBar(100);
