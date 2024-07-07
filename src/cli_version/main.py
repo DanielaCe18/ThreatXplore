@@ -35,7 +35,9 @@ import ssl_vuln_detect
 
 import ssrf_detect
 import SSTI_detect
-import weak-auth_detect
+
+weak_auth_detect = importlib.import_module("weak-auth_detect")
+import weak_auth_detect
 import WebSocket
 import whois
 import xxe_detect
