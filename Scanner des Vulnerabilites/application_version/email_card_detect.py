@@ -2,6 +2,15 @@ import requests
 import re
 
 def find_emails(url):
+    """
+    Finds and prints email addresses from the content of the given URL.
+
+    Args:
+        url (str): The URL to fetch and search for email addresses.
+
+    Returns:
+        None
+    """
     try:
         response = requests.get(url, verify=True)  # Default behavior
         response.raise_for_status()  # Check for request errors
@@ -13,6 +22,15 @@ def find_emails(url):
         print(f"Error accessing {url}: {e}")
 
 def find_credit_cards(url):
+    """
+    Finds and returns credit card numbers from the content of the given URL.
+
+    Args:
+        url (str): The URL to fetch and search for credit card numbers.
+
+    Returns:
+        list: A list of strings containing messages about found or not found credit card numbers.
+    """
     credit_card_patterns = {
         'MASTERCARD': r"5[1-5][0-9]{14}",
         'VISA': r"4[0-9]{12}(?:[0-9]{3})?",
@@ -41,7 +59,15 @@ def find_credit_cards(url):
     return results
 
 def main():
-    # Example usage
+    """
+    Main function to demonstrate the usage of find_emails and find_credit_cards functions.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     url = "https://vulnerable-website.com/catalog/cart"
     find_emails(url)
     results = find_credit_cards(url)
