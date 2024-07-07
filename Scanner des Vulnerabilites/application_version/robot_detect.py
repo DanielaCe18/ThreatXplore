@@ -1,6 +1,16 @@
 import requests
 
 def check_robots_txt(url):
+    """
+    Checks for the presence and contents of the robots.txt file at the given URL.
+
+    Args:
+        url (str): The base URL of the website to check.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if the robots.txt file was found,
+               and the contents of the robots.txt file or an error message.
+    """
     # Ensure the URL ends with a slash
     if not url.endswith('/'):
         url += '/'
