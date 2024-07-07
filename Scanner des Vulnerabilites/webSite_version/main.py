@@ -29,9 +29,9 @@ CORS(app)  # Enable CORS for all routes
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'scan.html')
+    return send_from_directory('.', 'scanner.html')
 
-@app.route('/scan', methods=['POST'])
+@app.route('/scanner', methods=['POST'])
 def scan():
     data = request.get_json()
     url = data.get('url')

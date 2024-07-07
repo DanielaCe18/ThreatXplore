@@ -495,19 +495,35 @@ def download_report():
 def show_help():
     messagebox.showinfo("Help", "To use this scanner:\n1. Enter a URL.\n2. Select the type of scan.\n3. Click 'Scan'.\n4. Choose Red or Blue Team action.\n5. Download the report.")
 
+
 # Initialize the main application window
 root = tk.Tk()
 root.title("ThreatXplore")
 root.geometry("1080x720")
 root.minsize(480, 360)
-root.config(background="#ADD8E6")
+root.config(background="#FFFFFF")  # Change background to white
+
+# Load and set background image
+background_image = Image.open("background.png") 
+background_photo = ImageTk.PhotoImage(background_image)
+
+background_label = tk.Label(root, image=background_photo)
+background_label.place(x=0, y=0, anchor="nw", relwidth=1, relheight=1)
+
+def resize_background(event):
+    new_width = event.width
+    new_height = event.height
+    resized_image = background_image.resize((new_width, new_height), Image.LANCZOS)
+    background_photo_resized = ImageTk.PhotoImage(resized_image)
+    background_label.config(image=background_photo_resized)
+    background_label.image = background_photo_resized
+
+root.bind("<Configure>", resize_background)
 
 # Configure styles
 style = ttk.Style()
-style.configure("TFrame", background="#ADD8E6")
-style.configure("TLabel", background="#ADD8E6", foreground="#000000", font=("Arial", 15))
-style.configure("TButton", background="#dcdcdc", foreground="#000000", font=("Arial", 15), padding=10)
-style.map("TButton", background=[("active", "#c0c0c0")])
+style.configure("TFrame", background="#FFFFFF")  # Change background to white
+style.configure("TLabel", background="#FFFFFF", foreground="#000000", font=("Arial", 15))  # Change background to white
 
 # Add menu bar with Help
 menu_bar = tk.Menu(root)
@@ -533,26 +549,26 @@ result_frame.pack(pady=20)
 logo = Image.open("logo.png")  # Replace with your logo file path
 logo = logo.resize((100, 100), Image.LANCZOS)
 logo = ImageTk.PhotoImage(logo)
-logo_label = ttk.Label(header_frame, image=logo, background="#ADD8E6")
+logo_label = ttk.Label(header_frame, image=logo, background="#FFFFFF")  # Change background to white
 logo_label.pack(side=tk.LEFT, padx=20)
 
 # Title label
-title_label = ttk.Label(header_frame, text="ThreatXplore", font=("Arial", 35, "bold"))
+title_label = ttk.Label(header_frame, text="ThreatXplore", font=("Arial", 35, "bold"), background="#FFFFFF")  # Change background to white
 title_label.pack(side=tk.LEFT, padx=20)
 
 # URL entry
-entry_label = ttk.Label(input_frame, text="Enter URL:")
+entry_label = ttk.Label(input_frame, text="Enter URL:", background="#FFFFFF")  # Change background to white
 entry_label.grid(row=0, column=0, padx=10, pady=10, sticky=tk.E)
 entry = ttk.Entry(input_frame, font=("Arial", 15), width=50)
 entry.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
 
 # Tooltips for URL entry
-url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#ADD8E6", foreground="#888")
+url_tooltip = ttk.Label(input_frame, text="Enter the URL you want to scan", background="#FFFFFF", foreground="#888")  # Change background to white
 url_tooltip.grid(row=1, column=1, pady=5)
 
 # Scan options
 scan_type_var = tk.StringVar()
-scan_type_label = ttk.Label(input_frame, text="Select Scan Type:")
+scan_type_label = ttk.Label(input_frame, text="Select Scan Type:", background="#FFFFFF")  # Change background to white
 scan_type_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.E)
 scan_type_combobox = ttk.Combobox(input_frame, textvariable=scan_type_var, values=[
     "All", "OS Command Injection", "SQL Injection", "XSS", "SSTI", "WebSocket", "CORS", "CSRF", 
@@ -564,7 +580,7 @@ scan_type_combobox = ttk.Combobox(input_frame, textvariable=scan_type_var, value
 scan_type_combobox.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
 
 # Scan button
-scan_button = ttk.Button(input_frame, text="Scan", command=start_scan)
+scan_button = tk.Button(input_frame, text="Scan", command=start_scan, bg="#ff8c00", fg="#ffffff", font=("Arial", 15), relief="flat", padx=10, pady=5)
 scan_button.grid(row=0, column=2, padx=10, pady=10)
 
 # Progress bar
@@ -573,7 +589,7 @@ progress.grid(row=3, column=0, columnspan=3, pady=20)
 
 # Result label
 result_text = tk.StringVar()
-result_label = ttk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="#ADD8E6")
+result_label = ttk.Label(result_frame, textvariable=result_text, font=("Arial", 20), background="#FFFFFF")  # Change background to white
 result_label.pack()
 
 # White text box for displaying scan results
@@ -585,21 +601,15 @@ result_text_box.tag_configure("black", foreground="black")
 result_text_box.config(state=tk.DISABLED)
 
 # Red Team button
-red_team_button = ttk.Button(action_frame, text="Red Team Action", command=red_team_action, state=tk.DISABLED)
+red_team_button = tk.Button(action_frame, text="Red Team Action", command=red_team_action, state=tk.DISABLED, bg="#ff0000", fg="#ffffff", font=("Arial", 15), relief="flat", padx=10, pady=5)
 red_team_button.grid(row=0, column=0, padx=20, pady=10)
-red_team_button.config(style="Red.TButton")
 
 # Blue Team button
-blue_team_button = ttk.Button(action_frame, text="Blue Team Action", command=blue_team_action, state=tk.DISABLED)
+blue_team_button = tk.Button(action_frame, text="Blue Team Action", command=blue_team_action, state=tk.DISABLED, bg="#0000ff", fg="#ffffff", font=("Arial", 15), relief="flat", padx=10, pady=5)
 blue_team_button.grid(row=0, column=1, padx=20, pady=10)
-blue_team_button.config(style="Blue.TButton")
 
 # Download report button
-download_button = ttk.Button(root, text="Download Report", command=download_report)
+download_button = tk.Button(root, text="Download Report", command=download_report, bg="#ff8c00", fg="#ffffff", font=("Arial", 15), relief="flat", padx=10, pady=5)
 download_button.pack(pady=20)
-
-# Configure styles for Red and Blue buttons
-style.configure("Red.TButton", background="#ff0000", foreground="#ffffff")
-style.configure("Blue.TButton", background="#0000ff", foreground="#ffffff")
 
 root.mainloop()

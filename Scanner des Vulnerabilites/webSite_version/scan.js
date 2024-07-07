@@ -1,4 +1,4 @@
-document.getElementById('scan-form').addEventListener('submit', async function(event) {
+document.getElementById('.scan-form').addEventListener('submit', async function(event) {
   event.preventDefault();
   const url = document.getElementById('url-input').value;
   const scanTypes = Array.from(document.querySelectorAll('input[name="scan-type"]:checked')).map(cb => cb.value);
