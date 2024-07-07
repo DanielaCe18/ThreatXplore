@@ -1,4 +1,4 @@
-document.getElementById('.scan-form').addEventListener('submit', async function(event) {
+document.getElementById('scan-form').addEventListener('submit', async function(event) {
   event.preventDefault();
   const url = document.getElementById('url-input').value;
   const scanTypes = Array.from(document.querySelectorAll('input[name="scan-type"]:checked')).map(cb => cb.value);
@@ -36,7 +36,7 @@ document.getElementById('.scan-form').addEventListener('submit', async function(
   }, 300);
 
   try {
-    const response = await fetch('/scan', {
+    const response = await fetch('/scanner', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -210,12 +210,20 @@ document.getElementById('.scan-form').addEventListener('submit', async function(
 
     findingsSection.classList.remove('hidden');
 
+    // Clear previous download button
+    const existingButton = findingsDiv.querySelector('.downloadButton');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
     // Add button to download the report
+    console.log('Creating download button');
     const downloadButton = document.createElement('button');
     downloadButton.textContent = 'Download Report';
     downloadButton.classList.add('downloadButton'); // Apply the class here
     downloadButton.addEventListener('click', () => downloadReport(reportData));
     findingsDiv.appendChild(downloadButton);
+    console.log('Download button appended');
   } catch (error) {
     clearInterval(interval);
     updateProgressBar(100);
