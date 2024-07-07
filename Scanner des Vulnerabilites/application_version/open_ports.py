@@ -2,11 +2,30 @@ import nmap
 import json
 
 def scan_ports(target, options):
+    """
+    Scans the target for open ports and services using nmap with the given options.
+
+    Args:
+        target (str): The IP address or hostname of the target to scan.
+        options (str): The options to pass to nmap for the scan.
+
+    Returns:
+        nmap.PortScanner: An nmap scanner object containing the scan results.
+    """
     nm = nmap.PortScanner()
     nm.scan(target, arguments=options)
     return nm
 
 def get_scan_results(nm):
+    """
+    Extracts and formats the scan results from the nmap scanner object.
+
+    Args:
+        nm (nmap.PortScanner): The nmap scanner object containing the scan results.
+
+    Returns:
+        list: A list of dictionaries with formatted scan results for each host.
+    """
     results = []
     for host in nm.all_hosts():
         host_info = {
@@ -35,7 +54,6 @@ def get_scan_results(nm):
     return results
 
 def main():
-    # Example usage
     target = "127.0.0.1"
     options = "-sV"  # Example options for nmap scan
     
