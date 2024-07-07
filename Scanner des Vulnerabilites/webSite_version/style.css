@@ -1029,6 +1029,23 @@ label {
     display: none;
   }
   
+  .downloadButton {
+    background-color: orangered;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    margin-right: 10px;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+  }
+  
+  .downloadButton:hover {
+    background-color: darkorange;
+  }
+  
+  
   footer {
     background-color: #000;
     color: #ffffff;
