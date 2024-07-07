@@ -1,4 +1,3 @@
-```markdown
 # :shield: ThreatXplore - Web Vulnerability Scanner :snake:
 
 ThreatXplore is a web vulnerability scanner written in Python.
@@ -56,47 +55,39 @@ Clone this repository:
 
 ```sh
 git clone https://github.com/DanielaCe18/ThreatXplore.git
-```
 
-## Usage 
-
-### Without Docker:
-
+Usage
+Without Docker:
 Install requirements:
-```sh
+
+sh
+Copy code
 pip install -r requirements.txt
-```
-
 For the website:
-1. Navigate to the `src/website_version` folder.
-2. Run `python3 main.py`.
-3. Navigate to `http://127.0.0.1:5000` once the Flask server is running.
 
+Navigate to the src/website_version folder.
+Run python3 main.py.
+Navigate to http://127.0.0.1:5000 once the Flask server is running.
 For the application:
-1. Navigate to the `src/application_version` folder.
-2. Run `python3 app.py` and start scanning.
 
-### With Docker:
-
+Navigate to the src/application_version folder.
+Run python3 app.py and start scanning.
+With Docker:
 For the website:
-1. Locate to `Docker/`.
-2. Build the Docker image: `docker build -t website .`
-3. Run the Docker container: `docker run -p 5000:5000 website`
 
+Locate to Docker/.
+Build the Docker image: docker build -t website .
+Run the Docker container: docker run -p 5000:5000 website
 For the application:
-1. Locate to `Docker/`.
-2. Build the Docker image: `docker build -t app .`
-3. Run the Docker container: `docker run -it --rm app`
 
-## Authors
+Locate to Docker/.
+Build the Docker image: docker build -t app .
+Run the Docker container: docker run -it --rm app
+Authors
+Licensing
+ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on GitHub.
 
-## Licensing
-
-ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on [GitHub](https://github.com/DanielaCe18/ThreatXplore).
-
-## Disclaimer
-
+Disclaimer
 Usage of ThreatXplore for attacking a target without prior consent of its owner is illegal. It is the end user's responsibility to obey all applicable local laws.
 
 Developers and people involved in the ThreatXplore project assume no liability and are not responsible for any misuse or damage caused by this program.
-```
