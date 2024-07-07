@@ -1,6 +1,10 @@
-# Add repo2 to PYTHONPATH
-repo2_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../repo2'))
-sys.path.insert(0, repo2_path)
+# cli/test.py
+
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../scripts')))
+
+import scan
 
 import time
 
@@ -80,7 +84,6 @@ def MenuScan():
     print("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$")
     print("*$*$*$*$*$*$*$*$*$*$*$*$*$*$ SCAN*$*$*$*$*$*$*$*$*$*$*$*$*$*$")
     print("1 - New Scan")
-    print("2 - List Previous Scan")
     print("3 - Main Menu")
     print("4 - Quit")
     print("5 - Help")
@@ -94,13 +97,10 @@ def MenuScan():
             NewScan()
             break
         elif input_choice == 2:
-            ListScan()
-            break
-        elif input_choice == 3:
             print("\nExiting the program...\n\n")
             EndProgram()
             break
-        elif input_choice == 4:
+        elif input_choice == 3:
             Help()
             break
         else:
@@ -109,15 +109,35 @@ def MenuScan():
 def NewScan():
     print("\n\n**$**$**$**$**$**$**$**$**$**$**$**$**$**$**")
     print("**$**$**$**$**$** NEW SCAN **$**$**$**$**$**")
+    print("Choose the scan you want to realize:")
+    print("1 - Crawler")
+    print("2 - Csrf")
+    print("3 - Email card")
+    print("4 - File upload")
+    print("5 - Http vulnerability")
+    print("6 - LFI")
+    print("7 - OS command injection")
+    print("8 - Path trasversal")
+    print("9 - Robot.txt")
+    print("10 - Scan open ports")
+    print("11 - Scan")
+    print("12 - SQLI XSS")
+    print("13 - SSRF")
+    print("14 - SSL")
+    print("15 - SSTI")
+    print("16 - Weak Authentication")
+    print("17 - WebSocket")
+    print("18 - WHOIS")
+    print("19 - XXE")
+    print("20 - CORS")
+    print("21 - ALL")
+    print("22 - Return")
+    print("23 - QUIT")
+    print("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**")
     print("**$**$**$**$**$**$**$**$**$**$**$**$**$**$**\n\n")
-    
-    input_address = input("Enter the address of the website: ")
-
-    while not input_address:
-        input_address = input("Input invalid. Write a correct address: ")
 
     print("Scan ongoing ..")
-    time.sleep(15)
+    
     print("Scan finished. End of the program..")
     EndProgram()
 
@@ -125,6 +145,67 @@ def ListScan():
     print("List Previous Scan")
     EndProgram()
 
+
+def scan():
+    scan.main()
+    NewScan()
+
+def cors_detect():
+    pass
+
+def crawlerFile():
+    pass
+
+def csrf_detector():
+    pass
+
+def email_card_detect():
+    pass
+
+def file_upload():
+    pass
+
+def http_vulnerability():
+    pass
+
+def lfi_detect():
+    pass
+
+def OS_command_injection():
+    pass
+
+def path_trasversal():
+    pass
+
+def robot_detect():
+    pass
+
+def scan_open_ports():
+    pass
+
+def sqli_xss_detect():
+    pass
+
+def ssl_vuln_detect():
+    pass
+
+def SSTI_detect():
+    pass
+
+def weak_auth_detect():
+    pass
+
+def WebSocket():
+    pass
+
+def whois():
+    pass
+
+def xxe_detect():
+    pass
+
+def all():
+    pass
 
 
 if __name__ == "__main__":
