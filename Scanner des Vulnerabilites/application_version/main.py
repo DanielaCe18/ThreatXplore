@@ -111,6 +111,34 @@ vulnerability_descriptions = {
     )
 }
 
+# Prevention messages for each vulnerability
+prevention_messages = {
+    'OS Command Injection': "Use parameterized queries and avoid using shell commands directly in the code.",
+    'SQL Injection': "Use parameterized queries or prepared statements to prevent malicious SQL code execution.",
+    'XSS': "Validate and encode user inputs, and use Content Security Policy (CSP) to mitigate XSS risks.",
+    'Email Disclosure': "Avoid disclosing email addresses in webpage content and use obfuscation techniques.",
+    'Credit Card Disclosure': "Do not store or display credit card information directly in webpages.",
+    'SSTI': "Use safe template engines that do not allow arbitrary code execution.",
+    'WebSocket': "Validate and sanitize WebSocket messages, and use secure WebSocket protocols.",
+    'CORS': "Implement a restrictive CORS policy and validate the origin of incoming requests.",
+    'CSRF': "Use anti-CSRF tokens and ensure that state-changing operations require a valid token.",
+    'File Upload': "Validate file uploads, check file types, and store files in a secure location.",
+    'LFI': "Validate and sanitize all user inputs that interact with the file system.",
+    'Path Traversal': "Sanitize user inputs and avoid using user-supplied data in file paths.",
+    'Robots.txt': "Avoid listing sensitive paths in robots.txt and use proper access controls.",
+    'SSRF': "Validate and sanitize URLs, and restrict internal services from making external requests.",
+    'Common Passwords': "Enforce strong password policies and use password strength checks.",
+    'Brute Force': "Implement account lockout mechanisms after a certain number of failed login attempts.",
+    'Account Lockout': "Implement account lockout mechanisms to prevent brute force attacks.",
+    'XXE': "Disable external entity processing in XML parsers and use secure XML libraries.",
+    'Uncommon HTTP Methods': "Disable unnecessary HTTP methods and restrict access to sensitive methods.",
+    'HTTP Redirections': "Validate and sanitize URLs in redirection responses to prevent open redirects.",
+    'Security Headers': "Implement security headers like Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, etc.",
+    'Open Ports': "Close unnecessary ports and use a firewall to restrict access to open ports.",
+    'WHOIS': "Keep your domain information private and use WHOIS privacy services.",
+    'General Info': "Restrict the exposure of server and application information.",
+}
+
 # Function to validate URL
 def validate_url(url):
     regex = re.compile(
@@ -137,13 +165,12 @@ def start_scan():
 
     logging.info(f"Started scan for URL: {url} with scan: {selected_scan}")
     progress.start()
-    root.after(2000, lambda: scan_vulnerabilities(selected_scan))  # Simulate a scan delay
+    root.after(2000, lambda: scan_vulnerabilities(url, selected_scan))  # Pass URL to scan_vulnerabilities
 
 # Function to scan for vulnerabilities
-def scan_vulnerabilities(selected_scan):
+def scan_vulnerabilities(url, selected_scan):
     global scan_results  # Correct placement of global declaration
     progress.stop()
-    url = entry.get()
     results = []
 
     module_map = {
@@ -173,234 +200,242 @@ def scan_vulnerabilities(selected_scan):
         'Credit Card Disclosure': 'email_card_detect'
     }
 
-    try:
-        module = importlib.import_module(module_map[selected_scan])
-    except ImportError as e:
-        messagebox.showerror("Import Error", f"Failed to import module for {selected_scan}: {str(e)}")
-        return
-
-    if selected_scan == 'OS Command Injection':
-        vulnerabilities_found, description = module.scan_os_command_injection(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "OS Command Injection", description))
-        else:
-            results.append(("No vulnerabilities found.", "OS Command Injection", description))
-    
-    elif selected_scan == 'SQL Injection':
-        vulnerabilities_found, description = module.scan_sql(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "SQL Injection", description))
-        else:
-            results.append(("No vulnerabilities found.", "SQL Injection", description))
-    
-    elif selected_scan == 'XSS':
-        vulnerabilities_found, description = module.scan_xss(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "XSS", description))
-        else:
-            results.append(("No vulnerabilities found.", "XSS", description))
-
-    elif selected_scan == 'Email Disclosure':
-        emails = module.find_emails(url)
-        description = "\n".join(emails) if emails else "No email addresses found."
-        if emails:
-            results.append(("Vulnerabilities found!", "Email Disclosure", description))
-        else:
-            results.append(("No vulnerabilities found.", "Email Disclosure", description))
-
-    elif selected_scan == 'Credit Card Disclosure':
-        credit_cards = module.find_credit_cards(url)
-        description = "\n".join(credit_cards) if credit_cards else "No credit card information found."
-        if credit_cards:
-            results.append(("Vulnerabilities found!", "Credit Card Disclosure", description))
-        else:
-            results.append(("No vulnerabilities found.", "Credit Card Disclosure", description))
-
-    elif selected_scan == 'SSTI':
-        vulnerabilities_found, engine, payload = module.check_ssti(url, "message")  # Replace "message" with actual parameter
-        description = f"SSTI vulnerability detected with {engine} payload: {payload}" if vulnerabilities_found else "No SSTI vulnerabilities found."
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "SSTI", description))
-        else:
-            results.append(("No vulnerabilities found.", "SSTI", description))
-
-    elif selected_scan == 'WebSocket':
-        url = module.transform_url_to_ws(url)
-        vulnerabilities_found = asyncio.run(module.test_websocket(url))
-        if vulnerabilities_found:
-            description = '\n'.join(vulnerabilities_found)
-            results.append(("Vulnerabilities found!", "WebSocket", description))
-        else:
-            results.append(("No vulnerabilities found.", "WebSocket", "No WebSocket vulnerabilities detected."))
-
-    elif selected_scan == 'CORS':
-        exploit_server_url = "https://exploit-0a8d004004b6bc7486346adb017d0039.exploit-server.net"
-        base_url = entry.get()
-        login_url = f"{base_url}/login"  # Replace with actual login URL
-        target_url = f"{base_url}/accountDetails"  # Replace with actual target URL
-        evil_origin = "https://example.com"   # Replace with actual evil origin
-        username = "wiener"  # Replace with actual username
-        password = "peter"  # Replace with actual password
-        session = module.login_and_get_session(login_url, username, password)
-        if session:
-            vulnerabilities_found, cors_details = module.check_cors_vulnerability(session, target_url, evil_origin)
-            description = f"CORS vulnerability detected. Details: {cors_details}" if vulnerabilities_found else "No CORS vulnerabilities found."
-            results.append(("Vulnerabilities found!", "CORS", description)) if vulnerabilities_found else results.append(("No vulnerabilities found.", "CORS", description))
-        else:
-            results.append(("Failed to login.", "CORS", "Could not log in to test for CORS vulnerability."))
-
-    elif selected_scan == 'CSRF':
-        base_url = entry.get()
-        description = module.detect_csrf_vulnerability(base_url)
-    
-        if "likely vulnerable" in description:
-            results.append(("Vulnerabilities found!", "CSRF", description))
-        else:
-            results.append(("No vulnerabilities found.", "CSRF", description))
-
-    elif selected_scan == 'File Upload':
-        session = module.create_session()
-        username = "bee"  # Replace with actual username
-        password = "bug"  # Replace with actual password
-    
-        # Login and then check the specific file upload URL
-        module.login(session, url, username, password)
-        file_upload_url = f"{url}/unrestricted_file_upload.php"  # Ensure this matches the URL you are checking
-    
-        vulnerabilities_found, description = module.file_upload_vulnerability(session, file_upload_url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "File Upload", description))
-        else:
-            results.append(("No vulnerabilities found.", "File Upload", description))
-    
-    elif selected_scan == 'LFI':
-        vulnerabilities_found, description = module.advanced_lfi_detection(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "LFI", description))
-        else:
-            results.append(("No vulnerabilities found.", "LFI", description))
-    
-    elif selected_scan == 'Path Traversal':
-        vulnerabilities_found, description = module.check_path_traversal(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Path Traversal", description))
-        else:
-            results.append(("No vulnerabilities found.", "Path Traversal", description))
-
-    elif selected_scan == 'Robots.txt':
-        vulnerabilities_found, description = module.check_robots_txt(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Robots.txt", description))
-        else:
-            results.append(("No vulnerabilities found.", "Robots.txt", description))
-
-    elif selected_scan == 'SSRF':
-        vulnerabilities_found, description = module.check_ssrf(url)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "SSRF", description))
-        else:
-            results.append(("No vulnerabilities found.", "SSRF", description))
-
-    elif selected_scan == 'Common Passwords':
-        username = "bee"  # Replace with actual username
-        password_file = 'common-password.txt'  # Replace with actual password file path
-        vulnerabilities_found, description = module.check_common_passwords(url, username, module.load_passwords(password_file))
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Common Passwords", description))
-        else:
-            results.append(("No vulnerabilities found.", "Common Passwords", description))
-
-    elif selected_scan == 'Brute Force':
-        username = "bee"  # Replace with actual username
-        password_file = 'common-password.txt'  # Replace with actual password file path
-        vulnerabilities_found, description = module.brute_force_attack(url, username, module.load_passwords(password_file))
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Brute Force", description))
-        else:
-            results.append(("No vulnerabilities found.", "Brute Force", description))
-
-    elif selected_scan == 'Account Lockout':
-        username = "bee"  # Replace with actual username
-        vulnerabilities_found, description = module.check_account_lockout(url, username)
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Account Lockout", description))
-        else:
-            results.append(("No vulnerabilities found.", "Account Lockout", description))
-
-    elif selected_scan == 'XXE':
-        vulnerabilities_found, description = module.scan_xxe(url)
-        print(f"XXE - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "XXE", description))
-        else:
-            results.append(("No vulnerabilities found.", "XXE", description))
-
-    elif selected_scan == 'Uncommon HTTP Methods':
-        vulnerabilities_found, method_descriptions = module.check_uncommon_http_methods(url)
-        description = "\n".join(method_descriptions)
-        print(f"Uncommon HTTP Methods - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
-        if vulnerabilities_found:
-            results.append(("Vulnerabilities found!", "Uncommon HTTP Methods", description))
-        else:
-            results.append(("No vulnerabilities found.", "Uncommon HTTP Methods", description))
-    
-    elif selected_scan == 'HTTP Redirections':
-        redirection_result = module.check_redirections(url)
-        description = redirection_result['reason']
-        if redirection_result['vulnerability']:
-            results.append(("Vulnerabilities found!", "HTTP Redirections", description))
-        else:
-            results.append(("No vulnerabilities found.", "HTTP Redirections", description))
-    
-    elif selected_scan == 'Security Headers':
-        headers_result = module.check_security_headers(url)
-        description = headers_result['reason']
-        if headers_result['vulnerability']:
-            results.append(("Vulnerabilities found!", "Security Headers", description))
-        else:
-            results.append(("No vulnerabilities found.", "Security Headers", description))
-    
-    elif selected_scan == 'Open Ports':
-        options = "-sS -sV -O -p- --script=vuln"
-        nm = module.scan_ports(url, options)
-        scan_results = module.get_scan_results(nm)
-        if scan_results:
-            description = json.dumps(scan_results, indent=4)
-            results.append(("Vulnerabilities found!", "Open Ports", description))
-        else:
-            results.append(("No vulnerabilities found.", "Open Ports", "No open ports detected."))
-
-    elif selected_scan == 'WHOIS':
+    def scan_single_vulnerability(scan_name, url):
         try:
-            w = module.fetch_whois_info(url)
-            whois_info = module.format_whois_info(w)
-            result_text_box.config(state=tk.NORMAL)
-            result_text_box.delete(1.0, tk.END)
-            result_text_box.insert(tk.END, whois_info)
-            result_text_box.config(state=tk.DISABLED)
-            return  # Exit the function as WHOIS doesn't need further processing
-        except Exception as e:
-            result_text_box.config(state=tk.NORMAL)
-            result_text_box.delete(1.0, tk.END)
-            result_text_box.insert(tk.END, f"Failed to fetch WHOIS info: {str(e)}")
-            result_text_box.config(state=tk.DISABLED)
+            module = importlib.import_module(module_map[scan_name])
+        except ImportError as e:
+            messagebox.showerror("Import Error", f"Failed to import module for {scan_name}: {str(e)}")
             return
 
-    elif selected_scan == 'General Info':
-        try:
-            general_info = module.scan_general_info(url)
-            result_text_box.config(state=tk.NORMAL)
-            result_text_box.delete(1.0, tk.END)
-            for key, info in general_info.items():
-                result_text_box.insert(tk.END, f"{key.capitalize()}: {info}\n", "black")
-            result_text_box.config(state=tk.DISABLED)
-            return  # Exit the function as General Info doesn't need further processing
-        except Exception as e:
-            result_text_box.config(state=tk.NORMAL)
-            result_text_box.delete(1.0, tk.END)
-            result_text_box.insert(tk.END, f"Failed to fetch General Info: {str(e)}")
-            result_text_box.config(state=tk.DISABLED)
-            return
+        if scan_name == 'OS Command Injection':
+            vulnerabilities_found, description = module.scan_os_command_injection(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "OS Command Injection", description))
+            else:
+                results.append(("No vulnerabilities found.", "OS Command Injection", description))
+        
+        elif scan_name == 'SQL Injection':
+            vulnerabilities_found, description = module.scan_sql(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "SQL Injection", description))
+            else:
+                results.append(("No vulnerabilities found.", "SQL Injection", description))
+        
+        elif scan_name == 'XSS':
+            vulnerabilities_found, description = module.scan_xss(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "XSS", description))
+            else:
+                results.append(("No vulnerabilities found.", "XSS", description))
+
+        elif scan_name == 'Email Disclosure':
+            emails = module.find_emails(url)
+            description = "\n".join(emails) if emails else "No email addresses found."
+            if emails:
+                results.append(("Vulnerabilities found!", "Email Disclosure", description))
+            else:
+                results.append(("No vulnerabilities found.", "Email Disclosure", description))
+
+        elif scan_name == 'Credit Card Disclosure':
+            credit_cards = module.find_credit_cards(url)
+            description = "\n".join(credit_cards) if credit_cards else "No credit card information found."
+            if credit_cards:
+                results.append(("Vulnerabilities found!", "Credit Card Disclosure", description))
+            else:
+                results.append(("No vulnerabilities found.", "Credit Card Disclosure", description))
+
+        elif scan_name == 'SSTI':
+            vulnerabilities_found, engine, payload = module.check_ssti(url, "message")  # Replace "message" with actual parameter
+            description = f"SSTI vulnerability detected with {engine} payload: {payload}" if vulnerabilities_found else "No SSTI vulnerabilities found."
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "SSTI", description))
+            else:
+                results.append(("No vulnerabilities found.", "SSTI", description))
+
+        elif scan_name == 'WebSocket':
+            url = module.transform_url_to_ws(url)
+            vulnerabilities_found = asyncio.run(module.test_websocket(url))
+            if vulnerabilities_found:
+                description = '\n'.join(vulnerabilities_found)
+                results.append(("Vulnerabilities found!", "WebSocket", description))
+            else:
+                results.append(("No vulnerabilities found.", "WebSocket", "No WebSocket vulnerabilities detected."))
+
+        elif scan_name == 'CORS':
+            exploit_server_url = "https://exploit-0a8d004004b6bc7486346adb017d0039.exploit-server.net"
+            base_url = entry.get()
+            login_url = f"{base_url}/login"  # Replace with actual login URL
+            target_url = f"{base_url}/accountDetails"  # Replace with actual target URL
+            evil_origin = "https://example.com"   # Replace with actual evil origin
+            username = "wiener"  # Replace with actual username
+            password = "peter"  # Replace with actual password
+            session = module.login_and_get_session(login_url, username, password)
+            if session:
+                vulnerabilities_found, cors_details = module.check_cors_vulnerability(session, target_url, evil_origin)
+                description = f"CORS vulnerability detected. Details: {cors_details}" if vulnerabilities_found else "No CORS vulnerabilities found."
+                results.append(("Vulnerabilities found!", "CORS", description)) if vulnerabilities_found else results.append(("No vulnerabilities found.", "CORS", description))
+            else:
+                results.append(("Failed to login.", "CORS", "Could not log in to test for CORS vulnerability."))
+
+        elif scan_name == 'CSRF':
+            base_url = entry.get()
+            description = module.detect_csrf_vulnerability(base_url)
+        
+            if "likely vulnerable" in description:
+                results.append(("Vulnerabilities found!", "CSRF", description))
+            else:
+                results.append(("No vulnerabilities found.", "CSRF", description))
+
+        elif scan_name == 'File Upload':
+            session = module.create_session()
+            username = "bee"  # Replace with actual username
+            password = "bug"  # Replace with actual password
+        
+            # Login and then check the specific file upload URL
+            module.login(session, url, username, password)
+            file_upload_url = f"{url}/unrestricted_file_upload.php"  # Ensure this matches the URL you are checking
+        
+            vulnerabilities_found, description = module.file_upload_vulnerability(session, file_upload_url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "File Upload", description))
+            else:
+                results.append(("No vulnerabilities found.", "File Upload", description))
+        
+        elif scan_name == 'LFI':
+            vulnerabilities_found, description = module.advanced_lfi_detection(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "LFI", description))
+            else:
+                results.append(("No vulnerabilities found.", "LFI", description))
+        
+        elif scan_name == 'Path Traversal':
+            vulnerabilities_found, description = module.check_path_traversal(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Path Traversal", description))
+            else:
+                results.append(("No vulnerabilities found.", "Path Traversal", description))
+
+        elif scan_name == 'Robots.txt':
+            vulnerabilities_found, description = module.check_robots_txt(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Robots.txt", description))
+            else:
+                results.append(("No vulnerabilities found.", "Robots.txt", description))
+
+        elif scan_name == 'SSRF':
+            vulnerabilities_found, description = module.check_ssrf(url)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "SSRF", description))
+            else:
+                results.append(("No vulnerabilities found.", "SSRF", description))
+
+        elif scan_name == 'Common Passwords':
+            username = "bee"  # Replace with actual username
+            password_file = 'common-password.txt'  # Replace with actual password file path
+            vulnerabilities_found, description = module.check_common_passwords(url, username, module.load_passwords(password_file))
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Common Passwords", description))
+            else:
+                results.append(("No vulnerabilities found.", "Common Passwords", description))
+
+        elif scan_name == 'Brute Force':
+            username = "bee"  # Replace with actual username
+            password_file = 'common-password.txt'  # Replace with actual password file path
+            vulnerabilities_found, description = module.brute_force_attack(url, username, module.load_passwords(password_file))
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Brute Force", description))
+            else:
+                results.append(("No vulnerabilities found.", "Brute Force", description))
+
+        elif scan_name == 'Account Lockout':
+            username = "bee"  # Replace with actual username
+            vulnerabilities_found, description = module.check_account_lockout(url, username)
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Account Lockout", description))
+            else:
+                results.append(("No vulnerabilities found.", "Account Lockout", description))
+
+        elif scan_name == 'XXE':
+            vulnerabilities_found, description = module.scan_xxe(url)
+            print(f"XXE - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "XXE", description))
+            else:
+                results.append(("No vulnerabilities found.", "XXE", description))
+
+        elif scan_name == 'Uncommon HTTP Methods':
+            vulnerabilities_found, method_descriptions = module.check_uncommon_http_methods(url)
+            description = "\n".join(method_descriptions)
+            print(f"Uncommon HTTP Methods - vulnerabilities_found: {vulnerabilities_found}, description: {description}")
+            if vulnerabilities_found:
+                results.append(("Vulnerabilities found!", "Uncommon HTTP Methods", description))
+            else:
+                results.append(("No vulnerabilities found.", "Uncommon HTTP Methods", description))
+        
+        elif scan_name == 'HTTP Redirections':
+            redirection_result = module.check_redirections(url)
+            description = redirection_result['reason']
+            if redirection_result['vulnerability']:
+                results.append(("Vulnerabilities found!", "HTTP Redirections", description))
+            else:
+                results.append(("No vulnerabilities found.", "HTTP Redirections", description))
+        
+        elif scan_name == 'Security Headers':
+            headers_result = module.check_security_headers(url)
+            description = headers_result['reason']
+            if headers_result['vulnerability']:
+                results.append(("Vulnerabilities found!", "Security Headers", description))
+            else:
+                results.append(("No vulnerabilities found.", "Security Headers", description))
+        
+        elif scan_name == 'Open Ports':
+            options = "-sS -sV -O -p- --script=vuln"
+            nm = module.scan_ports(url, options)
+            scan_results = module.get_scan_results(nm)
+            if scan_results:
+                description = json.dumps(scan_results, indent=4)
+                results.append(("Vulnerabilities found!", "Open Ports", description))
+            else:
+                results.append(("No vulnerabilities found.", "Open Ports", "No open ports detected."))
+
+        elif scan_name == 'WHOIS':
+            try:
+                w = module.fetch_whois_info(url)
+                whois_info = module.format_whois_info(w)
+                result_text_box.config(state=tk.NORMAL)
+                result_text_box.delete(1.0, tk.END)
+                result_text_box.insert(tk.END, whois_info)
+                result_text_box.config(state=tk.DISABLED)
+                return  # Exit the function as WHOIS doesn't need further processing
+            except Exception as e:
+                result_text_box.config(state=tk.NORMAL)
+                result_text_box.delete(1.0, tk.END)
+                result_text_box.insert(tk.END, f"Failed to fetch WHOIS info: {str(e)}")
+                result_text_box.config(state=tk.DISABLED)
+                return
+
+        elif scan_name == 'General Info':
+            try:
+                general_info = module.scan_general_info(url)
+                result_text_box.config(state=tk.NORMAL)
+                result_text_box.delete(1.0, tk.END)
+                for key, info in general_info.items():
+                    result_text_box.insert(tk.END, f"{key.capitalize()}: {info}\n", "black")
+                result_text_box.config(state=tk.DISABLED)
+                return  # Exit the function as General Info doesn't need further processing
+            except Exception as e:
+                result_text_box.config(state=tk.NORMAL)
+                result_text_box.delete(1.0, tk.END)
+                result_text_box.insert(tk.END, f"Failed to fetch General Info: {str(e)}")
+                result_text_box.config(state=tk.DISABLED)
+                return
+
+    # Scan all vulnerabilities if "All" is selected, otherwise scan the selected one
+    if selected_scan == 'All':
+        for scan in module_map.keys():
+            scan_single_vulnerability(scan, url)
+    else:
+        scan_single_vulnerability(selected_scan, url)
 
     # Display results in the white text box
     result_text_box.config(state=tk.NORMAL)
@@ -430,13 +465,17 @@ def red_team_action():
 # Function for Blue Team action
 def blue_team_action():
     logging.info("Blue Team action executed.")
-    prevention_message = (
-        "To protect against vulnerabilities:\n"
-        "1. Validate and sanitize all user inputs.\n"
-        "2. Use parameterized queries and prepared statements for SQL.\n"
-        "3. Encode output to prevent XSS.\n"
-        "4. Employ security libraries and frameworks."
-    )
+    
+    prevention_message = ""
+    selected_scan = scan_type_var.get()
+
+    if selected_scan == 'All':
+        prevention_message = "For all vulnerabilities:\n"
+        for name, message in prevention_messages.items():
+            prevention_message += f"{name}: {message}\n"
+    else:
+        prevention_message = prevention_messages.get(selected_scan, "No specific prevention message available.")
+
     messagebox.showinfo("Blue Team", prevention_message)
 
 # Function to download the report
@@ -516,7 +555,7 @@ scan_type_var = tk.StringVar()
 scan_type_label = ttk.Label(input_frame, text="Select Scan Type:")
 scan_type_label.grid(row=2, column=0, padx=10, pady=10, sticky=tk.E)
 scan_type_combobox = ttk.Combobox(input_frame, textvariable=scan_type_var, values=[
-    "OS Command Injection", "SQL Injection", "XSS", "SSTI", "WebSocket", "CORS", "CSRF", 
+    "All", "OS Command Injection", "SQL Injection", "XSS", "SSTI", "WebSocket", "CORS", "CSRF", 
     "File Upload", "LFI", "Path Traversal", "Robots.txt", "SSRF",
     "Common Passwords", "Brute Force", "Account Lockout", "XXE", "Uncommon HTTP Methods", 
     "HTTP Redirections", "Security Headers", "Open Ports", "WHOIS", "General Info",
