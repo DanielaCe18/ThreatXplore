@@ -1,10 +1,17 @@
 requests
 beautifulsoup4
-mechanize
+urllib3
+websockets
+pillow
+whois
+python-nmap
 dnspython
+pyOpenSSL
+selenium
+mechanize
 flask
 flask-cors
-python-nmap
-pyopenssl
-websockets
-python-whois
+importlib-metadata
+aiohttp
+tk
+# Note: Remember to install 'nmap' separately. On Linux: sudo apt-get install nmap, on macOS: brew install nmap, on Windows: download from https://nmap.org/download.html
