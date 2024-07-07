@@ -47,11 +47,29 @@ xss_payloads = [
 ]
 
 def get_forms(url):
+    """
+    Retrieves all forms from the given URL's page.
+
+    Args:
+        url (str): The URL to retrieve forms from.
+
+    Returns:
+        list: A list of BeautifulSoup form elements.
+    """
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
     return soup.find_all('form')
 
 def form_details(form):
+    """
+    Extracts details from a form element.
+
+    Args:
+        form (BeautifulSoup element): The form element to extract details from.
+
+    Returns:
+        dict: A dictionary containing the form's action, method, and inputs.
+    """
     details = {}
     action = form.attrs.get('action')
     method = form.attrs.get('method', 'get').lower()
@@ -67,6 +85,15 @@ def form_details(form):
     return details
 
 def is_vulnerable_to_sqli(response):
+    """
+    Checks if the response indicates a SQL Injection vulnerability.
+
+    Args:
+        response (requests.Response): The response object to check.
+
+    Returns:
+        bool: True if a SQL Injection vulnerability is detected, False otherwise.
+    """
     errors = [
         "you have an error in your sql syntax;",
         "warning: mysql",
@@ -80,6 +107,15 @@ def is_vulnerable_to_sqli(response):
     return False
 
 def is_vulnerable_to_xss(response):
+    """
+    Checks if the response indicates an XSS vulnerability.
+
+    Args:
+        response (requests.Response): The response object to check.
+
+    Returns:
+        bool: True if an XSS vulnerability is detected, False otherwise.
+    """
     xss_markers = [
         "<script>alert('XSS')</script>",
         "<img src=x onerror=alert('XSS')>",
@@ -95,6 +131,16 @@ def is_vulnerable_to_xss(response):
     return False
 
 def scan_sql(url):
+    """
+    Scans the given URL for SQL Injection vulnerabilities using predefined payloads.
+
+    Args:
+        url (str): The URL to scan for SQL Injection vulnerabilities.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if a vulnerability was found,
+               and a description of the vulnerability.
+    """
     # Test payloads directly in the URL
     for payload in sqli_payloads:
         new_url = f"{url}?param={payload}"
@@ -125,6 +171,16 @@ def scan_sql(url):
     return False, "No SQL Injection vulnerabilities detected."
 
 def scan_xss(url):
+    """
+    Scans the given URL for XSS vulnerabilities using predefined payloads.
+
+    Args:
+        url (str): The URL to scan for XSS vulnerabilities.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if a vulnerability was found,
+               and a description of the vulnerability.
+    """
     forms = get_forms(url)
     for form in forms:
         details = form_details(form)
