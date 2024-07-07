@@ -6,8 +6,6 @@ import re
 import logging
 import whois_scan
 import asyncio
-
-# Import only when needed
 import importlib
 
 # Configure logging
@@ -111,7 +109,7 @@ vulnerability_descriptions = {
     )
 }
 
-# Prevention messages for each vulnerability
+# Blue Team messages for each vulnerability
 prevention_messages = {
     'OS Command Injection': "Use parameterized queries and avoid using shell commands directly in the code.",
     'SQL Injection': "Use parameterized queries or prepared statements to prevent malicious SQL code execution.",
