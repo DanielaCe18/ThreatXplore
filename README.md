@@ -90,10 +90,6 @@ For the application:
 2. Build the Docker image: `docker build -t app .`
 3. Run the Docker container: `docker run -it --rm app`
 
-## Authors
-
-DanielaCe18 & sdiop61 :crossed_fingers:
-
 ## Licensing
 
 ThreatXplore is released under the MIT licence by DanielaCe18. Source code is available on [GitHub](https://github.com/DanielaCe18/ThreatXplore).
